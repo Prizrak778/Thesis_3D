@@ -19,7 +19,6 @@ namespace Thesis_3D
     {
         public Form1()
         {
-            
             InitializeComponent();
         }
     }
