@@ -84,7 +84,10 @@ namespace Thesis_3D
         {
             GL.DrawArrays(PrimitiveType.Triangles, 0, _verticeCount);
         }
-
+        public void Render_line()//Отрисовка(пока только треугольником)
+        {
+            GL.DrawArrays(PrimitiveType.Triangles, 0, _verticeCount);
+        }
         public void Dispose()
         {
             Dispose(true);
