@@ -16,12 +16,53 @@ namespace Thesis_3D
         private int _vertexArray;
         private int _buffer; //Буффер в котором хранится объект
         private int _verticeCount;
-        private int _verticeLenght;
         private PolygonMode _polygon;
         public Vector4 Color4; //Цвет объекта
         public Vector4 Color_choice; //Цвет объекта для буффера выбора
-        public RenderObject(Color4 color, Color4 color_choice)
+        public RenderObject(Vertex[] vertices, Color4 color, Color4 color_choice)
         {
+            _verticeCount = vertices.Length;
+            _vertexArray = GL.GenVertexArray();
+            GL.GenBuffers(1, out _buffer);
+
+            GL.BindVertexArray(_vertexArray);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, _buffer);
+            GL.NamedBufferStorage(_buffer, Vertex.Size * vertices.Length,        // the size needed by this buffer
+                vertices,                                                        // data to initialize with
+                BufferStorageFlags.MapWriteBit);                                 // at this point we will only write to the buffer
+                                                                                 // create vertex array and buffer here
+
+            GL.VertexArrayAttribBinding(_vertexArray, 1, 0);
+            GL.EnableVertexArrayAttrib(_vertexArray, 1);
+            GL.VertexArrayAttribFormat(
+                _vertexArray,
+                1,                                                               // attribute index, from the shader location = 0
+                4,                                                               // size of attribute, vec4
+                VertexAttribType.Float,                                          // contains floats
+                false,                                                           // does not need to be normalized as it is already, floats ignore this flag anyway
+                0);                                                              // relative offset, first item
+
+            GL.VertexArrayAttribBinding(_vertexArray, 2, 0);
+            GL.EnableVertexArrayAttrib(_vertexArray, 2);
+            GL.VertexArrayAttribFormat(
+                _vertexArray,
+                2,                                                               // attribute index, from the shader location = 1
+                4,                                                               // size of attribute, vec4
+                VertexAttribType.Float,                                          // contains floats
+                false,                                                           // does not need to be normalized as it is already, floats ignore this flag anyway
+                16);                                                             // relative offset after a vec4
+            GL.VertexArrayAttribBinding(_vertexArray, 3, 0);
+            GL.EnableVertexArrayAttrib(_vertexArray, 3);
+            GL.VertexArrayAttribFormat(
+                _vertexArray,
+                3,                                                               // attribute index, from the shader location = 2
+                4,                                                               // size of attribute, vec4
+                VertexAttribType.Float,                                          // contains floats
+                false,                                                           // does not need to be normalized as it is already, floats ignore this flag anyway
+                32);                                                             // relative offset after a vec4 + vec4
+
+            _initialized = true;
+            GL.VertexArrayVertexBuffer(_vertexArray, 0, _buffer, IntPtr.Zero, Vertex.Size);
             Color4.X = color.R;
             Color4.Y = color.G;
             Color4.Z = color.B;
