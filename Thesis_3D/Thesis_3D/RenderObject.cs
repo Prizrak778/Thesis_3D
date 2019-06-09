@@ -72,6 +72,19 @@ namespace Thesis_3D
             Color_choice.Z = color_choice.B;
             Color_choice.W = color_choice.A;
         }
+        public void Bind()//Сохранение буфера для дальнейшей отрисовки
+        {
+            GL.BindVertexArray(_vertexArray);
+        }
+        public int RenderBuffer()//вернуть номер буффера
+        {
+            return _buffer;
+        }
+        public void Render()//Отрисовка(пока только треугольником)
+        {
+            GL.DrawArrays(PrimitiveType.Triangles, 0, _verticeCount);
+        }
+
         public void Dispose()
         {
             Dispose(true);
