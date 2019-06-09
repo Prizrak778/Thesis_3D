@@ -8,12 +8,18 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using OpenTK;
+using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
+using OpenTK.Platform;
+
 namespace Thesis_3D
 {
     public partial class Form1 : Form
     {
         public Form1()
         {
+            
             InitializeComponent();
         }
     }
