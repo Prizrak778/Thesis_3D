@@ -17,7 +17,7 @@ namespace Thesis_3D
 {
     public partial class Form1 : Form
     {
-        Camera camera1;
+        Camera camera1 = new Camera();
         private Matrix4 _projectionMatrix;
         private Matrix4 _modelView;
         private Matrix4 _view;
@@ -43,7 +43,7 @@ namespace Thesis_3D
         }
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            
         }
         #region Form1_Resize
 
@@ -55,6 +55,9 @@ namespace Thesis_3D
         #endregion
         protected override void OnLoad(EventArgs e)
         {
+            glControl1.Load += new EventHandler(glControl_Load);
+            glControl_Load(glControl1, EventArgs.Empty);
+            GL.ClearColor(new Color4(0.3f, 0.3f, 0.3f, 0.0f));
             Text =
                 GL.GetString(StringName.Vendor) + " " +
                 GL.GetString(StringName.Renderer) + " " +
@@ -73,14 +76,18 @@ namespace Thesis_3D
         private void glControl_Load(object sender, EventArgs e)
         {
             CreateProjection();
+            glControl1.Resize += new EventHandler(glControl_Resize);
             camera1.Position = new Vector3(0, 2.5f, 2);
             camera1.Orientation = new Vector3(-(float)Math.PI, -(float)Math.PI, 0);
-            // Ensure that the viewport and projection matrix are set correctly.
             glControl_Resize(glControl1, EventArgs.Empty);
         }
         void glControl_Resize(object sender, EventArgs e)
         {
+            CreateProjection();
+            OpenTK.GLControl c = sender as OpenTK.GLControl;
 
+            if (c.ClientSize.Height == 0)
+                c.ClientSize = new System.Drawing.Size(c.ClientSize.Width, 1);
         }
     }
 }
