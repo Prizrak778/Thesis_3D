@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -22,6 +23,46 @@ namespace Thesis_3D
         private Matrix4 _modelView;
         private Matrix4 _view;
 
+        #region CompileShaders
+        private int CompileShaders(String VertexString, String FragmentString, String GeometricString = "")
+        {
+            var vertexShader = GL.CreateShader(ShaderType.VertexShader);
+            GL.ShaderSource(vertexShader, File.ReadAllText(VertexString));
+            GL.CompileShader(vertexShader);
+            int geometryShader = 0;
+            if (GeometricString != "")
+            {
+                geometryShader = GL.CreateShader(ShaderType.GeometryShader);
+                GL.ShaderSource(geometryShader, File.ReadAllText(GeometricString));
+                GL.CompileShader(geometryShader);
+            }
+
+            var fragmentShader = GL.CreateShader(ShaderType.FragmentShader);
+            GL.ShaderSource(fragmentShader, File.ReadAllText(FragmentString));
+            GL.CompileShader(fragmentShader);
+
+            var program = GL.CreateProgram();
+            GL.AttachShader(program, vertexShader);
+            GL.AttachShader(program, fragmentShader);
+            if (GeometricString != "")
+            {
+                GL.AttachShader(program, geometryShader);
+            }
+            GL.LinkProgram(program);
+
+            GL.DetachShader(program, vertexShader);
+            GL.DetachShader(program, fragmentShader);
+            if (GeometricString != "")
+            {
+                GL.DetachShader(program, geometryShader);
+                GL.DeleteProgram(geometryShader);
+            }
+            GL.DeleteShader(vertexShader);
+            GL.DeleteShader(fragmentShader);
+            return program;
+        }
+        #endregion
+
         private void CreateProjection()
         {
             float aspectRatio = (float)Width / Height;
@@ -43,7 +84,7 @@ namespace Thesis_3D
         }
         private void Form1_Load(object sender, EventArgs e)
         {
-            
+
         }
         #region Form1_Resize
 
@@ -77,6 +118,7 @@ namespace Thesis_3D
         {
             CreateProjection();
             glControl1.Resize += new EventHandler(glControl_Resize);
+            glControl1.Paint += new PaintEventHandler(glControl_Paint);
             camera1.Position = new Vector3(0, 2.5f, 2);
             camera1.Orientation = new Vector3(-(float)Math.PI, -(float)Math.PI, 0);
             glControl_Resize(glControl1, EventArgs.Empty);
@@ -88,6 +130,18 @@ namespace Thesis_3D
 
             if (c.ClientSize.Height == 0)
                 c.ClientSize = new System.Drawing.Size(c.ClientSize.Width, 1);
+        }
+        void glControl_Paint(object sender, PaintEventArgs e)
+        {
+            Render();
+        }
+        private void Render()
+        {
+            GL.ClearColor(new Color4(0.3f, 0.3f, 0.3f, 1.0f));
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
+            //Матрица проекции и вида
+            CreateProjection();
         }
     }
 }
