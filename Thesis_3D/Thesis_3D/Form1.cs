@@ -173,10 +173,64 @@ namespace Thesis_3D
             camera1.AddRotation(delta.X, delta.Y);
             lastMousePos = new Vector2(e.X, e.Y);
         }
-        void glControl_KeyPress(object sender, KeyEventArgs e)
+        void glControl_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
         {
-
-            switch (e.KeyData)
+            char t = e.KeyChar;
+            switch(e.KeyChar)
+            {
+                case (char)27:
+                    this.Close();
+                    break;
+                case '6':
+                    camera1.AddRotation(-10f, 0f);
+                    break;
+                case '4':
+                    camera1.AddRotation(10f, 0f);
+                    break;
+                case '8':
+                    camera1.AddRotation(0f, 10f);
+                    break;
+                case '2':
+                    camera1.AddRotation(0f, -10f);
+                    break;
+                case 'w':
+                    camera1.Move(0f, 0.05f, 0f);
+                    break;
+                case 'W':
+                    camera1.Move(0f, 0.05f, 0f);
+                    break;
+                case 'A':
+                    camera1.Move(-0.05f, 0f, 0f);
+                    break;
+                case 'a':
+                    camera1.Move(-0.05f, 0f, 0f);
+                    break;
+                case 'D':
+                    camera1.Move(0.05f, 0f, 0f);
+                    break;
+                case 'd':
+                    camera1.Move(0.05f, 0f, 0f);
+                    break;
+                case 'Q'://Вверх по y
+                    camera1.Move(0f, 0f, 0.05f);
+                    break;
+                case 'q'://Вверх по y
+                    camera1.Move(0f, 0f, 0.05f);
+                    break;
+                case 'E'://Вниз по y
+                    camera1.Move(0f, 0f, -0.05f);
+                    break;
+                case 'e'://Вниз по y
+                    camera1.Move(0f, 0f, -0.05f);
+                    break;
+                case 'S':
+                    camera1.Move(0f, -0.05f, 0f);
+                    break;
+                case 's':
+                    camera1.Move(0f, -0.05f, 0f);
+                    break;
+            }
+            /*switch (e.KeyChar)
             {
                 case Keys.Escape:
                     this.Close();
@@ -211,7 +265,7 @@ namespace Thesis_3D
                 case Keys.E://Вниз по y
                     camera1.Move(0f, 0f, -0.05f);
                     break;
-            }
+            }*/
         }
         private void Render_figure(RenderObject renderObject, PolygonMode polygon)
         {
