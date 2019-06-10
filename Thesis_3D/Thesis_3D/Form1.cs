@@ -23,6 +23,8 @@ namespace Thesis_3D
         private Matrix4 _modelView;
         private Matrix4 _view;
 
+        private int _program;
+
         private List<RenderObject> _renderObjects = new List<RenderObject>();
 
         #region CompileShaders
@@ -119,7 +121,6 @@ namespace Thesis_3D
         {
 
             String Text_glcontrol = Text;
-            //Text += $" (FPS: {1f / time_now:0})";
             Text += $"(Position:{camera1.Position})";
             while (glControl1.IsIdle)
             {
@@ -129,7 +130,6 @@ namespace Thesis_3D
                 }
                 Render();
             }
-
             Text = Text_glcontrol;
         }
         private void glControl_Load(object sender, EventArgs e)
@@ -141,6 +141,10 @@ namespace Thesis_3D
             camera1.Position = new Vector3(0, 2.5f, 2);
             camera1.Orientation = new Vector3(-(float)Math.PI, -(float)Math.PI, 0);
             glControl_Resize(glControl1, EventArgs.Empty);
+
+            String VertexShader = @"Components\Shaders\vertexShader.vert";
+            String FragentShader = @"Components\Shaders\fragmentShader.frag";
+            _program = CompileShaders(VertexShader, FragentShader);
         }
         void glControl_Resize(object sender, EventArgs e)
         {
@@ -161,7 +165,7 @@ namespace Thesis_3D
 
             //Матрица проекции и вида
             CreateProjection();
+            glControl1.SwapBuffers();
         }
-        
     }
 }
