@@ -84,6 +84,11 @@ namespace Thesis_3D
         {
             GL.DrawArrays(PrimitiveType.Triangles, 0, _verticeCount);
         }
+        public void PolygonMode_now(PolygonMode polygon)//тип полигона для отрисовки(Fill, Line, Point)
+        {
+            _polygon = polygon;
+            GL.PolygonMode(MaterialFace.FrontAndBack, polygon);
+        }
         public void Render_line()//Отрисовка(пока только треугольником)
         {
             GL.DrawArrays(PrimitiveType.Triangles, 0, _verticeCount);

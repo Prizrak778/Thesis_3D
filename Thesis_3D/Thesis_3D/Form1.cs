@@ -26,6 +26,7 @@ namespace Thesis_3D
         private int _program;
 
         private List<RenderObject> _renderObjects = new List<RenderObject>();
+        private Vector2 lastMousePos = new Vector2(30f, 140f);
 
         #region CompileShaders
         private int CompileShaders(String VertexString, String FragmentString, String GeometricString = "")
@@ -106,7 +107,7 @@ namespace Thesis_3D
             Text += $" (Vsync: {glControl1.VSync})";
             Application.Idle += Application_Idle;
 
-            String VertexShader = @"Components\Shaders\vertexShader.vert";
+            String VertexShader = @"Components\Shaders\vertexShader_c.vert";
             String FragentShader = @"Components\Shaders\fragmentShader.frag";
             _program = CompileShaders(VertexShader, FragentShader);
 
@@ -138,9 +139,11 @@ namespace Thesis_3D
             CreateProjection();
             glControl1.Resize += new EventHandler(glControl_Resize);
             glControl1.Paint += new PaintEventHandler(glControl_Paint);
+            glControl1.MouseMove += new MouseEventHandler(glControl_Move);
             glControl1.MakeCurrent();
             camera1.Position = new Vector3(0, 2.5f, 2);
             camera1.Orientation = new Vector3(-(float)Math.PI, -(float)Math.PI, 0);
+            camera1.AddRotation(0, 0);
             glControl_Resize(glControl1, EventArgs.Empty);
 
             GL.PatchParameter(PatchParameterInt.PatchVertices, 3);
@@ -158,17 +161,42 @@ namespace Thesis_3D
             if (c.ClientSize.Height == 0)
                 c.ClientSize = new System.Drawing.Size(c.ClientSize.Width, 1);
         }
+
         void glControl_Paint(object sender, PaintEventArgs e)
         {
             Render();
         }
+        void glControl_Move(object sender, MouseEventArgs e)
+        {
+            Vector2 delta = lastMousePos - new Vector2(e.X, e.Y);
+            camera1.AddRotation(delta.X, delta.Y);
+            lastMousePos = new Vector2(e.X, e.Y);
+        }
+        private void Render_figure(RenderObject renderObject, PolygonMode polygon)
+        {
+            renderObject.Bind();
+
+            GL.UniformMatrix4(20, false, ref _view);
+            GL.UniformMatrix4(21, false, ref _projectionMatrix);
+            GL.UniformMatrix4(22, false, ref _modelView);
+            renderObject.PolygonMode_now(polygon);
+        }
         private void Render()
         {
             GL.ClearColor(new Color4(0.3f, 0.3f, 0.3f, 1.0f));
+            GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, 0);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-
-            //Матрица проекции и вида
+            GL.UseProgram(_program);
             CreateProjection();
+            foreach (var renderObject in _renderObjects)
+            {
+                Render_figure(renderObject, PolygonMode.Fill);
+                Vector4 color = renderObject.Color4;
+                GL.Uniform4(19, ref color);
+
+                renderObject.Render();
+            }
+            //Матрица проекции и вида
             glControl1.SwapBuffers();
         }
     }
