@@ -26,7 +26,29 @@ namespace Thesis_3D
         private int _program;
 
         private List<RenderObject> _renderObjects = new List<RenderObject>();
+        private List<Color4> color4s_unique = new List<Color4>();
         private Vector2 lastMousePos = new Vector2(30f, 140f);
+
+        private Random rnd = new Random();
+
+        private Color4 RandomColor()
+        {
+            Color4 temp_color = Color4.Black;
+            bool flag = true;
+            while (flag)
+            {
+                flag = false;
+                temp_color = new Color4(rnd.Next(256), rnd.Next(256), rnd.Next(256), 255);
+                for (int i = 0; i < color4s_unique.Count; i++)
+                {
+                    if (temp_color == color4s_unique[i] && temp_color == Color4.Black)
+                    {
+                        flag = true;
+                    }
+                }
+            }
+            return temp_color;
+        }
 
         #region CompileShaders
         private int CompileShaders(String VertexString, String FragmentString, String GeometricString = "")
@@ -111,7 +133,7 @@ namespace Thesis_3D
             String FragentShader = @"Components\Shaders\fragmentShader.frag";
             _program = CompileShaders(VertexShader, FragentShader);
 
-            _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f, 0.0f, 2.0f, 0.0f), Color4.LightCoral, Color4.Black));
+            _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f, 0.0f, 2.0f, 0.0f), Color4.LightCoral, RandomColor()));
         }
         protected override void OnClosing(CancelEventArgs e)
         {
@@ -230,42 +252,6 @@ namespace Thesis_3D
                     camera1.Move(0f, -0.05f, 0f);
                     break;
             }
-            /*switch (e.KeyChar)
-            {
-                case Keys.Escape:
-                    this.Close();
-                    break;
-                case Keys.NumPad6:
-                    camera1.AddRotation(-10f, 0f);
-                    break;
-                case Keys.NumPad4:
-                    camera1.AddRotation(10f, 0f);
-                    break;
-                case Keys.NumPad8:
-                    camera1.AddRotation(0f, 10f);
-                    break;
-                case Keys.NumPad2:
-                    camera1.AddRotation(0f, -10f);
-                    break;
-                case Keys.W:
-                    camera1.Move(0f, 0.05f, 0f);
-                    break;
-                case Keys.S:
-                    camera1.Move(0f, -0.05f, 0f);
-                    break;
-                case Keys.A:
-                    camera1.Move(-0.05f, 0f, 0f);
-                    break;
-                case Keys.D:
-                    camera1.Move(0.05f, 0f, 0f);
-                    break;
-                case Keys.Q://Вверх по y
-                    camera1.Move(0f, 0f, 0.05f);
-                    break;
-                case Keys.E://Вниз по y
-                    camera1.Move(0f, 0f, -0.05f);
-                    break;
-            }*/
         }
         private void Render_figure(RenderObject renderObject, PolygonMode polygon)
         {
