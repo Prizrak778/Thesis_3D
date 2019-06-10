@@ -23,6 +23,8 @@ namespace Thesis_3D
         private Matrix4 _modelView;
         private Matrix4 _view;
 
+        private List<RenderObject> _renderObjects = new List<RenderObject>();
+
         #region CompileShaders
         private int CompileShaders(String VertexString, String FragmentString, String GeometricString = "")
         {
@@ -71,9 +73,6 @@ namespace Thesis_3D
                 aspectRatio,
                 0.1f,
                 400f);
-            //_projectionMatrix = Matrix4.CreatePerspectiveOffCenter(-0.5f, 0.5f, -0.5f, 0.5f, 0.1f, 400f);
-            //_projectionMatrix = Matrix4.CreateOrthographicOffCenter(-4*glControl.Width / glControl.Height, 4*glControl.Width / glControl.Height, -4 / aspectRatio, 4 / aspectRatio, 0.7f, 400f);
-            //_projectionMatrix = Matrix4.CreateOrthographic(10* aspectRatio, 10, 0.1f, 400f );
             _modelView = camera1.GetViewMatrix();
             _view = _modelView * _projectionMatrix;
         }
@@ -109,16 +108,36 @@ namespace Thesis_3D
             GL.Enable(EnableCap.Texture2D);
             GL.Enable(EnableCap.TextureCubeMap);
             GL.DepthFunc(DepthFunction.Less);
+            Application.Idle += Application_Idle;
+            _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f, 0.0f, 2.0f, 0.0f), Color4.LightCoral, Color4.Black));
         }
         protected override void OnClosing(CancelEventArgs e)
         {
             base.OnClosing(e);
+        }
+        void Application_Idle(object sender, EventArgs e)
+        {
+
+            String Text_glcontrol = Text;
+            //Text += $" (FPS: {1f / time_now:0})";
+            Text += $"(Position:{camera1.Position})";
+            while (glControl1.IsIdle)
+            {
+                if (Focused)
+                {
+
+                }
+                Render();
+            }
+
+            Text = Text_glcontrol;
         }
         private void glControl_Load(object sender, EventArgs e)
         {
             CreateProjection();
             glControl1.Resize += new EventHandler(glControl_Resize);
             glControl1.Paint += new PaintEventHandler(glControl_Paint);
+            glControl1.MakeCurrent();
             camera1.Position = new Vector3(0, 2.5f, 2);
             camera1.Orientation = new Vector3(-(float)Math.PI, -(float)Math.PI, 0);
             glControl_Resize(glControl1, EventArgs.Empty);
@@ -143,5 +162,6 @@ namespace Thesis_3D
             //Матрица проекции и вида
             CreateProjection();
         }
+        
     }
 }
