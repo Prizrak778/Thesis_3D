@@ -39,12 +39,16 @@ namespace Thesis_3D
             {
                 flag = false;
                 temp_color = new Color4(rnd.Next(256), rnd.Next(256), rnd.Next(256), 255);
-                for (int i = 0; i < color4s_unique.Count; i++)
+                for (int i = 0; i < color4s_unique.Count && flag; i++)
                 {
                     if (temp_color == color4s_unique[i] && temp_color == Color4.Black)
                     {
                         flag = true;
                     }
+                }
+                if(!flag)
+                {
+                    color4s_unique.Add(temp_color);
                 }
             }
             return temp_color;
