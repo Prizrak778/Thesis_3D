@@ -23,6 +23,8 @@ namespace Thesis_3D
         private Matrix4 _modelView;
         private Matrix4 _view;
 
+        private int _program;
+
         private List<RenderObject> _renderObjects = new List<RenderObject>();
 
         #region CompileShaders
@@ -97,18 +99,17 @@ namespace Thesis_3D
         {
             glControl1.Load += new EventHandler(glControl_Load);
             glControl_Load(glControl1, EventArgs.Empty);
-            GL.ClearColor(new Color4(0.3f, 0.3f, 0.3f, 0.0f));
             Text =
                 GL.GetString(StringName.Vendor) + " " +
                 GL.GetString(StringName.Renderer) + " " +
                 GL.GetString(StringName.Version);
             Text += $" (Vsync: {glControl1.VSync})";
-            GL.PatchParameter(PatchParameterInt.PatchVertices, 3);
-            GL.Enable(EnableCap.DepthTest);
-            GL.Enable(EnableCap.Texture2D);
-            GL.Enable(EnableCap.TextureCubeMap);
-            GL.DepthFunc(DepthFunction.Less);
             Application.Idle += Application_Idle;
+
+            String VertexShader = @"Components\Shaders\vertexShader.vert";
+            String FragentShader = @"Components\Shaders\fragmentShader.frag";
+            _program = CompileShaders(VertexShader, FragentShader);
+
             _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f, 0.0f, 2.0f, 0.0f), Color4.LightCoral, Color4.Black));
         }
         protected override void OnClosing(CancelEventArgs e)
@@ -141,6 +142,13 @@ namespace Thesis_3D
             camera1.Position = new Vector3(0, 2.5f, 2);
             camera1.Orientation = new Vector3(-(float)Math.PI, -(float)Math.PI, 0);
             glControl_Resize(glControl1, EventArgs.Empty);
+
+            GL.PatchParameter(PatchParameterInt.PatchVertices, 3);
+            GL.Enable(EnableCap.DepthTest);
+            GL.Enable(EnableCap.Texture2D);
+            GL.Enable(EnableCap.TextureCubeMap);
+            GL.DepthFunc(DepthFunction.Less);
+            GL.ClearColor(new Color4(0.3f, 0.3f, 0.3f, 0.0f));
         }
         void glControl_Resize(object sender, EventArgs e)
         {
@@ -161,7 +169,7 @@ namespace Thesis_3D
 
             //Матрица проекции и вида
             CreateProjection();
+            glControl1.SwapBuffers();
         }
-        
     }
 }
