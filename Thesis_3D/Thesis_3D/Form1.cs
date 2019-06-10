@@ -140,6 +140,7 @@ namespace Thesis_3D
             glControl1.Resize += new EventHandler(glControl_Resize);
             glControl1.Paint += new PaintEventHandler(glControl_Paint);
             glControl1.MouseMove += new MouseEventHandler(glControl_Move);
+            glControl1.KeyPress += new KeyPressEventHandler(glControl_KeyPress);
             glControl1.MakeCurrent();
             camera1.Position = new Vector3(0, 2.5f, 2);
             camera1.Orientation = new Vector3(-(float)Math.PI, -(float)Math.PI, 0);
@@ -171,6 +172,46 @@ namespace Thesis_3D
             Vector2 delta = lastMousePos - new Vector2(e.X, e.Y);
             camera1.AddRotation(delta.X, delta.Y);
             lastMousePos = new Vector2(e.X, e.Y);
+        }
+        void glControl_KeyPress(object sender, KeyEventArgs e)
+        {
+
+            switch (e.KeyData)
+            {
+                case Keys.Escape:
+                    this.Close();
+                    break;
+                case Keys.NumPad6:
+                    camera1.AddRotation(-10f, 0f);
+                    break;
+                case Keys.NumPad4:
+                    camera1.AddRotation(10f, 0f);
+                    break;
+                case Keys.NumPad8:
+                    camera1.AddRotation(0f, 10f);
+                    break;
+                case Keys.NumPad2:
+                    camera1.AddRotation(0f, -10f);
+                    break;
+                case Keys.W:
+                    camera1.Move(0f, 0.05f, 0f);
+                    break;
+                case Keys.S:
+                    camera1.Move(0f, -0.05f, 0f);
+                    break;
+                case Keys.A:
+                    camera1.Move(-0.05f, 0f, 0f);
+                    break;
+                case Keys.D:
+                    camera1.Move(0.05f, 0f, 0f);
+                    break;
+                case Keys.Q://Вверх по y
+                    camera1.Move(0f, 0f, 0.05f);
+                    break;
+                case Keys.E://Вниз по y
+                    camera1.Move(0f, 0f, -0.05f);
+                    break;
+            }
         }
         private void Render_figure(RenderObject renderObject, PolygonMode polygon)
         {
