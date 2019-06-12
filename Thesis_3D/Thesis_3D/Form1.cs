@@ -24,6 +24,9 @@ namespace Thesis_3D
         private Matrix4 _view;
 
         private int _program;
+        private int _program_contour;
+
+        private bool _contour = false;
 
         private List<RenderObject> _renderObjects = new List<RenderObject>();
         private List<Color4> color4s_unique = new List<Color4>();
@@ -31,6 +34,7 @@ namespace Thesis_3D
 
         private Random rnd = new Random();
 
+        #region RandomColor
         private Color4 RandomColor()
         {
             Color4 temp_color = Color4.Black;
@@ -53,6 +57,7 @@ namespace Thesis_3D
             }
             return temp_color;
         }
+        #endregion
 
         #region CompileShaders
         private int CompileShaders(String VertexString, String FragmentString, String GeometricString = "")
@@ -94,6 +99,7 @@ namespace Thesis_3D
         }
         #endregion
 
+        #region CreateProjection
         private void CreateProjection()
         {
             float aspectRatio = (float)Width / Height;
@@ -105,15 +111,19 @@ namespace Thesis_3D
             _modelView = camera1.GetViewMatrix();
             _view = _modelView * _projectionMatrix;
         }
+        #endregion
+
         public Form1()
         {
             OpenTK.Toolkit.Init();
             InitializeComponent();
         }
+
         private void Form1_Load(object sender, EventArgs e)
         {
 
         }
+
         #region Form1_Resize
 
         private void Form1_Resize(object sender, EventArgs e)
@@ -122,6 +132,7 @@ namespace Thesis_3D
         }
 
         #endregion
+
         protected override void OnLoad(EventArgs e)
         {
             glControl1.Load += new EventHandler(glControl_Load);
@@ -137,6 +148,10 @@ namespace Thesis_3D
             String FragentShader = @"Components\Shaders\fragmentShader.frag";
             _program = CompileShaders(VertexShader, FragentShader);
 
+            VertexShader = @"Components\Shaders\vertexShader_c.vert";
+            FragentShader = @"Components\Shaders\fragmentShader_c.frag";
+            _program_contour = CompileShaders(VertexShader, FragentShader);
+
             _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f, 0.0f, 2.0f, 0.0f), Color4.LightCoral, RandomColor()));
         }
         protected override void OnClosing(CancelEventArgs e)
@@ -145,7 +160,6 @@ namespace Thesis_3D
         }
         void Application_Idle(object sender, EventArgs e)
         {
-
             String Text_glcontrol = Text;
             //Text += $" (FPS: {1f / time_now:0})";
             Text += $"(Position:{camera1.Position})";
@@ -157,7 +171,6 @@ namespace Thesis_3D
                 }
                 Render();
             }
-
             Text = Text_glcontrol;
         }
         private void glControl_Load(object sender, EventArgs e)
@@ -255,12 +268,17 @@ namespace Thesis_3D
                 case 's':
                     camera1.Move(0f, -0.05f, 0f);
                     break;
+                case 'L':
+                    _contour = _contour ? false : true;
+                    break;
+                case 'l':
+                    _contour = _contour ? false : true;
+                    break;
             }
         }
         private void Render_figure(RenderObject renderObject, PolygonMode polygon)
         {
             renderObject.Bind();
-
             GL.UniformMatrix4(20, false, ref _view);
             GL.UniformMatrix4(21, false, ref _projectionMatrix);
             GL.UniformMatrix4(22, false, ref _modelView);
@@ -271,17 +289,31 @@ namespace Thesis_3D
             GL.ClearColor(new Color4(0.3f, 0.3f, 0.3f, 1.0f));
             GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, 0);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            GL.UseProgram(_program);
             CreateProjection();
+            GL.UseProgram(_program);
             foreach (var renderObject in _renderObjects)
             {
+                
                 Render_figure(renderObject, PolygonMode.Fill);
                 Vector4 color = renderObject.Color4;
                 GL.Uniform4(19, ref color);
 
                 renderObject.Render();
             }
-            //Матрица проекции и вида
+            if(_contour)
+            {
+                GL.UseProgram(_program);
+                GL.LineWidth(3);
+                foreach (var renderObject in _renderObjects)
+                {
+                    
+                    Render_figure(renderObject, PolygonMode.Line);
+                    Vector4 color = new Vector4(0, 0, 0, 255);
+                    GL.Uniform4(19, ref color);
+
+                    renderObject.Render_line();
+                }
+            }
             glControl1.SwapBuffers();
         }
     }
