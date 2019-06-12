@@ -28,6 +28,8 @@ namespace Thesis_3D
         private bool _contour = false;
         private int _SelectID = -1;
 
+        private double _framecount = 0;
+
         private List<RenderObject> _renderObjects = new List<RenderObject>();
         private List<Color4> color4s_unique = new List<Color4>();
         private Vector2 lastMousePos = new Vector2(30f, 140f);
@@ -107,7 +109,7 @@ namespace Thesis_3D
                 90f * (float)Math.PI / 180f,
                 aspectRatio,
                 0.1f,
-                400f);
+                40f);
             _modelView = camera1.GetViewMatrix();
             _view = _modelView * _projectionMatrix;
         }
@@ -137,11 +139,6 @@ namespace Thesis_3D
         {
             glControl1.Load += new EventHandler(glControl_Load);
             glControl_Load(glControl1, EventArgs.Empty);
-            Text =
-                GL.GetString(StringName.Vendor) + " " +
-                GL.GetString(StringName.Renderer) + " " +
-                GL.GetString(StringName.Version);
-            Text += $" (Vsync: {glControl1.VSync})";
             Application.Idle += Application_Idle;
 
             String VertexShader = @"Components\Shaders\vertexShader_c.vert";
@@ -149,6 +146,11 @@ namespace Thesis_3D
             _program = CompileShaders(VertexShader, FragentShader);
 
             _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f, 0.0f, 2.0f, 0.0f), Color4.LightCoral, RandomColor()));
+            for(int i = 0; i < 10; i++)
+            {
+                _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f, (float)i + 1, 2.0f, 0.0f), Color4.LightCoral, RandomColor()));
+            }
+               
         }
         protected override void OnClosing(CancelEventArgs e)
         {
@@ -156,18 +158,10 @@ namespace Thesis_3D
         }
         void Application_Idle(object sender, EventArgs e)
         {
-            String Text_glcontrol = Text;
-            //Text += $" (FPS: {1f / time_now:0})";
-            Text += $"(Position:{camera1.Position})";
             while (glControl1.IsIdle)
             {
-                if (Focused)
-                {
-
-                }
                 Render();
             }
-            Text = Text_glcontrol;
         }
         private void glControl_Load(object sender, EventArgs e)
         {
@@ -192,11 +186,21 @@ namespace Thesis_3D
         }
         void glControl_Resize(object sender, EventArgs e)
         {
-            CreateProjection();
+            
             OpenTK.GLControl c = sender as OpenTK.GLControl;
-
+            CreateProjection();
             if (c.ClientSize.Height == 0)
                 c.ClientSize = new System.Drawing.Size(c.ClientSize.Width, 1);
+
+            GL.LoadIdentity();
+            GL.Viewport(ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width, ClientRectangle.Height);
+            float aspect_ratio = Width / (float)Height;
+
+            _view = camera1.GetViewMatrix() * Matrix4.CreatePerspectiveFieldOfView(1f, aspect_ratio, 1.0f, 40.0f);
+            Matrix4 perpective = Matrix4.CreatePerspectiveFieldOfView(MathHelper.PiOver4, aspect_ratio, 1, 64);
+            GL.MatrixMode(MatrixMode.Projection);
+            GL.UniformMatrix4(21, false, ref _projectionMatrix);
+            GL.LoadMatrix(ref perpective);
         }
 
         void glControl_Paint(object sender, PaintEventArgs e)
@@ -336,6 +340,8 @@ namespace Thesis_3D
         }
         private void Render()
         {
+            DateTime dateTime = DateTime.Now;
+
             GL.ClearColor(new Color4(0.3f, 0.3f, 0.3f, 1.0f));
             GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, 0);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
@@ -372,6 +378,16 @@ namespace Thesis_3D
                 _renderObjects[_SelectID].Render_line();
             }
             glControl1.SwapBuffers();
+
+            TimeSpan timeSpan = DateTime.Now - dateTime;
+            _framecount = 1f / (timeSpan.TotalMilliseconds / 1000);
+            Text =
+                GL.GetString(StringName.Vendor) + " " +
+                GL.GetString(StringName.Renderer) + " " +
+                GL.GetString(StringName.Version);
+            Text += $" (Vsync: {glControl1.VSync})";
+            Text += $" (FPS: {_framecount:0})";
+            Text += $"(Position:{camera1.Position})";
         }
     }
 }
