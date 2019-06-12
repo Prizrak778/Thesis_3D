@@ -24,9 +24,9 @@ namespace Thesis_3D
         private Matrix4 _view;
 
         private int _program;
-        private int _program_contour;
 
         private bool _contour = false;
+        private int _SelectID = -1;
 
         private List<RenderObject> _renderObjects = new List<RenderObject>();
         private List<Color4> color4s_unique = new List<Color4>();
@@ -148,10 +148,6 @@ namespace Thesis_3D
             String FragentShader = @"Components\Shaders\fragmentShader.frag";
             _program = CompileShaders(VertexShader, FragentShader);
 
-            VertexShader = @"Components\Shaders\vertexShader_c.vert";
-            FragentShader = @"Components\Shaders\fragmentShader_c.frag";
-            _program_contour = CompileShaders(VertexShader, FragentShader);
-
             _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f, 0.0f, 2.0f, 0.0f), Color4.LightCoral, RandomColor()));
         }
         protected override void OnClosing(CancelEventArgs e)
@@ -179,6 +175,7 @@ namespace Thesis_3D
             glControl1.Resize += new EventHandler(glControl_Resize);
             glControl1.Paint += new PaintEventHandler(glControl_Paint);
             glControl1.MouseMove += new MouseEventHandler(glControl_Move);
+            glControl1.MouseDown += new MouseEventHandler(glControl_MouseDown);
             glControl1.KeyPress += new KeyPressEventHandler(glControl_KeyPress);
             glControl1.MakeCurrent();
             camera1.Position = new Vector3(0, 2.5f, 2);
@@ -276,6 +273,59 @@ namespace Thesis_3D
                     break;
             }
         }
+
+        private void glControl_MouseDown(object sender, MouseEventArgs e)
+        {
+            int colorFBO;
+            GL.GenBuffers(1, out colorFBO);
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, colorFBO);
+            {
+                _SelectID = -1;
+                GL.Enable(EnableCap.DepthTest);
+                GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
+                int pixel = new int();
+                Render_select_color_buf();
+                GL.ReadPixels(e.X, glControl1.Height - e.Y, 1, 1, PixelFormat.Bgra, PixelType.UnsignedByte, ref pixel);
+
+                Color color = Color.FromArgb(pixel);
+                Color4 temp_color;
+                temp_color.R = color.R;
+                temp_color.G = color.G;
+                temp_color.B = color.B;
+                temp_color.A = 255;
+                for(int i = 0; i < _renderObjects.Count; i++)
+                {
+                    if(color4s_unique[i]== temp_color)
+                    {
+                        _SelectID = i;
+                    }
+                }
+            }
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+        }
+
+        private void Render_select_color_buf()
+        {
+            CreateProjection();
+            GL.UniformMatrix4(21, false, ref _projectionMatrix);
+            GL.ClearColor(new Color4(0.0f, 0.0f, 0.0f, 1.0f));
+            GL.UseProgram(_program);
+            int iter = 0;
+            Vector4 temp_color;
+            foreach (var renderObject in _renderObjects)
+            {
+                temp_color.X = color4s_unique[iter].R / 255;
+                temp_color.Y = color4s_unique[iter].G / 255;
+                temp_color.Z = color4s_unique[iter].B / 255;
+                temp_color.W = color4s_unique[iter].A / 255;
+                Render_figure(renderObject, PolygonMode.Fill);
+                GL.Uniform4(19, ref temp_color);
+                renderObject.Render();
+                iter++;
+            }
+        }
+
         private void Render_figure(RenderObject renderObject, PolygonMode polygon)
         {
             renderObject.Bind();
@@ -302,7 +352,6 @@ namespace Thesis_3D
             }
             if(_contour)
             {
-                GL.UseProgram(_program);
                 GL.LineWidth(3);
                 foreach (var renderObject in _renderObjects)
                 {
@@ -313,6 +362,14 @@ namespace Thesis_3D
 
                     renderObject.Render_line();
                 }
+            }
+            if(_SelectID > -1)
+            {
+                GL.LineWidth(7);
+                Render_figure(_renderObjects[_SelectID], PolygonMode.Line);
+                Vector4 color = new Vector4(0, 0, 0, 255);
+                GL.Uniform4(19, ref color);
+                _renderObjects[_SelectID].Render_line();
             }
             glControl1.SwapBuffers();
         }
