@@ -217,9 +217,17 @@ namespace Thesis_3D
         }
         void glControl_MouseWheel(object sender, MouseEventArgs e)
         {
-            if(angel>0 && angel< 180)
+            if(angel > 1 && angel < 179)
             {
                 angel += e.Delta/120;
+            }
+            else if(angel == 1 && e.Delta > 0)
+            {
+                angel += e.Delta / 120;
+            }
+            else if (angel == 179 && e.Delta < 0)
+            {
+                angel += e.Delta / 120;
             }
         }
         void glControl_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
