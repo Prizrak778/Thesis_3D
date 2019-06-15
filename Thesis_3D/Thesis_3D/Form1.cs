@@ -27,6 +27,7 @@ namespace Thesis_3D
 
         private bool _contour = false;
         private int _SelectID = -1;
+        private float angel = 90f;
 
         private double _framecount = 0;
 
@@ -106,9 +107,9 @@ namespace Thesis_3D
         {
             float aspectRatio = (float)Width / Height;
             _projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(
-                90f * (float)Math.PI / 180f,
+                angel * (float)Math.PI / 180f,
                 aspectRatio,
-                0.1f,
+                0.01f,
                 40f);
             _modelView = camera1.GetViewMatrix();
             _view = _modelView * _projectionMatrix;
@@ -168,9 +169,10 @@ namespace Thesis_3D
             CreateProjection();
             glControl1.Resize += new EventHandler(glControl_Resize);
             glControl1.Paint += new PaintEventHandler(glControl_Paint);
-            glControl1.MouseMove += new MouseEventHandler(glControl_Move);
+            glControl1.MouseMove += new MouseEventHandler(glControl_MouseMove);
             glControl1.MouseDown += new MouseEventHandler(glControl_MouseDown);
             glControl1.KeyPress += new KeyPressEventHandler(glControl_KeyPress);
+            glControl1.MouseWheel += new MouseEventHandler(glControl_MouseWheel);
             glControl1.MakeCurrent();
             camera1.Position = new Vector3(0, 2.5f, 2);
             camera1.Orientation = new Vector3(-(float)Math.PI, -(float)Math.PI, 0);
@@ -194,24 +196,31 @@ namespace Thesis_3D
 
             GL.LoadIdentity();
             GL.Viewport(ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width, ClientRectangle.Height);
-            float aspect_ratio = Width / (float)Height;
+            //float aspect_ratio = Width / (float)Height;
 
-            _view = camera1.GetViewMatrix() * Matrix4.CreatePerspectiveFieldOfView(1f, aspect_ratio, 1.0f, 40.0f);
-            Matrix4 perpective = Matrix4.CreatePerspectiveFieldOfView(MathHelper.PiOver4, aspect_ratio, 1, 64);
-            GL.MatrixMode(MatrixMode.Projection);
+            //_view = camera1.GetViewMatrix() * Matrix4.CreatePerspectiveFieldOfView(1f, aspect_ratio * 90, 1.0f, 40.0f);
+            //Matrix4 perpective = Matrix4.CreatePerspectiveFieldOfView(MathHelper.PiOver4, aspect_ratio, 1, 64);
+            //GL.MatrixMode(MatrixMode.Projection);
             GL.UniformMatrix4(21, false, ref _projectionMatrix);
-            GL.LoadMatrix(ref perpective);
+            //GL.LoadMatrix(ref perpective);
         }
 
         void glControl_Paint(object sender, PaintEventArgs e)
         {
             Render();
         }
-        void glControl_Move(object sender, MouseEventArgs e)
+        void glControl_MouseMove(object sender, MouseEventArgs e)
         {
             Vector2 delta = lastMousePos - new Vector2(e.X, e.Y);
             camera1.AddRotation(delta.X, delta.Y);
             lastMousePos = new Vector2(e.X, e.Y);
+        }
+        void glControl_MouseWheel(object sender, MouseEventArgs e)
+        {
+            if(angel>0 && angel< 180)
+            {
+                angel += e.Delta/120;
+            }
         }
         void glControl_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
         {
