@@ -147,11 +147,10 @@ namespace Thesis_3D
             _program = CompileShaders(VertexShader, FragentShader);
 
             _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f, 0.0f, 2.0f, 0.0f), Color4.LightCoral, RandomColor()));
-            for(int i = 0; i < 10; i++)
+            for (int i = 0; i < 10; i++)
             {
                 _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f, (float)i + 1, 2.0f, 0.0f), Color4.LightCoral, RandomColor()));
             }
-               
         }
         protected override void OnClosing(CancelEventArgs e)
         {
@@ -209,11 +208,16 @@ namespace Thesis_3D
         {
             Render();
         }
+
+        #region MouseEvent
         void glControl_MouseMove(object sender, MouseEventArgs e)
         {
-            Vector2 delta = lastMousePos - new Vector2(e.X, e.Y);
-            camera1.AddRotation(delta.X, delta.Y);
-            lastMousePos = new Vector2(e.X, e.Y);
+            if (camera1.Rotation_on)
+            {
+                Vector2 delta = lastMousePos - new Vector2(e.X, e.Y);
+                camera1.AddRotation(delta.X, delta.Y);
+                lastMousePos = new Vector2(e.X, e.Y);
+            }
         }
         void glControl_MouseWheel(object sender, MouseEventArgs e)
         {
@@ -230,6 +234,39 @@ namespace Thesis_3D
                 angel += e.Delta / 120;
             }
         }
+        private void glControl_MouseDown(object sender, MouseEventArgs e)
+        {
+            int colorFBO;
+            GL.GenBuffers(1, out colorFBO);
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, colorFBO);
+            {
+                _SelectID = -1;
+                GL.Enable(EnableCap.DepthTest);
+                GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
+                int pixel = new int();
+                Render_select_color_buf();
+                GL.ReadPixels(e.X, glControl1.Height - e.Y, 1, 1, PixelFormat.Bgra, PixelType.UnsignedByte, ref pixel);
+
+                Color color = Color.FromArgb(pixel);
+                Color4 temp_color;
+                temp_color.R = color.R;
+                temp_color.G = color.G;
+                temp_color.B = color.B;
+                temp_color.A = 255;
+                for (int i = 0; i < _renderObjects.Count; i++)
+                {
+                    if (color4s_unique[i] == temp_color)
+                    {
+                        _SelectID = i;
+                    }
+                }
+            }
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+        }
+        #endregion
+
+        #region KeyEvent
         void glControl_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
         {
             char t = e.KeyChar;
@@ -292,40 +329,17 @@ namespace Thesis_3D
                 case 'l':
                     _contour = _contour ? false : true;
                     break;
+                case 'c':
+                    camera1.Rotation_on = camera1.Rotation_on ? false : true;
+                    break;
+                case 'C':
+                    camera1.Rotation_on = camera1.Rotation_on ? false : true;
+                    break;
             }
         }
+        #endregion
 
-        private void glControl_MouseDown(object sender, MouseEventArgs e)
-        {
-            int colorFBO;
-            GL.GenBuffers(1, out colorFBO);
-            GL.BindFramebuffer(FramebufferTarget.Framebuffer, colorFBO);
-            {
-                _SelectID = -1;
-                GL.Enable(EnableCap.DepthTest);
-                GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-
-                int pixel = new int();
-                Render_select_color_buf();
-                GL.ReadPixels(e.X, glControl1.Height - e.Y, 1, 1, PixelFormat.Bgra, PixelType.UnsignedByte, ref pixel);
-
-                Color color = Color.FromArgb(pixel);
-                Color4 temp_color;
-                temp_color.R = color.R;
-                temp_color.G = color.G;
-                temp_color.B = color.B;
-                temp_color.A = 255;
-                for(int i = 0; i < _renderObjects.Count; i++)
-                {
-                    if(color4s_unique[i]== temp_color)
-                    {
-                        _SelectID = i;
-                    }
-                }
-            }
-            GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
-        }
-
+        
         private void Render_select_color_buf()
         {
             CreateProjection();

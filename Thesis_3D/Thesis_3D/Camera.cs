@@ -13,6 +13,7 @@ namespace Thesis_3D
         public Vector3 Orientation = new Vector3((float)Math.PI, 0f, 0f);
         public float MoveSpeed = 0.05f;
         public float MouseSensitivity = 0.01f;
+        public bool Rotation_on = true;
 
         public Matrix4 GetViewMatrix()
         {
