@@ -212,7 +212,7 @@ namespace Thesis_3D
         #region MouseEvent
         void glControl_MouseMove(object sender, MouseEventArgs e)
         {
-            if (camera1.Rotation_on)
+            if (camera1.Rotation_status)
             {
                 Vector2 delta = lastMousePos - new Vector2(e.X, e.Y);
                 camera1.AddRotation(delta.X, delta.Y);
@@ -330,10 +330,10 @@ namespace Thesis_3D
                     _contour = _contour ? false : true;
                     break;
                 case 'c':
-                    camera1.Rotation_on = camera1.Rotation_on ? false : true;
+                    camera1.Rotation_change_status();
                     break;
                 case 'C':
-                    camera1.Rotation_on = camera1.Rotation_on ? false : true;
+                    camera1.Rotation_change_status();
                     break;
             }
         }

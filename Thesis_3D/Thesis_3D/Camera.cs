@@ -13,7 +13,7 @@ namespace Thesis_3D
         public Vector3 Orientation = new Vector3((float)Math.PI, 0f, 0f);
         public float MoveSpeed = 0.05f;
         public float MouseSensitivity = 0.01f;
-        public bool Rotation_on = true;
+        public bool Rotation_status = true;
 
         public Matrix4 GetViewMatrix()
         {
@@ -48,6 +48,10 @@ namespace Thesis_3D
 
             Orientation.X = (Orientation.X + x) % ((float)Math.PI * 2.0f);
             Orientation.Y = Math.Max(Math.Min(Orientation.Y + y, (float)Math.PI / 2.0f - 0.1f), (float)-Math.PI / 2.0f + 0.1f);
+        }
+        public void Rotation_change_status()
+        {
+            Rotation_status = Rotation_status ? false : true; //если == true, то делаем false и наоборот 
         }
     }
 }
