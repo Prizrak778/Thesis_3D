@@ -141,7 +141,8 @@ namespace Thesis_3D
             glControl1.Load += new EventHandler(glControl_Load);
             glControl_Load(glControl1, EventArgs.Empty);
             Application.Idle += Application_Idle;
-
+            comboBox1.Items.AddRange(new object[] { "Обычные цвета", "Т.И. без отражения" });
+            comboBox1.SelectedIndex = 0;
             String VertexShader = @"Components\Shaders\vertexShader_c.vert";
             String FragentShader = @"Components\Shaders\fragmentShader.frag";
             _program = CompileShaders(VertexShader, FragentShader);
@@ -212,12 +213,12 @@ namespace Thesis_3D
         #region MouseEvent
         void glControl_MouseMove(object sender, MouseEventArgs e)
         {
+            Vector2 delta = lastMousePos - new Vector2(e.X, e.Y);
             if (camera1.Rotation_status)
             {
-                Vector2 delta = lastMousePos - new Vector2(e.X, e.Y);
                 camera1.AddRotation(delta.X, delta.Y);
-                lastMousePos = new Vector2(e.X, e.Y);
             }
+            lastMousePos = new Vector2(e.X, e.Y);
         }
         void glControl_MouseWheel(object sender, MouseEventArgs e)
         {
@@ -325,15 +326,19 @@ namespace Thesis_3D
                     break;
                 case 'L':
                     _contour = _contour ? false : true;
+                    checkBox1.Checked = _contour;
                     break;
                 case 'l':
                     _contour = _contour ? false : true;
+                    checkBox1.Checked = _contour;
                     break;
                 case 'c':
                     camera1.Rotation_change_status();
+                    checkBox2.Checked = camera1.Rotation_status;
                     break;
                 case 'C':
                     camera1.Rotation_change_status();
+                    checkBox2.Checked = camera1.Rotation_status;
                     break;
             }
         }
@@ -419,6 +424,21 @@ namespace Thesis_3D
             Text += $" (Vsync: {glControl1.VSync})";
             Text += $" (FPS: {_framecount:0})";
             Text += $"(Position:{camera1.Position})";
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            _contour = checkBox1.Checked;
+        }
+
+        private void checkBox2_CheckedChanged(object sender, EventArgs e)
+        {
+            camera1.Rotation_status = checkBox2.Checked;
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
