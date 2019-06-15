@@ -24,6 +24,7 @@ namespace Thesis_3D
         private Matrix4 _view;
 
         private int _program;
+        private int _program_contour;
 
         private bool _contour = false;
         private int _SelectID = -1;
@@ -32,6 +33,7 @@ namespace Thesis_3D
         private double _framecount = 0;
 
         private List<RenderObject> _renderObjects = new List<RenderObject>();
+        private List<LightObject> _lightObjects = new List<LightObject>();
         private List<Color4> color4s_unique = new List<Color4>();
         private Vector2 lastMousePos = new Vector2(30f, 140f);
 
@@ -145,18 +147,34 @@ namespace Thesis_3D
             comboBox1.SelectedIndex = 0;
             String VertexShader = @"Components\Shaders\vertexShader_c.vert";
             String FragentShader = @"Components\Shaders\fragmentShader.frag";
-            _program = CompileShaders(VertexShader, FragentShader);
+            _program_contour = _program = CompileShaders(VertexShader, FragentShader);
+
 
             _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f, 0.0f, 2.0f, 0.0f), Color4.LightCoral, RandomColor()));
             for (int i = 0; i < 10; i++)
             {
                 _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f, (float)i + 1, 2.0f, 0.0f), Color4.LightCoral, RandomColor()));
             }
+            Vector3 position_light = new Vector3(0.0f, 3.0f, 0.0f);
+            _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f, position_light.X, position_light.Y, position_light.Z), Color4.Yellow, RandomColor(), position_light, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(0.2f, 0.2f, 5.0f), new Vector3(0.5f, 0.5f, 0.5f), new Vector3(1.0f, 0.0f, 5f)));
+            foreach(var obj in _lightObjects)
+            {
+                _renderObjects.Add(obj);
+            }
         }
+
         protected override void OnClosing(CancelEventArgs e)
         {
+            Application.Idle -= Application_Idle;
+            foreach (var obj in _renderObjects)
+                obj.Dispose();
+            foreach (var obj in _lightObjects)
+                obj.Dispose();
+            GL.DeleteProgram(_program);
+            GL.DeleteProgram(_program_contour);
             base.OnClosing(e);
         }
+
         void Application_Idle(object sender, EventArgs e)
         {
             while (glControl1.IsIdle)
@@ -392,7 +410,8 @@ namespace Thesis_3D
 
                 renderObject.Render();
             }
-            if(_contour)
+            GL.UseProgram(_program_contour);
+            if (_contour)
             {
                 GL.LineWidth(3);
                 foreach (var renderObject in _renderObjects)
