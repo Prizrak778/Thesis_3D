@@ -171,7 +171,7 @@ namespace Thesis_3D
             {
                 _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f, (float)i + 1, 2.0f, 0.0f), Color4.LightCoral, RandomColor()));
             }
-            Vector3 position_light = new Vector3(0.0f, 3.0f, 0.0f);
+            Vector3 position_light = new Vector3(1.0f, 3.0f, 1.0f);
             _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f, position_light.X, position_light.Y, position_light.Z), Color4.Yellow, RandomColor(), position_light, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(0.2f, 0.2f, 5.0f), new Vector3(0.5f, 0.5f, 0.5f), new Vector3(1.0f, 0.0f, 5f)));
             foreach(var obj in _lightObjects)
             {
@@ -404,7 +404,7 @@ namespace Thesis_3D
         {
             renderObject.Bind();
             GL.UniformMatrix4(20, false, ref _view);
-            GL.UniformMatrix4(21, false, ref _projectionMatrix);
+            //GL.UniformMatrix4(21, false, ref _projectionMatrix);
             GL.UniformMatrix4(22, false, ref _modelView);
             renderObject.PolygonMode_now(polygon);
         }
@@ -419,13 +419,13 @@ namespace Thesis_3D
             GL.UseProgram(_program);
             foreach (var renderObject in _renderObjects)
             {
-                
                 Render_figure(renderObject, PolygonMode.Fill);
                 Vector4 color = renderObject.Color_obj;
                 GL.Uniform4(19, ref color);
                 foreach(var light in _lightObjects)
                 {
-                    light.PositionLightUniform();
+                    light.PositionLightUniform(18);
+                    light.MatrixViewUnifomr(22);
                 }
                 renderObject.Render();
             }

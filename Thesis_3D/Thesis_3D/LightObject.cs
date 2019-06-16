@@ -37,9 +37,19 @@ namespace Thesis_3D
             ColorRadiation.Z = color.B;
             ColorRadiation.W = color.A;
         }
-        public void PositionLightUniform()
+        public void PositionLightUniform(int location)
         {
-            GL.Uniform4(5, new Vector4(Position, 1));
+            Vector4 position_v4 = new Vector4(Position, 1);
+            GL.Uniform4(location, position_v4);
+        }
+        public void MatrixViewUnifomr(int location)
+        {
+            Matrix4 modelview = Matrix4.CreateTranslation(
+                0,
+                0, 
+                0 
+                );
+            GL.UniformMatrix4(location, false, ref modelview);
         }
     }
 }
