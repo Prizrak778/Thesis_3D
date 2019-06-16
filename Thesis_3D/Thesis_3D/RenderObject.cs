@@ -17,7 +17,7 @@ namespace Thesis_3D
         private int _buffer; //Буффер в котором хранится объект
         private int _verticeCount;
         private PolygonMode _polygon;
-        public Vector4 Color4; //Цвет объекта
+        public Vector4 Color_obj; //Цвет объекта
         public Vector4 Color_choice; //Цвет объекта для буффера выбора
         public RenderObject(Vertex[] vertices, Color4 color, Color4 color_choice)
         {
@@ -63,10 +63,10 @@ namespace Thesis_3D
 
             _initialized = true;
             GL.VertexArrayVertexBuffer(_vertexArray, 0, _buffer, IntPtr.Zero, Vertex.Size);
-            Color4.X = color.R;
-            Color4.Y = color.G;
-            Color4.Z = color.B;
-            Color4.W = color.A;
+            Color_obj.X = color.R;
+            Color_obj.Y = color.G;
+            Color_obj.Z = color.B;
+            Color_obj.W = color.A;
             Color_choice.X = color_choice.R;
             Color_choice.Y = color_choice.G;
             Color_choice.Z = color_choice.B;

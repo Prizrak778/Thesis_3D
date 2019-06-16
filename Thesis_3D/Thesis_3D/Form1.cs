@@ -118,6 +118,22 @@ namespace Thesis_3D
         }
         #endregion
 
+        private void ChoiseShader(int Index)
+        {
+            String VertexShader = @"Components\Shaders\vertexShader_c.vert";
+            String FragentShader = @"Components\Shaders\fragmentShader.frag";
+            String GeometricString = "";
+            switch (Index)
+            {
+                case 1:
+                    VertexShader = @"Components\Shaders\vertexShader.vert";
+                    FragentShader = @"Components\Shaders\fragmentShader.frag";
+                    GeometricString = "";
+                    break;
+            }
+            _program = CompileShaders(VertexShader ,FragentShader, GeometricString);
+        }
+
         public Form1()
         {
             OpenTK.Toolkit.Init();
@@ -126,7 +142,7 @@ namespace Thesis_3D
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            
         }
 
         #region Form1_Resize
@@ -368,7 +384,7 @@ namespace Thesis_3D
             CreateProjection();
             GL.UniformMatrix4(21, false, ref _projectionMatrix);
             GL.ClearColor(new Color4(0.0f, 0.0f, 0.0f, 1.0f));
-            GL.UseProgram(_program);
+            GL.UseProgram(_program_contour);
             int iter = 0;
             Vector4 temp_color;
             foreach (var renderObject in _renderObjects)
@@ -405,9 +421,12 @@ namespace Thesis_3D
             {
                 
                 Render_figure(renderObject, PolygonMode.Fill);
-                Vector4 color = renderObject.Color4;
+                Vector4 color = renderObject.Color_obj;
                 GL.Uniform4(19, ref color);
-
+                foreach(var light in _lightObjects)
+                {
+                    light.PositionLightUniform();
+                }
                 renderObject.Render();
             }
             GL.UseProgram(_program_contour);
@@ -457,7 +476,7 @@ namespace Thesis_3D
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-
+            ChoiseShader(comboBox1.SelectedIndex);
         }
     }
 }
