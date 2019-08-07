@@ -20,6 +20,6 @@ void main(void)
 	
 	vec3 s = normalize(vec3(vec_LightPosition - eyeCoords));
 	
-	gl_Position = view * vec_position;
+	gl_Position = view * modelView * vec_position;
 	vs_color = Ld * Kd * vec4(max( dot( s, tnorm ), 0.0 ))+ vec4(0.0,0.15,0.0,0.0);
 }

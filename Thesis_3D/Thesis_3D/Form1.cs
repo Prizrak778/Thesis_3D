@@ -20,8 +20,8 @@ namespace Thesis_3D
     {
         Camera camera1 = new Camera();
         private Matrix4 _projectionMatrix;
-        private Matrix4 _modelView;
-        private Matrix4 _view;
+        private Matrix4 _ViewMatrix;
+        private Matrix4 _MVP; //Modal * View * Matrix
 
         private int _program;
         private int _program_contour;
@@ -98,8 +98,8 @@ namespace Thesis_3D
                 GL.DetachShader(program, geometryShader);
                 GL.DeleteProgram(geometryShader);
             }
-            GL.DeleteShader(vertexShader);
-            GL.DeleteShader(fragmentShader);
+            GL.DeleteProgram(vertexShader);
+            GL.DeleteProgram(fragmentShader);
             return program;
         }
         #endregion
@@ -113,8 +113,8 @@ namespace Thesis_3D
                 aspectRatio,
                 0.01f,
                 40f);
-            _modelView = camera1.GetViewMatrix();
-            _view = _modelView * _projectionMatrix;
+            _ViewMatrix = camera1.GetViewMatrix();
+            _MVP = _ViewMatrix * _projectionMatrix;
         }
         #endregion
 
@@ -171,6 +171,10 @@ namespace Thesis_3D
             {
                 _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f, (float)i + 1, 2.0f, 0.0f), Color4.LightCoral, RandomColor()));
             }
+            for (int i = 0; i < 10; i++)
+            {
+                _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f, 1, -(float)i + 2.0f, 0.0f), Color4.LightCoral, RandomColor()));
+            }
             Vector3 position_light = new Vector3(1.0f, 3.0f, 1.0f);
             _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f, position_light.X, position_light.Y, position_light.Z), Color4.Yellow, RandomColor(), position_light, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(0.2f, 0.2f, 5.0f), new Vector3(0.5f, 0.5f, 0.5f), new Vector3(1.0f, 0.0f, 5f)));
             foreach(var obj in _lightObjects)
@@ -205,7 +209,7 @@ namespace Thesis_3D
             glControl1.Paint += new PaintEventHandler(glControl_Paint);
             glControl1.MouseMove += new MouseEventHandler(glControl_MouseMove);
             glControl1.MouseDown += new MouseEventHandler(glControl_MouseDown);
-            glControl1.KeyPress += new KeyPressEventHandler(glControl_KeyPress);
+            glControl1.KeyDown += new KeyEventHandler(glControl_KeyPressDown);
             glControl1.MouseWheel += new MouseEventHandler(glControl_MouseWheel);
             glControl1.MakeCurrent();
             camera1.Position = new Vector3(0, 2.5f, 2);
@@ -302,77 +306,87 @@ namespace Thesis_3D
         #endregion
 
         #region KeyEvent
-        void glControl_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
+        void glControl_KeyPressDown(object sender, KeyEventArgs e)
         {
-            char t = e.KeyChar;
-            switch(e.KeyChar)
+            Vector3 translation;
+            switch (e.KeyData)
             {
-                case (char)27:
+                case Keys.Escape:
                     this.Close();
                     break;
-                case '6':
+                case Keys.J:
                     camera1.AddRotation(-10f, 0f);
                     break;
-                case '4':
+                case Keys.L:
                     camera1.AddRotation(10f, 0f);
                     break;
-                case '8':
+                case Keys.I:
                     camera1.AddRotation(0f, 10f);
                     break;
-                case '2':
+                case Keys.K:
                     camera1.AddRotation(0f, -10f);
                     break;
-                case 'w':
+                case Keys.W:
                     camera1.Move(0f, 0.05f, 0f);
                     break;
-                case 'W':
-                    camera1.Move(0f, 0.05f, 0f);
-                    break;
-                case 'A':
-                    camera1.Move(-0.05f, 0f, 0f);
-                    break;
-                case 'a':
-                    camera1.Move(-0.05f, 0f, 0f);
-                    break;
-                case 'D':
-                    camera1.Move(0.05f, 0f, 0f);
-                    break;
-                case 'd':
-                    camera1.Move(0.05f, 0f, 0f);
-                    break;
-                case 'Q'://Вверх по y
-                    camera1.Move(0f, 0f, 0.05f);
-                    break;
-                case 'q'://Вверх по y
-                    camera1.Move(0f, 0f, 0.05f);
-                    break;
-                case 'E'://Вниз по y
-                    camera1.Move(0f, 0f, -0.05f);
-                    break;
-                case 'e'://Вниз по y
-                    camera1.Move(0f, 0f, -0.05f);
-                    break;
-                case 'S':
+                case Keys.S:
                     camera1.Move(0f, -0.05f, 0f);
                     break;
-                case 's':
-                    camera1.Move(0f, -0.05f, 0f);
+                case Keys.A:
+                    camera1.Move(-0.05f, 0f, 0f);
                     break;
-                case 'L':
-                    _contour = _contour ? false : true;
-                    checkBox1.Checked = _contour;
+                case Keys.D:
+                    camera1.Move(0.05f, 0f, 0f);
                     break;
-                case 'l':
-                    _contour = _contour ? false : true;
-                    checkBox1.Checked = _contour;
+                case Keys.Q://Вверх по y
+                    camera1.Move(0f, 0f, 0.05f);
                     break;
-                case 'c':
+                case Keys.E://Вниз по y
+                    camera1.Move(0f, 0f, -0.05f);
+                    break;
+                case Keys.C:
                     camera1.Rotation_change_status();
                     checkBox2.Checked = camera1.Rotation_status;
                     break;
-                case 'C':
-                    camera1.Rotation_change_status();
-                    checkBox2.Checked = camera1.Rotation_status;
+                case Keys.O:
+                    _contour = _contour ? false : true;
+                    checkBox1.Checked = _contour;
+                    break;
+                case Keys.NumPad8:
+                    if (_SelectID > -1)
+                    {
+                        _renderObjects[_SelectID].changeModelMstrix(new Vector3(1, 0, 0));
+                    }
+                    break;
+                case Keys.NumPad6:
+                    if (_SelectID > -1)
+                    {
+                        _renderObjects[_SelectID].changeModelMstrix(new Vector3(0, 0, 1));
+                    }
+                    break;
+                case Keys.NumPad4:
+                    if (_SelectID > -1)
+                    {
+                        _renderObjects[_SelectID].changeModelMstrix(new Vector3(0, 0, -1));
+                    }
+                    break;
+                case Keys.NumPad2:
+                    if (_SelectID > -1)
+                    {
+                        _renderObjects[_SelectID].changeModelMstrix(new Vector3(-1, 0, 0));
+                    }
+                    break;
+                case Keys.NumPad7:
+                    if (_SelectID > -1)
+                    {
+                        _renderObjects[_SelectID].changeModelMstrix(new Vector3(0, -1, 0));
+                    }
+                    break;
+                case Keys.NumPad9:
+                    if (_SelectID > -1)
+                    {
+                        _renderObjects[_SelectID].changeModelMstrix(new Vector3(0, 1, 0));
+                    }
                     break;
             }
         }
@@ -403,9 +417,9 @@ namespace Thesis_3D
         private void Render_figure(RenderObject renderObject, PolygonMode polygon)
         {
             renderObject.Bind();
-            GL.UniformMatrix4(20, false, ref _view);
+            GL.UniformMatrix4(20, false, ref _MVP);
             //GL.UniformMatrix4(21, false, ref _projectionMatrix);
-            GL.UniformMatrix4(22, false, ref _modelView);
+            GL.UniformMatrix4(22, false, ref renderObject.ModelMatrix);
             renderObject.PolygonMode_now(polygon);
         }
         private void Render()
@@ -425,14 +439,13 @@ namespace Thesis_3D
                 foreach(var light in _lightObjects)
                 {
                     light.PositionLightUniform(18);
-                    light.MatrixViewUnifomr(22);
                 }
                 renderObject.Render();
             }
             GL.UseProgram(_program_contour);
             if (_contour)
             {
-                GL.LineWidth(3);
+                GL.LineWidth(4);
                 foreach (var renderObject in _renderObjects)
                 {
                     

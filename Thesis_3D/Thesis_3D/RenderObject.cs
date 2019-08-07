@@ -17,6 +17,7 @@ namespace Thesis_3D
         private int _buffer; //Буффер в котором хранится объект
         private int _verticeCount;
         private PolygonMode _polygon;
+        public Matrix4 ModelMatrix = Matrix4.CreateTranslation(0, 0, 0);
         public Vector4 Color_obj; //Цвет объекта
         public Vector4 Color_choice; //Цвет объекта для буффера выбора
         public RenderObject(Vertex[] vertices, Color4 color, Color4 color_choice)
@@ -24,10 +25,10 @@ namespace Thesis_3D
             _verticeCount = vertices.Length;
             _vertexArray = GL.GenVertexArray();
             GL.GenBuffers(1, out _buffer);
-
+            //PolygonMode.Line
             GL.BindVertexArray(_vertexArray);
             GL.BindBuffer(BufferTarget.ArrayBuffer, _buffer);
-            GL.NamedBufferStorage(_buffer, Vertex.Size * vertices.Length,        // the size needed by this buffer
+            GL.NamedBufferStorage(_buffer, Vertex.Size * _verticeCount,        // the size needed by this buffer
                 vertices,                                                        // data to initialize with
                 BufferStorageFlags.MapWriteBit);                                 // at this point we will only write to the buffer
                                                                                  // create vertex array and buffer here
@@ -110,6 +111,13 @@ namespace Thesis_3D
                     _initialized = false;
                 }
             }
+        }
+        public void changeModelMstrix(Vector3 tr)
+        {
+            Vector3 translation = ModelMatrix.ExtractTranslation();
+            ModelMatrix.ClearTranslation();
+            translation += tr;
+            ModelMatrix = Matrix4.CreateTranslation(translation);
         }
     }
 }
