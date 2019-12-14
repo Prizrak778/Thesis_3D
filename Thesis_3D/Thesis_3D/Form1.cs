@@ -315,10 +315,10 @@ namespace Thesis_3D
                     this.Close();
                     break;
                 case Keys.J:
-                    camera1.AddRotation(-10f, 0f);
+                    camera1.AddRotation(10f, 0f);
                     break;
                 case Keys.L:
-                    camera1.AddRotation(10f, 0f);
+                    camera1.AddRotation(-10f, 0f);
                     break;
                 case Keys.I:
                     camera1.AddRotation(0f, 10f);
