@@ -491,5 +491,71 @@ namespace Thesis_3D
         {
             ChoiseShader(comboBox1.SelectedIndex);
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            camera1.Move(0, 0, 1.5f);
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            camera1.Move(0, 1.5f, 0);
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            camera1.Move(0, 0, -1.5f);
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            camera1.Move(-1.5f, 0.0f, 0);
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            camera1.Move(0, -1.5f, 0);
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            camera1.Move(1.5f, 0, 0);
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            camera1.AddRotation(0.0f, 10.0f);
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+            camera1.AddRotation(10.0f, 0.0f);
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            camera1.AddRotation(0.0f, -10.0f);
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            camera1.AddRotation(-10.0f, 0.0f);
+        }
+
+        private void textBox1_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
+        {
+            char number = e.KeyChar;
+
+            if (!Char.IsDigit(number))
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void button11_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(textBox1.Text) && string.IsNullOrWhiteSpace(textBox2.Text) && string.IsNullOrWhiteSpace(textBox3.Text))
+                camera1.Position = new Vector3((float)Convert.ToDouble(textBox1.Text), (float)Convert.ToDouble(textBox2.Text), (float)Convert.ToDouble(textBox3.Text));
+        }
     }
 }
