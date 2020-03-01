@@ -35,6 +35,7 @@ namespace Thesis_3D
         private List<RenderObject> _renderObjects = new List<RenderObject>();
         private List<LightObject> _lightObjects = new List<LightObject>();
         private List<Color4> color4s_unique = new List<Color4>();
+        private List<int> listProgram = new List<int>();
         private Vector2 lastMousePos = new Vector2(30f, 140f);
 
         private Random rnd = new Random();
@@ -55,7 +56,7 @@ namespace Thesis_3D
                         flag = true;
                     }
                 }
-                if(!flag)
+                if (!flag)
                 {
                     color4s_unique.Add(temp_color);
                 }
@@ -120,18 +121,7 @@ namespace Thesis_3D
 
         private void ChoiseShader(int Index)
         {
-            String VertexShader = @"Components\Shaders\vertexShader_c.vert";
-            String FragentShader = @"Components\Shaders\fragmentShader.frag";
-            String GeometricString = "";
-            switch (Index)
-            {
-                case 1:
-                    VertexShader = @"Components\Shaders\vertexShader.vert";
-                    FragentShader = @"Components\Shaders\fragmentShader.frag";
-                    GeometricString = "";
-                    break;
-            }
-            _program = CompileShaders(VertexShader ,FragentShader, GeometricString);
+            _program = listProgram[Index];
         }
 
         public Form1()
@@ -142,7 +132,7 @@ namespace Thesis_3D
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            
+
         }
 
         #region Form1_Resize
@@ -154,18 +144,48 @@ namespace Thesis_3D
 
         #endregion
 
+        bool CompileAllShaders(out string error)
+        {
+            error = string.Empty;
+            String VertexShader = @"Components\Shaders\vertexShader_c.vert";
+            String FragentShader = @"Components\Shaders\fragmentShader.frag";
+            if((_program_contour = _program = CompileShaders(VertexShader, FragentShader)) == -1)
+            {
+                error = "Ошибка при компиляции обычного шейдера";
+                return false;
+            }
+            VertexShader = @"Components\Shaders\vertexShader.vert";
+            FragentShader = @"Components\Shaders\fragmentShader.frag";
+            listProgram.Add(_program);
+            if ((_program = CompileShaders(VertexShader, FragentShader)) == -1)
+            {
+                error = "Ошибка при компиляции шейдера т.и. без отражения";
+                return false;
+            }
+            listProgram.Add(_program);
+            VertexShader = @"Components\Shaders\vertexShader_mirror.vert";
+            FragentShader = @"Components\Shaders\fragmentShader.frag";
+            if ((_program = CompileShaders(VertexShader, FragentShader)) == -1)
+            {
+                error = "Ошибка при компиляции шейдера т.и. с отражением";
+                return false;
+            }
+            listProgram.Add(_program);
+            return true;
+        }
+
         protected override void OnLoad(EventArgs e)
         {
             glControl1.Load += new EventHandler(glControl_Load);
             glControl_Load(glControl1, EventArgs.Empty);
             Application.Idle += Application_Idle;
-            comboBox1.Items.AddRange(new object[] { "Обычные цвета", "Т.И. без отражения" });
+            String ErrorText = string.Empty;
+            if(!CompileAllShaders(out ErrorText))
+            {
+                throw new Exception(ErrorText);
+            }
+            comboBox1.Items.AddRange(new object[] { "Обычные цвета", "Т.И. без отражения", "Т.И. с отражением" });
             comboBox1.SelectedIndex = 0;
-            String VertexShader = @"Components\Shaders\vertexShader_c.vert";
-            String FragentShader = @"Components\Shaders\fragmentShader.frag";
-            _program_contour = _program = CompileShaders(VertexShader, FragentShader);
-
-
             _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f, 0.0f, 2.0f, 0.0f), Color4.LightCoral, RandomColor()));
             for (int i = 0; i < 10; i++)
             {
@@ -308,7 +328,6 @@ namespace Thesis_3D
         #region KeyEvent
         void glControl_KeyPressDown(object sender, KeyEventArgs e)
         {
-            Vector3 translation;
             switch (e.KeyData)
             {
                 case Keys.Escape:
