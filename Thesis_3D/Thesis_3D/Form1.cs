@@ -171,6 +171,22 @@ namespace Thesis_3D
                 return false;
             }
             listProgram.Add(_program);
+            VertexShader = @"Components\Shaders\vertexShader_double_mirror.vert";
+            FragentShader = @"Components\Shaders\fragmentShader_double_mirror.frag";
+            if ((_program = CompileShaders(VertexShader, FragentShader)) == -1)
+            {
+                error = "Ошибка при компиляции шейдера т.и. с двойным отражением";
+                return false;
+            }
+            listProgram.Add(_program);
+            VertexShader = @"Components\Shaders\vertexShader_flatshadow.vert";
+            FragentShader = @"Components\Shaders\fragmentShader.frag";
+            if ((_program = CompileShaders(VertexShader, FragentShader)) == -1)
+            {
+                error = "Ошибка при компиляции шейдера т.и. с плоским затенением";
+                return false;
+            }
+            listProgram.Add(_program);
             return true;
         }
 
@@ -184,7 +200,7 @@ namespace Thesis_3D
             {
                 throw new Exception(ErrorText);
             }
-            comboBox1.Items.AddRange(new object[] { "Обычные цвета", "Т.И. без отражения", "Т.И. с отражением" });
+            comboBox1.Items.AddRange(new object[] { "Обычные цвета", "Т.И. без отражения", "Т.И. с отражением", "Т.И. с двойным отражением", "Т.И. с плоским затенением" });
             comboBox1.SelectedIndex = 0;
             _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f, 0.0f, 2.0f, 0.0f), Color4.LightCoral, RandomColor()));
             for (int i = 0; i < 10; i++)
