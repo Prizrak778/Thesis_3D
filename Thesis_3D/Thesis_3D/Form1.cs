@@ -486,17 +486,19 @@ namespace Thesis_3D
                 Render_figure(renderObject, PolygonMode.Fill);
                 Vector4 color = renderObject.Color_obj;
                 GL.Uniform4(19, ref color);
-                foreach(var light in _lightObjects.Cast<LightObject>().Select((r, i) => new { Row = r, Index = i }))
+                if (_program == _program_some_light)
                 {
-                    if (_program == _program_some_light)
+                    foreach (var light in _lightObjects.Cast<LightObject>().Select((r, i) => new { Row = r, Index = i }))
                     {
-                        light.Row.PositionLightUniform(16 + light.Index);
-                        light.Row.IntensityLightUniform(13 + light.Index);
+                        
+                            light.Row.PositionLightUniform(16 + light.Index);
+                            light.Row.IntensityLightUniform(13 + light.Index);
+                        
                     }
-                    else
-                    {
-                        light.Row.PositionLightUniform(18);
-                    }
+                }
+                else
+                {
+                    _lightObjects[0].PositionLightUniform(18);
                 }
                 renderObject.Render();
             }
