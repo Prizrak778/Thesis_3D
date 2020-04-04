@@ -51,5 +51,10 @@ namespace Thesis_3D
                 );
             GL.UniformMatrix4(location, false, ref modelview);
         }
+
+        public void IntensityLightUniform(int location)
+        {
+            GL.Uniform3(location, AmbirntIntensity);
+        }
     }
 }

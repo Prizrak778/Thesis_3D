@@ -24,6 +24,7 @@ namespace Thesis_3D
         private Matrix4 _MVP; //Modal * View * Matrix
 
         private int _program;
+        private int _program_some_light;
         private int _program_contour;
 
         private bool _contour = false;
@@ -187,6 +188,15 @@ namespace Thesis_3D
                 return false;
             }
             listProgram.Add(_program);
+            VertexShader = @"Components\Shaders\vertexShader_some_light.vert";
+            FragentShader = @"Components\Shaders\fragmentShader.frag";
+            if ((_program = CompileShaders(VertexShader, FragentShader)) == -1)
+            {
+                error = "Ошибка при компиляции шейдера несколько т.и.";
+                return false;
+            }
+            _program_some_light = _program;
+            listProgram.Add(_program);
             return true;
         }
 
@@ -200,7 +210,7 @@ namespace Thesis_3D
             {
                 throw new Exception(ErrorText);
             }
-            comboBox1.Items.AddRange(new object[] { "Обычные цвета", "Т.И. без отражения", "Т.И. с отражением", "Т.И. с двойным отражением", "Т.И. с плоским затенением" });
+            comboBox1.Items.AddRange(new object[] { "Обычные цвета", "Т.И. без отражения", "Т.И. с отражением", "Т.И. с двойным отражением", "Т.И. с плоским затенением", "Несколько Т.И." });
             comboBox1.SelectedIndex = 0;
             
             _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f, 0.0f, 2.0f, 0.0f), Color4.LightCoral, RandomColor()));
@@ -213,8 +223,12 @@ namespace Thesis_3D
                 _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f, 1, -(float)i + 2.0f, 0.0f), Color4.LightCoral, RandomColor()));
             }
             Vector3 position_light = new Vector3(1.0f, 3.0f, 1.0f);
-            _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f, position_light.X, position_light.Y, position_light.Z), Color4.Yellow, RandomColor(), position_light, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(0.2f, 0.2f, 5.0f), new Vector3(0.5f, 0.5f, 0.5f), new Vector3(1.0f, 0.0f, 5f)));
-            foreach(var obj in _lightObjects)
+            _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f, position_light.X, position_light.Y, position_light.Z), Color4.Yellow, RandomColor(), position_light, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(0.2f, 0.2f, 5.0f), new Vector3(0.3f, 0.3f, 0.0f), new Vector3(1.0f, 0.0f, 5f)));
+            position_light = new Vector3(4.0f, 3.0f, 1.0f);
+            _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f, position_light.X, position_light.Y, position_light.Z), Color4.Yellow, RandomColor(), position_light, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(0.2f, 0.2f, 5.0f), new Vector3(0.0f, 0.3f, 0.3f), new Vector3(1.0f, 0.0f, 5f)));
+            position_light = new Vector3(7.0f, 3.0f, 1.0f);
+            _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f, position_light.X, position_light.Y, position_light.Z), Color4.Yellow, RandomColor(), position_light, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(0.2f, 0.2f, 5.0f), new Vector3(0.3f, 0.0f, 0.3f), new Vector3(1.0f, 0.0f, 5f)));
+            foreach (var obj in _lightObjects)
             {
                 _renderObjects.Add(obj);
             }
@@ -472,9 +486,17 @@ namespace Thesis_3D
                 Render_figure(renderObject, PolygonMode.Fill);
                 Vector4 color = renderObject.Color_obj;
                 GL.Uniform4(19, ref color);
-                foreach(var light in _lightObjects)
+                foreach(var light in _lightObjects.Cast<LightObject>().Select((r, i) => new { Row = r, Index = i }))
                 {
-                    light.PositionLightUniform(18);
+                    if (_program == _program_some_light)
+                    {
+                        light.Row.PositionLightUniform(16 + light.Index);
+                        light.Row.IntensityLightUniform(13 + light.Index);
+                    }
+                    else
+                    {
+                        light.Row.PositionLightUniform(18);
+                    }
                 }
                 renderObject.Render();
             }
@@ -510,7 +532,7 @@ namespace Thesis_3D
                 GL.GetString(StringName.Version);
             Text += $" (Vsync: {glControl1.VSync})";
             Text += $" (FPS: {_framecount:0})";
-            Text += $"(Position:{camera1.Position})";
+            Text += $" (Position:{camera1.Position})";
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
