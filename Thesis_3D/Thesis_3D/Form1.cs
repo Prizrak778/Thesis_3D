@@ -202,6 +202,7 @@ namespace Thesis_3D
             }
             comboBox1.Items.AddRange(new object[] { "Обычные цвета", "Т.И. без отражения", "Т.И. с отражением", "Т.И. с двойным отражением", "Т.И. с плоским затенением" });
             comboBox1.SelectedIndex = 0;
+            
             _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f, 0.0f, 2.0f, 0.0f), Color4.LightCoral, RandomColor()));
             for (int i = 0; i < 10; i++)
             {
