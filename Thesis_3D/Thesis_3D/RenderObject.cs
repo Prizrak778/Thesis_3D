@@ -10,6 +10,12 @@ using OpenTK.Graphics;
 
 namespace Thesis_3D
 {
+    public enum TypeObjectRender
+    {
+        SimpleObject,
+        LightSourceObject,
+        FlatObject
+    };
     public class RenderObject : IDisposable
     {
         private bool _initialized;
@@ -17,13 +23,15 @@ namespace Thesis_3D
         private int _buffer; //Буффер в котором хранится объект
         private int _verticeCount;
         private PolygonMode _polygon;
+        public TypeObjectRender TypeObject = TypeObjectRender.SimpleObject;
         public Matrix4 ModelMatrix = Matrix4.CreateTranslation(0, 0, 0);
         public Vector4 Color_obj; //Цвет объекта
         public Vector4 Color_choice; //Цвет объекта для буффера выбора
-        public RenderObject(Vertex[] vertices, Color4 color, Color4 color_choice)
+        public RenderObject(Vertex[] vertices, Color4 color, Color4 color_choice, TypeObjectRender typeObject = TypeObjectRender.SimpleObject)
         {
             _verticeCount = vertices.Length;
             _vertexArray = GL.GenVertexArray();
+            TypeObject = typeObject;
             GL.GenBuffers(1, out _buffer);
             //PolygonMode.Line
             GL.BindVertexArray(_vertexArray);

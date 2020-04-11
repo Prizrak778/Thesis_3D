@@ -460,6 +460,18 @@ namespace Thesis_3D
                         _renderObjects[_SelectID].changeModelMstrix(new Vector3(0, 1, 0));
                         break;
                 }
+                if(_renderObjects[_SelectID].TypeObject == TypeObjectRender.LightSourceObject)
+                {
+                    foreach(var lightObject in _lightObjects)
+                    {
+                        if(lightObject.Color_choice == _renderObjects[_SelectID].Color_choice)
+                        {
+                            lightObject.SetPositionLight(_renderObjects[_SelectID].ModelMatrix);
+                            if (_program_Fong_directed != -1 && lightObject.uboHandle != -1) lightObject.UpdateBufferForBlock(_program_Fong_directed);
+                            break; // -_-
+                        }
+                    }
+                }
             }
         }
         #endregion
@@ -520,8 +532,8 @@ namespace Thesis_3D
                 }
                 else if(_program == _program_Fong_directed)
                 {
-                    if(_lightObjects[0].uboHandle != -1) GL.BindBufferBase(BufferTarget.UniformBuffer, 24, _lightObjects[0].uboHandle);
-                    //GL.BindBufferRange(BufferRangeTarget.UniformBuffer, 24, _lightObjects[0].uboHandle, (IntPtr)0, _lightObjects[0].blockSize);
+                    if(_lightObjects[0].uboHandle != -1) //GL.BindBufferBase(BufferTarget.UniformBuffer, 24, _lightObjects[0].uboHandle);
+                    GL.BindBufferRange(BufferRangeTarget.UniformBuffer, 24, _lightObjects[0].uboHandle, (IntPtr)0, _lightObjects[0].blockSize);
                 }
                 else
                 {
