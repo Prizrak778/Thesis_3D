@@ -112,6 +112,17 @@ namespace Thesis_3D
                 GL.BufferData(BufferTarget.UniformBuffer, blockSize, blockBuffer, BufferUsageHint.DynamicDraw);
             }
         }
+        public void UpdatePositionForBlock(int program)
+        {
+            UpdatePositionForBlock(program, "SpotLightInfo");
+        }
+        public void UpdatePositionForBlock(int program, string nameBlock)
+        {
+            float[] position_lgh = { Position.X, Position.Y, Position.Z, 0.0f };
+            GL.BindBuffer(BufferTarget.UniformBuffer, uboHandle);
+            GL.BufferSubData(BufferTarget.UniformBuffer, (IntPtr)0, sizeof(float) * position_lgh.Length, position_lgh);
+        }
+
         public void UpdateBufferForBlock(int program)
         {
             UpdateBufferForBlock(program, "SpotLightInfo");
@@ -140,9 +151,9 @@ namespace Thesis_3D
                 Buffer.BlockCopy(direction_lgh, 0, blockBuffer, offset[2], direction_lgh.Length * sizeof(float));
                 Buffer.BlockCopy(exponent, 0, blockBuffer, offset[3], exponent.Length * sizeof(float));
                 Buffer.BlockCopy(cutoff, 0, blockBuffer, offset[4], cutoff.Length * sizeof(float));
-                
+
                 GL.BindBuffer(BufferTarget.UniformBuffer, uboHandle);
-                GL.BufferData(BufferTarget.UniformBuffer, blockSize, blockBuffer, BufferUsageHint.DynamicDraw);
+                GL.BufferSubData(BufferTarget.UniformBuffer, (IntPtr)0, blockSize, blockBuffer);
             }
         }
     }
