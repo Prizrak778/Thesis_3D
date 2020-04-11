@@ -436,42 +436,30 @@ namespace Thesis_3D
                     _contour = _contour ? false : true;
                     checkBox1.Checked = _contour;
                     break;
-                case Keys.NumPad8:
-                    if (_SelectID > -1)
-                    {
+            }
+            if (_SelectID > -1)
+            {
+                switch (e.KeyData)
+                {
+                    case Keys.D8:
                         _renderObjects[_SelectID].changeModelMstrix(new Vector3(1, 0, 0));
-                    }
-                    break;
-                case Keys.NumPad6:
-                    if (_SelectID > -1)
-                    {
+                        break;
+                    case Keys.D6:
                         _renderObjects[_SelectID].changeModelMstrix(new Vector3(0, 0, 1));
-                    }
-                    break;
-                case Keys.NumPad4:
-                    if (_SelectID > -1)
-                    {
+                        break;
+                    case Keys.D4:
                         _renderObjects[_SelectID].changeModelMstrix(new Vector3(0, 0, -1));
-                    }
-                    break;
-                case Keys.NumPad2:
-                    if (_SelectID > -1)
-                    {
+                        break;
+                    case Keys.D2:
                         _renderObjects[_SelectID].changeModelMstrix(new Vector3(-1, 0, 0));
-                    }
-                    break;
-                case Keys.NumPad7:
-                    if (_SelectID > -1)
-                    {
+                        break;
+                    case Keys.D7:
                         _renderObjects[_SelectID].changeModelMstrix(new Vector3(0, -1, 0));
-                    }
-                    break;
-                case Keys.NumPad9:
-                    if (_SelectID > -1)
-                    {
+                        break;
+                    case Keys.D9:
                         _renderObjects[_SelectID].changeModelMstrix(new Vector3(0, 1, 0));
-                    }
-                    break;
+                        break;
+                }
             }
         }
         #endregion
