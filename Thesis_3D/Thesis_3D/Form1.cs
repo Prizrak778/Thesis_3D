@@ -23,9 +23,10 @@ namespace Thesis_3D
         private Matrix4 _ViewMatrix;
         private Matrix4 _MVP; //Modal * View * Matrix
 
-        private int _program;
-        private int _program_some_light;
-        private int _program_contour;
+        private int _program = -1;
+        private int _program_contour = -1;
+        private int _program_some_light = -1;
+        private int _program_Fong_directed = -1;
 
         private bool _contour = false;
         private int _SelectID = -1;
@@ -197,6 +198,39 @@ namespace Thesis_3D
             }
             _program_some_light = _program;
             listProgram.Add(_program);
+            VertexShader = @"Components\Shaders\vertexShader_Lgh_directed.vert";
+            FragentShader = @"Components\Shaders\fragmentShader.frag";
+            if ((_program = CompileShaders(VertexShader, FragentShader)) == -1)
+            {
+                error = "Ошибка при компиляции шейдера направленного т.и";
+                return false;
+            }
+            listProgram.Add(_program);
+            VertexShader = @"Components\Shaders\vertexShader_Fong.vert";
+            FragentShader = @"Components\Shaders\fragmentShader_Fong.frag";
+            if ((_program = CompileShaders(VertexShader, FragentShader)) == -1)
+            {
+                error = "Ошибка при компиляции шейдера затенение по Фонгу";
+                return false;
+            }
+            listProgram.Add(_program);
+            VertexShader = @"Components\Shaders\vertexShader_Fong.vert";
+            FragentShader = @"Components\Shaders\fragmentShader_Fong_half.frag";
+            if ((_program = CompileShaders(VertexShader, FragentShader)) == -1)
+            {
+                error = "Ошибка при компиляции шейдера затенение по Фонгу с использованием вектора полпути ";
+                return false;
+            }
+            listProgram.Add(_program);
+            VertexShader = @"Components\Shaders\vertexShader_Fong.vert";
+            FragentShader = @"Components\Shaders\fragmentShader_Fong_directed.frag";
+            if ((_program = CompileShaders(VertexShader, FragentShader)) == -1)
+            {
+                error = "Ошибка при компиляции шейдера узконаправленый источник";
+                return false;
+            }
+            _program_Fong_directed = _program;
+            listProgram.Add(_program);
             return true;
         }
 
@@ -210,7 +244,7 @@ namespace Thesis_3D
             {
                 throw new Exception(ErrorText);
             }
-            comboBox1.Items.AddRange(new object[] { "Обычные цвета", "Т.И. без отражения", "Т.И. с отражением", "Т.И. с двойным отражением", "Т.И. с плоским затенением", "Несколько Т.И." });
+            comboBox1.Items.AddRange(new object[] { "Обычные цвета", "Т.И. без отражения", "Т.И. с отражением", "Т.И. с двойным отражением", "Т.И. с плоским затенением", "Несколько Т.И.", "Направленный источник", "Затенение по Фонгу", "Затенение по Фонгу с использованием вектора полпути" });
             comboBox1.SelectedIndex = 0;
             
             _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f, 0.0f, 2.0f, 0.0f), Color4.LightCoral, RandomColor()));
@@ -495,6 +529,11 @@ namespace Thesis_3D
                             light.Row.IntensityLightUniform(13 + light.Index);
                         
                     }
+                }
+                else if(_program == _program_Fong_directed)
+                {
+                    _lightObjects[0].PositionLightUniform(18);
+                    _lightObjects[0].SendParmInShader(24);
                 }
                 else
                 {
