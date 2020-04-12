@@ -13,6 +13,7 @@ layout(location = 22) uniform mat4 modelView;
 out vec4 eyePosition;
 out vec3 tnorm;
 out vec4 frag_LightPosition;
+out vec4 obj_position;
 
 void main(void)
 {
@@ -20,5 +21,6 @@ void main(void)
 	tnorm = normalize(NormalMatrix * vec3(vec_normal));
 	eyePosition = modelView * vec_position;
 	frag_LightPosition = vec_LightPosition;
+	obj_position = vec_position;
 	gl_Position = view * modelView * vec_position;
 }
