@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OpenTK;
+using OpenTK.Graphics.OpenGL;
+using OpenTK.Graphics;
 
 namespace Thesis_3D
 {
@@ -52,6 +54,10 @@ namespace Thesis_3D
         public void Rotation_change_status()
         {
             Rotation_status = Rotation_status ? false : true; //если == true, то делаем false и наоборот 
+        }
+        public void SetPositionCamerShader(int local)
+        {
+            GL.Uniform4(local, new Vector4(Position, 0.0f));
         }
     }
 }

@@ -27,6 +27,7 @@ namespace Thesis_3D
         private int _program_contour = -1;
         private int _program_some_light = -1;
         private int _program_Fong_directed = -1;
+        private int _program_Fong_fog = -1;
 
         private bool _contour = false;
         private int _SelectID = -1;
@@ -231,6 +232,15 @@ namespace Thesis_3D
             }
             _program_Fong_directed = _program;
             listProgram.Add(_program);
+            VertexShader = @"Components\Shaders\vertexShader_Fong.vert";
+            FragentShader = @"Components\Shaders\fragmentShader_Fong_fog.frag";
+            if ((_program = CompileShaders(VertexShader, FragentShader)) == -1)
+            {
+                error = "Ошибка при компиляции шейдера туман";
+                return false;
+            }
+            _program_Fong_fog = _program;
+            listProgram.Add(_program);
             return true;
         }
 
@@ -244,7 +254,7 @@ namespace Thesis_3D
             {
                 throw new Exception(ErrorText);
             }
-            comboBox1.Items.AddRange(new object[] { "Обычные цвета", "Т.И. без отражения", "Т.И. с отражением", "Т.И. с двойным отражением", "Т.И. с плоским затенением", "Несколько Т.И.", "Направленный источник", "Затенение по Фонгу", "Затенение по Фонгу с использованием вектора полпути", "Узконаправленный источник" });
+            comboBox1.Items.AddRange(new object[] { "Обычные цвета", "Т.И. без отражения", "Т.И. с отражением", "Т.И. с двойным отражением", "Т.И. с плоским затенением", "Несколько Т.И.", "Направленный источник", "Затенение по Фонгу", "Затенение по Фонгу с использованием вектора полпути", "Узконаправленный источник", "Туман" });
             comboBox1.SelectedIndex = 0;
             
             _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f, 0.0f, 2.0f, 0.0f), Color4.LightCoral, RandomColor()));
@@ -467,7 +477,7 @@ namespace Thesis_3D
                         if(lightObject.Color_choice == _renderObjects[_SelectID].Color_choice)
                         {
                             lightObject.SetPositionLight(_renderObjects[_SelectID].ModelMatrix);
-                            if (_program_Fong_directed != -1 && lightObject.uboHandle != -1) lightObject.UpdatePositionForBlock(_program_Fong_directed);
+                            if (_program_Fong_directed != -1 && lightObject.uboLightInfo != -1) lightObject.UpdatePositionForBlock(_program_Fong_directed);
                             break; // -_-
                         }
                     }
@@ -515,6 +525,7 @@ namespace Thesis_3D
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             CreateProjection();
             GL.UseProgram(_program);
+            camera1.SetPositionCamerShader(23);
             foreach (var renderObject in _renderObjects)
             {
                 Render_figure(renderObject, PolygonMode.Fill);
@@ -524,15 +535,18 @@ namespace Thesis_3D
                 {
                     foreach (var light in _lightObjects.Cast<LightObject>().Select((r, i) => new { Row = r, Index = i }))
                     {
-                        
-                            light.Row.PositionLightUniform(16 + light.Index);
-                            light.Row.IntensityLightUniform(13 + light.Index);
-                        
+                        light.Row.PositionLightUniform(16 + light.Index);
+                        light.Row.IntensityLightUniform(13 + light.Index);
                     }
+                }
+                else if(_program == _program_Fong_fog)
+                {
+                    _lightObjects[0].PositionLightUniform(18);
+                    _lightObjects[0].SetAttrFog(25, 1f, 24, 9f, 26, new Vector3(0.3f, 0.3f, 0.3f));
                 }
                 else if(_program == _program_Fong_directed)
                 {
-                    if(_lightObjects[0].uboHandle != -1) GL.BindBufferRange(BufferRangeTarget.UniformBuffer, 24, _lightObjects[0].uboHandle, (IntPtr)0, _lightObjects[0].blockSize);
+                    if(_lightObjects[0].uboLightInfo != -1) GL.BindBufferRange(BufferRangeTarget.UniformBuffer, 24, _lightObjects[0].uboLightInfo, (IntPtr)0, _lightObjects[0].blockSizeLightInfo);
                 }
                 else
                 {

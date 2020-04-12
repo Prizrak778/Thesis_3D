@@ -19,8 +19,8 @@ namespace Thesis_3D
 {
     class LightObject : RenderObject
     {
-        public int uboHandle = -1;
-        public int blockSize = -1;
+        public int uboLightInfo = -1;
+        public int blockSizeLightInfo = -1;
         public Vector3 Position;
         public Vector3 Angel_speed;
         public Vector4 Attribute;
@@ -45,6 +45,12 @@ namespace Thesis_3D
                 if (!string.IsNullOrWhiteSpace(nameBlock)) InitBufferForBlock(programBlock, nameBlock);
                 else InitBufferForBlock(programBlock);
             }
+        }
+        public void SetAttrFog(int localMinDist, float MinDist, int localMaxDist, float MaxDist, int localColorFog, Vector3 ColorFog)
+        {
+            GL.Uniform1(localMaxDist, MaxDist);
+            GL.Uniform1(localMinDist, MinDist);
+            GL.Uniform3(localColorFog, ColorFog);
         }
         public void SetPositionLight(Matrix4 ModelMatrix)
         {
@@ -86,8 +92,8 @@ namespace Thesis_3D
             int index_SLI = GL.GetUniformBlockIndex(program, nameBlock);
             if (index_SLI != -1)
             {
-                GL.GetActiveUniformBlock(program, index_SLI, ActiveUniformBlockParameter.UniformBlockDataSize, out blockSize);
-                byte[] blockBuffer = new byte[blockSize];
+                GL.GetActiveUniformBlock(program, index_SLI, ActiveUniformBlockParameter.UniformBlockDataSize, out blockSizeLightInfo);
+                byte[] blockBuffer = new byte[blockSizeLightInfo];
                 string[] names = { nameBlock + ".position_lgh", nameBlock + ".intensity_lgh", nameBlock + ".direction_lgh", nameBlock + ".exponent_lgh", nameBlock + ".cutoff_lgh" };
                 int[] indices = new int[5];
                 GL.GetUniformIndices(program, 5, names, indices);
@@ -106,10 +112,10 @@ namespace Thesis_3D
                 Buffer.BlockCopy(exponent, 0, blockBuffer, offset[3], exponent.Length * sizeof(float));
                 Buffer.BlockCopy(cutoff, 0, blockBuffer, offset[4], cutoff.Length * sizeof(float));
 
-                if (uboHandle != -1) GL.DeleteBuffer(uboHandle);
-                GL.GenBuffers(1, out uboHandle);
-                GL.BindBuffer(BufferTarget.UniformBuffer, uboHandle);
-                GL.BufferData(BufferTarget.UniformBuffer, blockSize, blockBuffer, BufferUsageHint.DynamicDraw);
+                if (uboLightInfo != -1) GL.DeleteBuffer(uboLightInfo);
+                GL.GenBuffers(1, out uboLightInfo);
+                GL.BindBuffer(BufferTarget.UniformBuffer, uboLightInfo);
+                GL.BufferData(BufferTarget.UniformBuffer, blockSizeLightInfo, blockBuffer, BufferUsageHint.DynamicDraw);
             }
         }
         public void UpdatePositionForBlock(int program)
@@ -119,7 +125,7 @@ namespace Thesis_3D
         public void UpdatePositionForBlock(int program, string nameBlock)
         {
             float[] position_lgh = { Position.X, Position.Y, Position.Z, 0.0f };
-            GL.BindBuffer(BufferTarget.UniformBuffer, uboHandle);
+            GL.BindBuffer(BufferTarget.UniformBuffer, uboLightInfo);
             GL.BufferSubData(BufferTarget.UniformBuffer, (IntPtr)0, sizeof(float) * position_lgh.Length, position_lgh);
         }
 
@@ -132,8 +138,8 @@ namespace Thesis_3D
             int index_SLI = GL.GetUniformBlockIndex(program, nameBlock);
             if (index_SLI != -1)
             {
-                GL.GetActiveUniformBlock(program, index_SLI, ActiveUniformBlockParameter.UniformBlockDataSize, out blockSize);
-                byte[] blockBuffer = new byte[blockSize];
+                GL.GetActiveUniformBlock(program, index_SLI, ActiveUniformBlockParameter.UniformBlockDataSize, out blockSizeLightInfo);
+                byte[] blockBuffer = new byte[blockSizeLightInfo];
                 string[] names = { nameBlock + ".position_lgh", nameBlock + ".intensity_lgh", nameBlock + ".direction_lgh", nameBlock + ".exponent_lgh", nameBlock + ".cutoff_lgh" };
                 int[] indices = new int[5];
                 GL.GetUniformIndices(program, 5, names, indices);
@@ -152,8 +158,8 @@ namespace Thesis_3D
                 Buffer.BlockCopy(exponent, 0, blockBuffer, offset[3], exponent.Length * sizeof(float));
                 Buffer.BlockCopy(cutoff, 0, blockBuffer, offset[4], cutoff.Length * sizeof(float));
 
-                GL.BindBuffer(BufferTarget.UniformBuffer, uboHandle);
-                GL.BufferSubData(BufferTarget.UniformBuffer, (IntPtr)0, blockSize, blockBuffer);
+                GL.BindBuffer(BufferTarget.UniformBuffer, uboLightInfo);
+                GL.BufferSubData(BufferTarget.UniformBuffer, (IntPtr)0, blockSizeLightInfo, blockBuffer);
             }
         }
     }
