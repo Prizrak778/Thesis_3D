@@ -256,7 +256,7 @@ namespace Thesis_3D
             }
             comboBox1.Items.AddRange(new object[] { "Обычные цвета", "Т.И. без отражения", "Т.И. с отражением", "Т.И. с двойным отражением", "Т.И. с плоским затенением", "Несколько Т.И.", "Направленный источник", "Затенение по Фонгу", "Затенение по Фонгу с использованием вектора полпути", "Узконаправленный источник", "Туман" });
             comboBox1.SelectedIndex = 0;
-            
+            _renderObjects.Add(new RenderObject(ObjectCreate.CreatePlane(1.5f, 0.0f, 0.0f, 4.0f, 0, 0, 90), Color4.LightCyan, RandomColor()));
             _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f, 0.0f, 2.0f, 0.0f), Color4.LightCoral, RandomColor()));
             for (int i = 0; i < 10; i++)
             {
@@ -318,6 +318,11 @@ namespace Thesis_3D
             GL.Enable(EnableCap.TextureCubeMap);
             GL.DepthFunc(DepthFunction.Less);
             GL.ClearColor(new Color4(0.3f, 0.3f, 0.3f, 0.0f));
+            Text =
+                GL.GetString(StringName.Vendor) + " " +
+                GL.GetString(StringName.Renderer) + " " +
+                GL.GetString(StringName.Version);
+            Text += $" (Vsync: {glControl1.VSync})";
         }
         void glControl_Resize(object sender, EventArgs e)
         {
@@ -580,13 +585,10 @@ namespace Thesis_3D
 
             TimeSpan timeSpan = DateTime.Now - dateTime;
             _framecount = 1f / (timeSpan.TotalMilliseconds / 1000);
-            Text =
-                GL.GetString(StringName.Vendor) + " " +
-                GL.GetString(StringName.Renderer) + " " +
-                GL.GetString(StringName.Version);
-            Text += $" (Vsync: {glControl1.VSync})";
-            Text += $" (FPS: {_framecount:0})";
-            Text += $" (Position:{camera1.Position})";
+            
+            label5.Text = $"Position:{camera1.Position:0}";
+            label6.Text = $"FPS: {_framecount:0}";
+
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
