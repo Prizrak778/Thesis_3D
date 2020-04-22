@@ -28,6 +28,8 @@ namespace Thesis_3D
         private int _program_some_light = -1;
         private int _program_Fong_directed = -1;
         private int _program_Fong_fog = -1;
+        private int _program_shadow_project = -1;
+        private int _program_Fong = -1;
 
         private bool _contour = false;
         private int _SelectID = -1;
@@ -150,8 +152,8 @@ namespace Thesis_3D
         bool CompileAllShaders(out string error)
         {
             error = string.Empty;
-            String VertexShader = @"Components\Shaders\vertexShader_c.vert";
-            String FragentShader = @"Components\Shaders\fragmentShader.frag";
+            string VertexShader = @"Components\Shaders\vertexShader_c.vert";
+            string FragentShader = @"Components\Shaders\fragmentShader.frag";
             if((_program_contour = _program = CompileShaders(VertexShader, FragentShader)) == -1)
             {
                 error = "Ошибка при компиляции обычного шейдера";
@@ -215,6 +217,7 @@ namespace Thesis_3D
                 return false;
             }
             listProgram.Add(_program);
+            _program_Fong = _program;
             VertexShader = @"Components\Shaders\vertexShader_Fong.vert";
             FragentShader = @"Components\Shaders\fragmentShader_Fong_half.frag";
             if ((_program = CompileShaders(VertexShader, FragentShader)) == -1)
@@ -241,6 +244,15 @@ namespace Thesis_3D
             }
             _program_Fong_fog = _program;
             listProgram.Add(_program);
+            VertexShader = @"Components\Shaders\vertexShader_shadow.vert";
+            FragentShader = @"Components\Shaders\fragmentShader_shadow.frag";
+            if ((_program = CompileShaders(VertexShader, FragentShader)) == -1)
+            {
+                error = "Ошибка при компиляции шейдера плоских теней";
+                return false;
+            }
+            _program_shadow_project = _program;
+            listProgram.Add(_program);
             return true;
         }
 
@@ -249,14 +261,14 @@ namespace Thesis_3D
             glControl1.Load += new EventHandler(glControl_Load);
             glControl_Load(glControl1, EventArgs.Empty);
             Application.Idle += Application_Idle;
-            String ErrorText = string.Empty;
+            string ErrorText = string.Empty;
             if(!CompileAllShaders(out ErrorText))
             {
                 throw new Exception(ErrorText);
             }
-            comboBox1.Items.AddRange(new object[] { "Обычные цвета", "Т.И. без отражения", "Т.И. с отражением", "Т.И. с двойным отражением", "Т.И. с плоским затенением", "Несколько Т.И.", "Направленный источник", "Затенение по Фонгу", "Затенение по Фонгу с использованием вектора полпути", "Узконаправленный источник", "Туман" });
-            comboBox1.SelectedIndex = 0;
-            _renderObjects.Add(new RenderObject(ObjectCreate.CreatePlane(1.5f, 0.0f, 0.0f, 4.0f, 0, 0, 90), Color4.LightCyan, RandomColor()));
+            comboBoxShaders.Items.AddRange(new object[] { "Обычные цвета", "Т.И. без отражения", "Т.И. с отражением", "Т.И. с двойным отражением", "Т.И. с плоским затенением", "Несколько Т.И.", "Направленный источник", "Затенение по Фонгу", "Затенение по Фонгу с использованием вектора полпути", "Узконаправленный источник", "Туман", "Плоское затенение для одного элемента" });
+            comboBoxShaders.SelectedIndex = 0;
+            _renderObjects.Add(new RenderObject(ObjectCreate.CreatePlane(1.5f, 0.0f, 0.0f, 0.0f, 0, 0, 0), Color4.LightCyan, RandomColor(), plane: true));
             _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f, 0.0f, 2.0f, 0.0f), Color4.LightCoral, RandomColor()));
             for (int i = 0; i < 10; i++)
             {
@@ -529,10 +541,27 @@ namespace Thesis_3D
             GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, 0);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             CreateProjection();
+
+
             GL.UseProgram(_program);
             camera1.SetPositionCamerShader(23);
             foreach (var renderObject in _renderObjects)
             {
+                if (_program == _program_shadow_project)
+                {
+                    if (_lightObjects[0].Color_choice != renderObject.Color_choice && _renderObjects[0].Color_choice != renderObject.Color_choice)
+                    {
+                        GL.UseProgram(_program_shadow_project);
+                        GL.UniformMatrix4(23, false, ref _renderObjects[0].ModelMatrix);
+                        GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 5, _renderObjects[0].ShadowProjectBuffer());
+                        GL.BindBuffer(BufferTarget.ShaderStorageBuffer, 0);
+                        Render_figure(renderObject, PolygonMode.Fill);
+                        _lightObjects[0].PositionLightUniform(18);
+                        renderObject.Render();
+                        
+                    }
+                    GL.UseProgram(_program_Fong);
+                }
                 Render_figure(renderObject, PolygonMode.Fill);
                 Vector4 color = renderObject.Color_obj;
                 GL.Uniform4(19, ref color);
@@ -603,7 +632,7 @@ namespace Thesis_3D
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            ChoiseShader(comboBox1.SelectedIndex);
+            ChoiseShader(comboBoxShaders.SelectedIndex);
         }
 
         private void button1_Click(object sender, EventArgs e)

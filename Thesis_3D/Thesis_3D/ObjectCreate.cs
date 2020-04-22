@@ -12,7 +12,7 @@ namespace Thesis_3D
         public const int Size = (4 + 4 + 2) * 4; // size of struct in bytes
 
         public Vector4 _Position;
-        private Vector4 _NormalCoord;
+        public Vector4 _NormalCoord;
         private Vector2 _TexCoord;
 
         public Vertex(Vector4 position, Vector4 normal, Vector2 texcoord)
@@ -111,7 +111,8 @@ namespace Thesis_3D
             Matrix4.CreateRotationY(angle_y, out matrix4RY);
             Matrix4.CreateRotationZ(angle_z, out matrix4RZ);
             Matrix4 transform = matrix4RX * matrix4RY * matrix4RZ;
-            Vector4 tnorm = transform * new Vector4(-1.0f, -1.0f, 1.0f, 0.0f);
+            Vector4 tnorm = transform * new Vector4(1.0f, 1.0f, 1.0f, 0.0f);
+            tnorm = tnorm - new Vector4(1, 0, 1, 0);
             List<Vertex> vertices = new List<Vertex>
             {
                 new Vertex(new Vector4((transform * new Vector4( 0, 0, 0, 1.0f)).Xyz + translation, 1.0f), tnorm, new Vector2(0.5f, 0.5f)),

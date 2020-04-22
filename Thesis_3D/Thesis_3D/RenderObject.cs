@@ -21,13 +21,14 @@ namespace Thesis_3D
         private bool _initialized;
         private int _vertexArray;
         private int _buffer; //Буффер в котором хранится объект
+        private int ssbo; //Буффер для плоских теней
         private int _verticeCount;
         private PolygonMode _polygon;
         public TypeObjectRender TypeObject = TypeObjectRender.SimpleObject;
         public Matrix4 ModelMatrix = Matrix4.CreateTranslation(0, 0, 0);
         public Vector4 Color_obj; //Цвет объекта
         public Vector4 Color_choice; //Цвет объекта для буффера выбора
-        public RenderObject(Vertex[] vertices, Color4 color, Color4 color_choice, TypeObjectRender typeObject = TypeObjectRender.SimpleObject)
+        public RenderObject(Vertex[] vertices, Color4 color, Color4 color_choice, TypeObjectRender typeObject = TypeObjectRender.SimpleObject, bool plane = false)
         {
             _verticeCount = vertices.Length;
             _vertexArray = GL.GenVertexArray();
@@ -36,7 +37,7 @@ namespace Thesis_3D
             //PolygonMode.Line
             GL.BindVertexArray(_vertexArray);
             GL.BindBuffer(BufferTarget.ArrayBuffer, _buffer);
-            GL.NamedBufferStorage(_buffer, Vertex.Size * _verticeCount,        // the size needed by this buffer
+            GL.NamedBufferStorage(_buffer, Vertex.Size * _verticeCount,          // the size needed by this buffer
                 vertices,                                                        // data to initialize with
                 BufferStorageFlags.MapWriteBit);                                 // at this point we will only write to the buffer
                                                                                  // create vertex array and buffer here
@@ -80,6 +81,7 @@ namespace Thesis_3D
             Color_choice.Y = color_choice.G;
             Color_choice.Z = color_choice.B;
             Color_choice.W = color_choice.A;
+            if (plane) bufferProjectionShadow(vertices);
         }
         public void Bind()//Сохранение буфера для дальнейшей отрисовки
         {
@@ -88,6 +90,10 @@ namespace Thesis_3D
         public int RenderBuffer()//вернуть номер буффера
         {
             return _buffer;
+        }
+        public int ShadowProjectBuffer()//вернуть номер буффера
+        {
+            return ssbo;
         }
         public void Render()//Отрисовка(пока только треугольником)
         {
@@ -126,6 +132,28 @@ namespace Thesis_3D
             ModelMatrix.ClearTranslation();
             translation += tr;
             ModelMatrix = Matrix4.CreateTranslation(translation);
+        }
+        private void bufferProjectionShadow(Vertex[] vertices)
+        {
+            
+            float[] temp = new float[vertices.Length * 4 + 4];
+            temp[0] = vertices[0]._NormalCoord.X;
+            temp[1] = vertices[0]._NormalCoord.Y;
+            temp[2] = vertices[0]._NormalCoord.Z;
+            temp[3] = vertices[0]._NormalCoord.W;
+            for (int i = 0; i < vertices.Length; i++)
+            {
+                temp[4 * i + 4] = vertices[i]._Position.X;
+                temp[4 * i + 5] = vertices[i]._Position.Y;
+                temp[4 * i + 6] = vertices[i]._Position.Z;
+                temp[4 * i + 7] = vertices[i]._Position.W;
+            }
+            
+
+            GL.GenBuffers(1, out ssbo);
+            GL.BindBuffer(BufferTarget.ShaderStorageBuffer, ssbo);
+            GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 5, ssbo);
+            GL.BufferData(BufferTarget.ShaderStorageBuffer, temp.Length * 4 + 4 * 4, temp, BufferUsageHint.DynamicDraw);
         }
     }
 }
