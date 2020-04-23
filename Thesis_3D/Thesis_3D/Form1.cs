@@ -911,8 +911,10 @@ namespace Thesis_3D
             TextBox textBox_coord_file = new TextBox { Text = "", Left = 100, Width = 120, Top = 30 };
             Label label_finit_elem = new Label() { Text = "Элементы", Left = 10, Width = 60, Top = 60 };
             OpenFileDialog file_coord = new OpenFileDialog();
+            file_coord.InitialDirectory = Application.ExecutablePath;
             file_coord.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
             OpenFileDialog file_finit_elem = new OpenFileDialog();
+            file_finit_elem.InitialDirectory = Application.ExecutablePath;
             file_finit_elem.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
             Button file_coord_open = new Button() { Text = "Открыть файл", Left = 230, Width = 100, Top = 30 };
             Color4 color_surface = Color4.White;
@@ -921,7 +923,7 @@ namespace Thesis_3D
             Button button_ok = new Button() { Text = "Ok", Left = 230, Width = 60, Top = 90, DialogResult = DialogResult.OK };
             Button file_finit_elem_open = new Button() { Text = "Открыть файл", Left = 230, Width = 100, Top = 60 };
             file_coord_open.Click += (sender1, e1) => { file_coord.ShowDialog(); };
-            button_color.Click += (sender1, e1) => { if (colorDialog.ShowDialog() == DialogResult.OK) { button_color.BackColor = colorDialog.Color; color_surface = colorDialog.Color; } };
+            button_color.Click += (sender1, e1) => { if (colorDialog.ShowDialog() == DialogResult.OK) { color_surface = button_color.BackColor = colorDialog.Color; } };
             file_coord.FileOk += (sender1, e1) => { textBox_coord_file.Text = file_coord.FileName; };
             file_finit_elem.FileOk += (sender1, e1) => { textBox_finit_elem.Text = file_finit_elem.FileName; };
             file_finit_elem_open.Click += (sender1, e1) => { file_finit_elem.ShowDialog(); };
