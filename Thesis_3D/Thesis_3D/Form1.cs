@@ -700,5 +700,79 @@ namespace Thesis_3D
             if (string.IsNullOrWhiteSpace(textBox1.Text) && string.IsNullOrWhiteSpace(textBox2.Text) && string.IsNullOrWhiteSpace(textBox3.Text))
                 camera1.Position = new Vector3((float)Convert.ToDouble(textBox1.Text), (float)Convert.ToDouble(textBox2.Text), (float)Convert.ToDouble(textBox3.Text));
         }
+
+        private void buttonNewAnFigure_Click(object sender, EventArgs e)
+        {
+            //По хорошему форму стоит вынести отдельно
+            Form dlgNewAnFigure = new Form()
+            {
+                Text = "Выбор фигуры",
+                Width = 300,
+                Height = 140,
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                StartPosition = FormStartPosition.CenterScreen
+            };
+            Label lblTypeFigure = new Label() { Text = "Тип фигуры:", Visible = true, Left = 30, Width = 100, Top = 30 };
+            Button confirmation = new Button() { Text = "Ok", Left = 100, Width = 80, Top = 60, DialogResult = DialogResult.OK };
+            Button close = new Button() { Text = "Отмена", Left = 192, Width = 80, Top = 60, DialogResult = DialogResult.Cancel };
+            ComboBox comboBox = new ComboBox() { DropDownStyle = ComboBoxStyle.DropDownList, Text = "Куб", Left = 110, Width = 160, Top = 27 };
+            dlgNewAnFigure.Controls.Add(comboBox);
+            comboBox.Items.AddRange(new object[] {
+            "Плоскость",
+            "Куб",
+            "Сфера"});
+            comboBox.SelectedIndex = 0;
+            confirmation.Click += (senderOk, eOk) => { dlgNewAnFigure.Close(); };
+            close.Click += (senderClose, eClose) => { dlgNewAnFigure.Close(); };
+            dlgNewAnFigure.Controls.Add(lblTypeFigure);
+            dlgNewAnFigure.Controls.Add(confirmation);
+            dlgNewAnFigure.Controls.Add(close);
+            dlgNewAnFigure.AcceptButton = confirmation;
+            dlgNewAnFigure.CancelButton = close;
+            if (dlgNewAnFigure.ShowDialog() == DialogResult.OK)
+            {
+                if (comboBox.Text == "Куб")
+                {
+                    dlgNewAnFigure = new Form()
+                    {
+                        Text = "Данные для фигуры",
+                        Width = 350,
+                        Height = 240,
+                        FormBorderStyle = FormBorderStyle.FixedDialog,
+                        StartPosition = FormStartPosition.CenterScreen
+                    };
+                    Label label_side = new Label() { Text = "Расстояние от центра то границы", Left = 10, Width = 190, Top = 30 };
+                    Label label_shift_lr = new Label() { Text = "Смещение по x", Left = 10, Width = 190, Top = 60 };
+                    Label label_shift_y = new Label() { Text = "Смещение по y", Left = 10, Width = 190, Top = 90 };
+                    Label label_shift_ud = new Label() { Text = "Смещение по z", Left = 10, Width = 190, Top = 120 };
+                    TextBox textBoxSide = new TextBox() {  Text = "0", Left = 200, Width = 100, Top = 30 };
+                    TextBox textBoxShift_lr = new TextBox() { Text = "0", Left = 200, Width = 100, Top = 60 };
+                    TextBox textBoxShift_y = new TextBox() { Text = "0", Left = 200, Width = 100, Top = 90 };
+                    TextBox textBoxShift_ud = new TextBox() { Text = "0", Left = 200, Width = 100, Top = 120 };
+                    Button confirmation_new = new Button() { Text = "Ok", Left = 200, Width = 100, Top = 150, DialogResult = DialogResult.OK };
+                    ColorDialog colorDialog = new ColorDialog();
+                    dlgNewAnFigure.Controls.Add(label_side);
+                    dlgNewAnFigure.Controls.Add(label_shift_lr);
+                    dlgNewAnFigure.Controls.Add(label_shift_y);
+                    dlgNewAnFigure.Controls.Add(label_shift_ud);
+                    dlgNewAnFigure.Controls.Add(textBoxSide);
+                    dlgNewAnFigure.Controls.Add(textBoxShift_lr);
+                    dlgNewAnFigure.Controls.Add(textBoxShift_y);
+                    dlgNewAnFigure.Controls.Add(textBoxShift_ud);
+                    dlgNewAnFigure.Controls.Add(confirmation_new);
+                    if (dlgNewAnFigure.ShowDialog() == DialogResult.OK)
+                    {
+                        Color4 colorcube = Color4.White;
+                        if (colorDialog.ShowDialog() == DialogResult.OK)
+                        {
+                            colorcube = colorDialog.Color;
+                        }
+                        Vertex[] figure_vertex = ObjectCreate.CreateSolidCube(float.Parse(textBoxSide.Text, System.Globalization.NumberStyles.Float), float.Parse(textBoxShift_lr.Text), float.Parse(textBoxShift_y.Text), float.Parse(textBoxShift_ud.Text));
+                        _renderObjects.Add(new RenderObject(figure_vertex, colorcube, RandomColor()));
+                        //_renderObjects_line.Add(new RenderObject(figure_vertex_contur, Color4.Black));
+                    }
+                }
+            }
+        }
     }
 }
