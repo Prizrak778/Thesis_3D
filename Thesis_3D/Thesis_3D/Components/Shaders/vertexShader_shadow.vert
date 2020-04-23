@@ -14,7 +14,7 @@ layout (binding = 5) buffer bufferPlane
 	vec4 plane[];
 };
 
-
+out float dotVt;
 
 void main(void)
 {
@@ -32,10 +32,12 @@ void main(void)
 		max_z = max(max_z, plane[i].z + positionPlane.z);
 	}
 	mat3 NormalMatrix = mat3(transpose(inverse(modelView)));
-	vec3 s =  vec_LightPosition.xyz;
+	vec3 s =  vec_LightPosition.xyz * vec3(1.0, 1.0, 1.0);
 	vec3 V_pos = (modelView * vec_position).xyz - s;
-	vec3 W_pos = V_pos *(dot(normal_floor.xyz, (plane[0].xyz - s))/dot(normal_floor.xyz, (V_pos)));
+	float dotV = (dot(normal_floor.xyz, (plane[0].xyz + positionPlane - s))/dot(normal_floor.xyz, (V_pos)));
+	vec3 W_pos = V_pos * dotV;
     vec3 B_pos = s + W_pos;
+	dotVt = dot(normal_floor.xyz, (plane[0].xyz + positionPlane - s))/dot(normal_floor.xyz, (V_pos));
 	if(B_pos.x>max_x)
 	{
 		B_pos.x=max_x;
@@ -60,9 +62,10 @@ void main(void)
 	{
 		B_pos.z=min_z;
 	}
-	B_pos.y += 0.05;
+	if(s.y > B_pos.y) B_pos.y += 0.02;
+	else B_pos.y -= 0.02;
 	vec4 pos_gl = vec4(0.0);
-	if(dot(normal_floor.xyz, (V_pos))<-0.1)
+	if(dot(normal_floor.xyz, (V_pos))<-0.01 && dotV>=1)
 	{
 		pos_gl = vec4(B_pos, 1.0);	
 	}

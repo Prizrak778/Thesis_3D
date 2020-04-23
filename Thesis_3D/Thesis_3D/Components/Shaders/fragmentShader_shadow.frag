@@ -1,6 +1,6 @@
 ﻿#version 450 core
 
-
+in float dotVt;
 out vec4 color;
 
 void main(void)

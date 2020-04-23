@@ -111,8 +111,9 @@ namespace Thesis_3D
             Matrix4.CreateRotationY(angle_y, out matrix4RY);
             Matrix4.CreateRotationZ(angle_z, out matrix4RZ);
             Matrix4 transform = matrix4RX * matrix4RY * matrix4RZ;
-            Vector4 tnorm = transform * new Vector4(1.0f, 1.0f, 1.0f, 0.0f);
-            tnorm = tnorm - new Vector4(1, 0, 1, 0);
+            Vector3 tnormXYZ;
+            CalcNormals(new Vector3((transform * new Vector4(0, 0, 0, 1.0f)).Xyz), new Vector3((transform * new Vector4(side + 0, 0, -side + 0, 1.0f)).Xyz), new Vector3((transform * new Vector4(-side + 0, 0, -side + 0, 1.0f)).Xyz), out tnormXYZ);
+            Vector4 tnorm = new Vector4(tnormXYZ, 1.0f);
             List<Vertex> vertices = new List<Vertex>
             {
                 new Vertex(new Vector4((transform * new Vector4( 0, 0, 0, 1.0f)).Xyz + translation, 1.0f), tnorm, new Vector2(0.5f, 0.5f)),
@@ -214,6 +215,24 @@ namespace Thesis_3D
                 }
             }
 
+        }
+        private static void CalcNormals(Vector3 a, Vector3 b, Vector3 c, out Vector3 n)
+        {
+            float wrki;
+            Vector3 v1, v2;
+
+            v1.X = a.X - b.X;
+            v1.Y = a.Y - b.Y;
+            v1.Z = a.Z - b.Z;
+
+            v2.X = b.X - c.X;
+            v2.Y = b.Y - c.Y;
+            v2.Z = b.Z - c.Z;
+
+            wrki = (float)Math.Sqrt((v1.Y * v2.Z - v1.Z * v2.Y) * (v1.Y * v2.Z - v1.Z * v2.Y) + (v1.Z * v2.X - v1.X * v2.Z) * (v1.Z * v2.X - v1.X * v2.Z) + (v1.X * v2.Y - v1.Y * v2.X) * (v1.X * v2.Y - v1.Y * v2.X));
+            n.X = (v1.Y * v2.Z - v1.Z * v2.Y) / wrki;
+            n.Y = (v1.Z * v2.X - v1.X * v2.Z) / wrki;
+            n.Z = (v1.X * v2.Y - v1.Y * v2.X) / wrki;
         }
     }
 }
