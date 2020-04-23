@@ -57,6 +57,8 @@
             this.label6 = new System.Windows.Forms.Label();
             this.buttonNewAnFigure = new System.Windows.Forms.Button();
             this.buttonNewFigureFile = new System.Windows.Forms.Button();
+            this.buttonChangeFigure = new System.Windows.Forms.Button();
+            this.buttonRemoveFigure = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -70,7 +72,7 @@
             this.glControl1.BackColor = System.Drawing.Color.Black;
             this.glControl1.Location = new System.Drawing.Point(12, 12);
             this.glControl1.Name = "glControl1";
-            this.glControl1.Size = new System.Drawing.Size(719, 541);
+            this.glControl1.Size = new System.Drawing.Size(733, 563);
             this.glControl1.TabIndex = 0;
             this.glControl1.VSync = false;
             // 
@@ -78,7 +80,7 @@
             // 
             this.checkBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(737, 322);
+            this.checkBox1.Location = new System.Drawing.Point(751, 322);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.checkBox1.Size = new System.Drawing.Size(112, 17);
@@ -93,7 +95,7 @@
             this.checkBox2.AutoSize = true;
             this.checkBox2.Checked = true;
             this.checkBox2.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox2.Location = new System.Drawing.Point(737, 345);
+            this.checkBox2.Location = new System.Drawing.Point(751, 345);
             this.checkBox2.Name = "checkBox2";
             this.checkBox2.Size = new System.Drawing.Size(189, 17);
             this.checkBox2.TabIndex = 2;
@@ -105,7 +107,7 @@
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(734, 365);
+            this.label1.Location = new System.Drawing.Point(748, 365);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(110, 13);
             this.label1.TabIndex = 3;
@@ -117,7 +119,7 @@
             this.comboBoxShaders.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxShaders.FormattingEnabled = true;
             this.comboBoxShaders.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.comboBoxShaders.Location = new System.Drawing.Point(737, 381);
+            this.comboBoxShaders.Location = new System.Drawing.Point(751, 381);
             this.comboBoxShaders.Name = "comboBoxShaders";
             this.comboBoxShaders.Size = new System.Drawing.Size(189, 21);
             this.comboBoxShaders.TabIndex = 4;
@@ -132,7 +134,7 @@
             this.groupBox1.Controls.Add(this.button3);
             this.groupBox1.Controls.Add(this.button2);
             this.groupBox1.Controls.Add(this.button1);
-            this.groupBox1.Location = new System.Drawing.Point(738, 12);
+            this.groupBox1.Location = new System.Drawing.Point(752, 12);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(200, 82);
             this.groupBox1.TabIndex = 5;
@@ -206,7 +208,7 @@
             this.groupBox2.Controls.Add(this.button9);
             this.groupBox2.Controls.Add(this.button10);
             this.groupBox2.Controls.Add(this.button7);
-            this.groupBox2.Location = new System.Drawing.Point(738, 101);
+            this.groupBox2.Location = new System.Drawing.Point(752, 101);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(200, 79);
             this.groupBox2.TabIndex = 6;
@@ -263,7 +265,7 @@
             this.groupBox3.Controls.Add(this.textBox2);
             this.groupBox3.Controls.Add(this.label2);
             this.groupBox3.Controls.Add(this.textBox1);
-            this.groupBox3.Location = new System.Drawing.Point(737, 187);
+            this.groupBox3.Location = new System.Drawing.Point(751, 187);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(200, 129);
             this.groupBox3.TabIndex = 7;
@@ -335,7 +337,7 @@
             // 
             this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(734, 496);
+            this.label5.Location = new System.Drawing.Point(748, 540);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(30, 13);
             this.label5.TabIndex = 8;
@@ -345,7 +347,7 @@
             // 
             this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(734, 519);
+            this.label6.Location = new System.Drawing.Point(748, 562);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(47, 13);
             this.label6.TabIndex = 9;
@@ -354,7 +356,7 @@
             // buttonNewAnFigure
             // 
             this.buttonNewAnFigure.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonNewAnFigure.Location = new System.Drawing.Point(737, 409);
+            this.buttonNewAnFigure.Location = new System.Drawing.Point(751, 409);
             this.buttonNewAnFigure.Name = "buttonNewAnFigure";
             this.buttonNewAnFigure.Size = new System.Drawing.Size(189, 23);
             this.buttonNewAnFigure.TabIndex = 10;
@@ -364,19 +366,43 @@
             // 
             // buttonNewFigureFile
             // 
-            this.buttonNewFigureFile.Location = new System.Drawing.Point(738, 439);
+            this.buttonNewFigureFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonNewFigureFile.Location = new System.Drawing.Point(751, 439);
             this.buttonNewFigureFile.Name = "buttonNewFigureFile";
-            this.buttonNewFigureFile.Size = new System.Drawing.Size(188, 23);
+            this.buttonNewFigureFile.Size = new System.Drawing.Size(189, 23);
             this.buttonNewFigureFile.TabIndex = 11;
             this.buttonNewFigureFile.Text = "Новая фигура(из файла)";
             this.buttonNewFigureFile.UseVisualStyleBackColor = true;
             this.buttonNewFigureFile.Click += new System.EventHandler(this.buttonNewFigureFile_Click);
             // 
+            // buttonChangeFigure
+            // 
+            this.buttonChangeFigure.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonChangeFigure.Location = new System.Drawing.Point(751, 469);
+            this.buttonChangeFigure.Name = "buttonChangeFigure";
+            this.buttonChangeFigure.Size = new System.Drawing.Size(189, 23);
+            this.buttonChangeFigure.TabIndex = 12;
+            this.buttonChangeFigure.Text = "Изменить фигуру";
+            this.buttonChangeFigure.UseVisualStyleBackColor = true;
+            this.buttonChangeFigure.Click += new System.EventHandler(this.buttonChangeFigure_Click);
+            // 
+            // buttonRemoveFigure
+            // 
+            this.buttonRemoveFigure.Location = new System.Drawing.Point(751, 498);
+            this.buttonRemoveFigure.Name = "buttonRemoveFigure";
+            this.buttonRemoveFigure.Size = new System.Drawing.Size(189, 23);
+            this.buttonRemoveFigure.TabIndex = 13;
+            this.buttonRemoveFigure.Text = "Удалить фигуру";
+            this.buttonRemoveFigure.UseVisualStyleBackColor = true;
+            this.buttonRemoveFigure.Click += new System.EventHandler(this.buttonRemoveFigure_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(938, 565);
+            this.ClientSize = new System.Drawing.Size(952, 587);
+            this.Controls.Add(this.buttonRemoveFigure);
+            this.Controls.Add(this.buttonChangeFigure);
             this.Controls.Add(this.buttonNewFigureFile);
             this.Controls.Add(this.buttonNewAnFigure);
             this.Controls.Add(this.label6);
@@ -431,6 +457,8 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Button buttonNewAnFigure;
         private System.Windows.Forms.Button buttonNewFigureFile;
+        private System.Windows.Forms.Button buttonChangeFigure;
+        private System.Windows.Forms.Button buttonRemoveFigure;
     }
 }
 

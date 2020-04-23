@@ -16,6 +16,21 @@ namespace Thesis_3D
         LightSourceObject,
         FlatObject
     };
+    public struct Triangls
+    {
+        public Vector4[] point;
+        public Triangls(Vector4 point_1, Vector4 point_2, Vector4 point_3)
+        {
+            point = new Vector4[3];
+            point[0] = point_1;
+            point[1] = point_2;
+            point[2] = point_3;
+        }
+    }
+    public struct PointUnik
+    {
+        public Vector4 point;
+    }
     public class RenderObject : IDisposable
     {
         private bool _initialized;
@@ -154,6 +169,61 @@ namespace Thesis_3D
             GL.BindBuffer(BufferTarget.ShaderStorageBuffer, ssbo);
             GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 5, ssbo);
             GL.BufferData(BufferTarget.ShaderStorageBuffer, temp.Length * 4 + 4 * 4, temp, BufferUsageHint.DynamicDraw);
+        }
+        public int BufferSize()
+        {
+            return _verticeCount;
+        }
+        public void ReadBuffer(Vertex[] vertices)
+        {
+            GL.GetNamedBufferSubData(_buffer, System.IntPtr.Zero, Vertex.Size * BufferSize(), vertices);
+        }
+        public void WriteBuffer(Vertex[] vertices)
+        {
+            GL.DeleteVertexArray(_vertexArray);
+            GL.DeleteBuffer(_buffer);
+            _verticeCount = vertices.Length;
+            _vertexArray = GL.GenVertexArray();
+            GL.GenBuffers(1, out _buffer);
+
+            GL.BindVertexArray(_vertexArray);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, _buffer);
+            GL.NamedBufferStorage(_buffer, Vertex.Size * vertices.Length,        // the size needed by this buffer
+                vertices,                                                        // data to initialize with
+                BufferStorageFlags.MapWriteBit);                                 // at this point we will only write to the buffer
+                                                                                 // create vertex array and buffer here
+
+            GL.VertexArrayAttribBinding(_vertexArray, 1, 0);
+            GL.EnableVertexArrayAttrib(_vertexArray, 1);
+            GL.VertexArrayAttribFormat(
+                _vertexArray,
+                1,                                                               // attribute index, from the shader location = 0
+                4,                                                               // size of attribute, vec4
+                VertexAttribType.Float,                                          // contains floats
+                false,                                                           // does not need to be normalized as it is already, floats ignore this flag anyway
+                0);                                                              // relative offset, first item
+
+            GL.VertexArrayAttribBinding(_vertexArray, 2, 0);
+            GL.EnableVertexArrayAttrib(_vertexArray, 2);
+            GL.VertexArrayAttribFormat(
+                _vertexArray,
+                2,                                                               // attribute index, from the shader location = 1
+                4,                                                               // size of attribute, vec4
+                VertexAttribType.Float,                                          // contains floats
+                false,                                                           // does not need to be normalized as it is already, floats ignore this flag anyway
+                16);                                                             // relative offset after a vec4
+            GL.VertexArrayAttribBinding(_vertexArray, 3, 0);
+            GL.EnableVertexArrayAttrib(_vertexArray, 3);
+            GL.VertexArrayAttribFormat(
+                _vertexArray,
+                3,                                                               // attribute index, from the shader location = 2
+                4,                                                               // size of attribute, vec4
+                VertexAttribType.Float,                                          // contains floats
+                false,                                                           // does not need to be normalized as it is already, floats ignore this flag anyway
+                32);                                                             // relative offset after a vec4 + vec4
+
+            _initialized = true;
+            GL.VertexArrayVertexBuffer(_vertexArray, 0, _buffer, IntPtr.Zero, Vertex.Size);
         }
     }
 }

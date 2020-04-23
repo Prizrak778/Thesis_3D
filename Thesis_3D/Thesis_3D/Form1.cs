@@ -312,6 +312,7 @@ namespace Thesis_3D
         private void glControl_Load(object sender, EventArgs e)
         {
             CreateProjection();
+            buttonChangeFigure.Enabled = false;
             glControl1.Resize += new EventHandler(glControl_Resize);
             glControl1.Paint += new PaintEventHandler(glControl_Paint);
             glControl1.MouseMove += new MouseEventHandler(glControl_MouseMove);
@@ -412,6 +413,14 @@ namespace Thesis_3D
                         _SelectID = i;
                     }
                 }
+            }
+            if(_SelectID > -1)
+            {
+                buttonChangeFigure.Enabled = true;
+            }
+            else
+            {
+                buttonChangeFigure.Enabled = false;
             }
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
         }
@@ -545,11 +554,13 @@ namespace Thesis_3D
 
             GL.UseProgram(_program);
             camera1.SetPositionCamerShader(23);
+            var countLightObj = _lightObjects.Count;
+            var countRenderObj = _renderObjects.Count;
             foreach (var renderObject in _renderObjects)
             {
                 if (_program == _program_shadow_project)
                 {
-                    if (_lightObjects[0].Color_choice != renderObject.Color_choice && _renderObjects[0].Color_choice != renderObject.Color_choice)
+                    if (countLightObj > 0 && countRenderObj > 0 && _lightObjects[0].Color_choice != renderObject.Color_choice && _renderObjects[0].Color_choice != renderObject.Color_choice)
                     {
                         GL.UseProgram(_program_shadow_project);
                         GL.UniformMatrix4(23, false, ref _renderObjects[0].ModelMatrix);
@@ -573,18 +584,18 @@ namespace Thesis_3D
                         light.Row.IntensityLightUniform(13 + light.Index);
                     }
                 }
-                else if(_program == _program_Fong_fog)
+                else if(_program == _program_Fong_fog && countLightObj > 0)
                 {
                     _lightObjects[0].PositionLightUniform(18);
                     _lightObjects[0].SetAttrFog(25, 1f, 24, 9f, 26, new Vector3(0.3f, 0.3f, 0.3f));
                 }
-                else if(_program == _program_Fong_directed)
+                else if(_program == _program_Fong_directed && countLightObj > 0)
                 {
                     if(_lightObjects[0].uboLightInfo != -1) GL.BindBufferRange(BufferRangeTarget.UniformBuffer, 24, _lightObjects[0].uboLightInfo, (IntPtr)0, _lightObjects[0].blockSizeLightInfo);
                 }
                 else
                 {
-                    _lightObjects[0].PositionLightUniform(18);
+                    if (countLightObj > 0) _lightObjects[0].PositionLightUniform(18);
                 }
                 renderObject.Render();
             }
@@ -1012,6 +1023,208 @@ namespace Thesis_3D
             else
             {
                 MessageBox.Show("Не были выбраны файлы", "Ошибка");
+            }
+        }
+
+        private void buttonChangeFigure_Click(object sender, EventArgs e)
+        {
+            if (_SelectID > 0)
+            {
+                Vertex[] vertexObject = new Vertex[_renderObjects[_SelectID].BufferSize()];
+                _renderObjects[_SelectID].ReadBuffer(vertexObject);
+                Form dlgChangeFigure = new Form()
+                {
+                    Text = "Изменение объекта",
+                    Width = 680,
+                    Height = 500,
+                    FormBorderStyle = FormBorderStyle.Sizable,
+                    StartPosition = FormStartPosition.CenterScreen,
+                };
+                Label lblTrackBar = new Label() { Text = "Прозрачность объекта", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 170, Height = 30, Top = 415, Left = 20 };
+                TrackBar trackBar = new TrackBar() { Value = (int)(_renderObjects[_SelectID].Color_obj.W * 10f), Minimum = 0, Maximum = 10, Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 170, Height = 30, Top = 415, Left = 150 };
+                CheckBox checkBox = new CheckBox() { Checked = false, Text = "Изменить структуру фигуры", Width = 170, Height = 30, Top = 375, Left = 20, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
+                TextBox textBoxChangeCoord = new TextBox() { Enabled = false, Multiline = true, Width = 250, Height = 350, Top = 10, Left = 10, Anchor = AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom, ScrollBars = ScrollBars.Vertical };
+                TextBox textBoxChangeFinit = new TextBox() { Enabled = false, Multiline = true, Width = 250, Height = 350, Top = 10, Left = 10, Anchor = AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom, ScrollBars = ScrollBars.Vertical };
+                SplitContainer splitterText = new SplitContainer() { Width = 540, Height = 400, Left = 10, Top = 10, Anchor = AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom, SplitterDistance = 260 };
+                Button buttonSave = new Button() { Text = "Save", Top = 20, Left = 550, Width = 100, Height = 25, Anchor = AnchorStyles.Top | AnchorStyles.Right };
+                SaveFileDialog saveFileCoord = new SaveFileDialog();
+                SaveFileDialog saveFileFinit = new SaveFileDialog();
+                checkBox.CheckedChanged += (sender1, e1) => { textBoxChangeCoord.Enabled = textBoxChangeFinit.Enabled = checkBox.Checked; };
+                buttonSave.Click += (sender1, e1) => { saveFileCoord.ShowDialog(); saveFileFinit.ShowDialog(); };
+                saveFileFinit.Filter = saveFileCoord.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+                saveFileCoord.FileName = "coord_default.txt";
+                saveFileFinit.FileName = "finit_default.txt";
+                Button button_ok = new Button() { Text = "Ok", Top = 50, Left = 550, Width = 100, Height = 25, Anchor = AnchorStyles.Top | AnchorStyles.Right, DialogResult = DialogResult.OK };
+                int i = vertexObject.Length;
+                int colFinElement = i / 3;
+                Triangls[] triangls_select = new Triangls[colFinElement];
+                PointUnik[] pointUnik = new PointUnik[i];
+                int colUnik = 0;
+                for (int iter = 0; iter < vertexObject.Length; iter++)
+                {
+                    bool flag = true;
+                    for (int jter = 0; jter < colUnik; jter++)
+                    {
+                        if (vertexObject[iter]._Position == pointUnik[jter].point)
+                        {
+                            flag = false;
+                        }
+                    }
+                    if (flag)
+                    {
+                        pointUnik[colUnik].point = vertexObject[iter]._Position;
+                        colUnik++;
+                    }
+                }
+                for (int iter = 0; iter < vertexObject.Length; iter += 3)
+                {
+                    for (int k = 0; k < 3; k++)
+                    {
+                        bool flag = true;
+                        for (int jter = 0; jter < colUnik && flag; jter++)
+                        {
+                            if (pointUnik[jter].point == vertexObject[iter + k]._Position)
+                            {
+                                flag = false;
+                                if (k == 2)
+                                {
+                                    textBoxChangeFinit.Text += jter.ToString();
+                                }
+                                else
+                                {
+                                    textBoxChangeFinit.Text += jter.ToString() + " ";
+                                }
+                            }
+                        }
+                    }
+                    textBoxChangeFinit.Text += "\r\n";
+                }
+                for (int jter = 0; jter < colUnik; jter++)
+                {
+                    textBoxChangeCoord.Text += pointUnik[jter].point.Xyz.ToString().Replace("(", "").Replace(")", "").Replace(";", "") + "\r\n";
+                }
+                splitterText.Panel1.Controls.Add(textBoxChangeCoord);
+                splitterText.Panel2.Controls.Add(textBoxChangeFinit);
+                dlgChangeFigure.Controls.Add(checkBox);
+                dlgChangeFigure.Controls.Add(splitterText);
+                dlgChangeFigure.Controls.Add(button_ok);
+                dlgChangeFigure.Controls.Add(buttonSave); 
+                dlgChangeFigure.Controls.Add(trackBar);
+                dlgChangeFigure.Controls.Add(lblTrackBar);
+                saveFileCoord.FileOk += (sender1, e1) =>
+                {
+                    if (saveFileCoord.FileName.Length != 0)
+                    {
+                        StreamWriter write_coord = new StreamWriter(saveFileCoord.FileName);
+                        write_coord.Write(textBoxChangeCoord.Text);
+                        write_coord.Close();
+                    }
+                };
+                saveFileFinit.FileOk += (sender1, e1) =>
+                {
+                    if (saveFileFinit.FileName.Length != 0)
+                    {
+                        StreamWriter write_finit = new StreamWriter(saveFileFinit.FileName);
+                        write_finit.Write(textBoxChangeFinit.Text);
+                        write_finit.Close();
+                    }
+                };
+                if (dlgChangeFigure.ShowDialog() == DialogResult.OK)
+                {
+                    if (checkBox.Checked)
+                    {
+                        List<DataCoordElem> list_coord = new List<DataCoordElem>();
+                        List<DataFinitElem> list_finit_elem = new List<DataFinitElem>();
+                        string[] string_line = textBoxChangeCoord.Text.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+                        bool error_flag = false;
+                        for (int iter = 0; iter < string_line.Length && !error_flag; iter++)
+                        {
+                            string[] x_y_z_coord = string_line[iter].Split(' ');
+                            if (x_y_z_coord.Length == 3)
+                            {
+                                DataCoordElem dataCoord = new DataCoordElem();
+                                dataCoord.X = double.Parse(x_y_z_coord[0]);
+                                dataCoord.Y = double.Parse(x_y_z_coord[1]);
+                                dataCoord.Z = double.Parse(x_y_z_coord[2]);
+                                list_coord.Add(dataCoord);
+                            }
+                            else
+                            {
+                                error_flag = true;
+                            }
+                        }
+                        string_line = textBoxChangeFinit.Text.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+                        for (int iter = 0; iter < string_line.Length && !error_flag; iter++)
+                        {
+                            string[] finit_elem = string_line[iter].Split(' ');
+                            if (finit_elem.Length == 3)
+                            {
+                                DataFinitElem data_temp = new DataFinitElem();
+                                data_temp.first = int.Parse(finit_elem[0]);
+                                data_temp.second = int.Parse(finit_elem[1]);
+                                data_temp.third = int.Parse(finit_elem[2]);
+                                list_finit_elem.Add(data_temp);
+                            }
+                            else
+                            {
+                                error_flag = true;
+                            }
+                        }
+                        if (!error_flag)
+                        {
+                            Vertex[] figure_vertex = new Vertex[list_finit_elem.Count * 3];
+                            int col = 0;
+                            foreach (DataFinitElem fin in list_finit_elem)
+                            {
+                                Vector4 norm_vec = new Vector4();
+                                norm_vec.X = (float)(list_coord[fin.first].Y * list_coord[fin.third].Z - list_coord[fin.second].Y * list_coord[fin.third].Z - list_coord[fin.first].Y * list_coord[fin.second].Z - list_coord[fin.first].Z * list_coord[fin.third].Y + list_coord[fin.second].Z * list_coord[fin.third].Y + list_coord[fin.first].Z * list_coord[fin.second].Y);
+                                norm_vec.Y = (float)(list_coord[fin.first].Z * list_coord[fin.third].X - list_coord[fin.second].Z * list_coord[fin.third].X - list_coord[fin.first].Z * list_coord[fin.second].X - list_coord[fin.first].X * list_coord[fin.third].Z + list_coord[fin.second].X * list_coord[fin.third].Z + list_coord[fin.first].X * list_coord[fin.second].Z);
+                                norm_vec.Z = (float)(list_coord[fin.first].X * list_coord[fin.third].Y - list_coord[fin.second].X * list_coord[fin.third].Y - list_coord[fin.first].X * list_coord[fin.second].Y - list_coord[fin.first].Y * list_coord[fin.third].X + list_coord[fin.second].Y * list_coord[fin.third].X + list_coord[fin.first].Y * list_coord[fin.second].X);
+                                norm_vec.W = 0.0f;
+                                float len = Math.Abs(norm_vec.X) + Math.Abs(norm_vec.Y) + Math.Abs(norm_vec.Z);
+                                norm_vec.X = norm_vec.X / len;
+                                norm_vec.Y = norm_vec.Y / len;
+                                norm_vec.Z = norm_vec.Z / len;
+                                figure_vertex[col] = new Vertex(new Vector4((float)list_coord[fin.first].X, (float)list_coord[fin.first].Y, (float)list_coord[fin.first].Z, 1.0f), new Vector4(norm_vec.X, norm_vec.Y, norm_vec.Z, 0.0f), new Vector2(0, 0));
+                                figure_vertex[col + 1] = new Vertex(new Vector4((float)list_coord[fin.second].X, (float)list_coord[fin.second].Y, (float)list_coord[fin.second].Z, 1.0f), new Vector4(norm_vec.X, norm_vec.Y, norm_vec.Z, 0.0f), new Vector2(0, 0));
+                                figure_vertex[col + 2] = new Vertex(new Vector4((float)list_coord[fin.third].X, (float)list_coord[fin.third].Y, (float)list_coord[fin.third].Z, 1.0f), new Vector4(norm_vec.X, norm_vec.Y, norm_vec.Z, 0.0f), new Vector2(0, 0));
+                                col += 3;
+                            }
+                            _renderObjects[_SelectID].WriteBuffer(figure_vertex);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Ошибка во формате входных данных", "Ошибка");
+                        }
+                    }
+                    _renderObjects[_SelectID].Color_obj.W = trackBar.Value / 10f;
+                }
+            }
+            else
+            {
+                MessageBox.Show("Этот объект нельзя изменить");
+            }
+        }
+
+        private void buttonRemoveFigure_Click(object sender, EventArgs e)
+        {
+            if (_SelectID > 0)
+            {
+                int buffer = _renderObjects[_SelectID].ShadowProjectBuffer();
+                if (buffer > -1) GL.DeleteBuffer(buffer);
+                buffer = _renderObjects[_SelectID].RenderBuffer();
+                if (buffer > -1) GL.DeleteBuffer(buffer);
+                var lightObj = _lightObjects.Where(x => x.Color_choice == _renderObjects[_SelectID].Color_choice).FirstOrDefault();
+                buffer = -1;
+                if (lightObj != null) buffer = lightObj.uboLightInfo;
+                if (buffer > -1) GL.DeleteBuffer(buffer);
+                _lightObjects.Remove(_lightObjects.Where(x => x.Color_choice == _renderObjects[_SelectID].Color_choice).FirstOrDefault());
+                _renderObjects.Remove(_renderObjects[_SelectID]);
+                _SelectID = -1;
+            }
+            else
+            {
+                MessageBox.Show("Этот объект нельзя удалить");
             }
         }
     }
