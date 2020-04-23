@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.glControl1 = new OpenTK.GLControl();
+            this.glControlThesis3D = new OpenTK.GLControl();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -66,15 +66,15 @@
             // 
             // glControl1
             // 
-            this.glControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.glControlThesis3D.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.glControl1.BackColor = System.Drawing.Color.Black;
-            this.glControl1.Location = new System.Drawing.Point(12, 12);
-            this.glControl1.Name = "glControl1";
-            this.glControl1.Size = new System.Drawing.Size(733, 563);
-            this.glControl1.TabIndex = 0;
-            this.glControl1.VSync = false;
+            this.glControlThesis3D.BackColor = System.Drawing.Color.Black;
+            this.glControlThesis3D.Location = new System.Drawing.Point(12, 12);
+            this.glControlThesis3D.Name = "glControl1";
+            this.glControlThesis3D.Size = new System.Drawing.Size(733, 563);
+            this.glControlThesis3D.TabIndex = 0;
+            this.glControlThesis3D.VSync = false;
             // 
             // checkBox1
             // 
@@ -414,7 +414,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.checkBox2);
             this.Controls.Add(this.checkBox1);
-            this.Controls.Add(this.glControl1);
+            this.Controls.Add(this.glControlThesis3D);
             this.Name = "Form1";
             this.Text = "Form1";
             this.groupBox1.ResumeLayout(false);
@@ -428,7 +428,7 @@
 
         #endregion
 
-        private OpenTK.GLControl glControl1;
+        private OpenTK.GLControl glControlThesis3D;
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.CheckBox checkBox2;
         private System.Windows.Forms.Label label1;
