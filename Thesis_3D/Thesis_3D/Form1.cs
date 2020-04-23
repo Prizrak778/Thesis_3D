@@ -827,7 +827,7 @@ namespace Thesis_3D
                         _renderObjects.Add(new RenderObject(figure_vertex, colorcube, RandomColor()));
                     }
                 }
-                else if (comboBox.Text == "Сфера")
+                else if (comboBox.Text == "Плоскость")
                 {
                     dlgNewAnFigure = new Form()
                     {
