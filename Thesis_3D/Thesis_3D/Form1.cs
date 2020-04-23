@@ -881,5 +881,136 @@ namespace Thesis_3D
                 }
             }
         }
+        public class DataCoordElem
+        {
+            public double X { get; set; }
+            public double Y { get; set; }
+            public double Z { get; set; }
+        }
+        public class DataFinitElem
+        {
+            public int first { get; set; }
+            public int second { get; set; }
+            public int third { get; set; }
+        }
+
+        private void buttonNewFigureFile_Click(object sender, EventArgs e)
+        {
+            List<DataCoordElem> list_coord = new List<DataCoordElem>();
+            List<DataFinitElem> list_finit_elem = new List<DataFinitElem>();
+            Form dlgNewFigureFile = new Form()
+            {
+                Text = "Считать из файла",
+                Width = 350,
+                Height = 160,
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                StartPosition = FormStartPosition.CenterScreen
+            };
+            Label label_coord = new Label() { Text = "Координаты", Left = 10, Width = 60, Top = 30 };
+            TextBox textBox_finit_elem = new TextBox { Text = "", Left = 100, Width = 120, Top = 60 };
+            TextBox textBox_coord_file = new TextBox { Text = "", Left = 100, Width = 120, Top = 30 };
+            Label label_finit_elem = new Label() { Text = "Элементы", Left = 10, Width = 60, Top = 60 };
+            OpenFileDialog file_coord = new OpenFileDialog();
+            file_coord.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+            OpenFileDialog file_finit_elem = new OpenFileDialog();
+            file_finit_elem.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+            Button file_coord_open = new Button() { Text = "Открыть файл", Left = 230, Width = 100, Top = 30 };
+            Color4 color_surface = Color4.White;
+            ColorDialog colorDialog = new ColorDialog();
+            Button button_color = new Button() { Text = "", Left = 30, Width = 60, Top = 90, BackColor = (System.Drawing.Color)color_surface };
+            Button button_ok = new Button() { Text = "Ok", Left = 230, Width = 60, Top = 90, DialogResult = DialogResult.OK };
+            Button file_finit_elem_open = new Button() { Text = "Открыть файл", Left = 230, Width = 100, Top = 60 };
+            file_coord_open.Click += (sender1, e1) => { file_coord.ShowDialog(); };
+            button_color.Click += (sender1, e1) => { if (colorDialog.ShowDialog() == DialogResult.OK) { button_color.BackColor = colorDialog.Color; color_surface = colorDialog.Color; } };
+            file_coord.FileOk += (sender1, e1) => { textBox_coord_file.Text = file_coord.FileName; };
+            file_finit_elem.FileOk += (sender1, e1) => { textBox_finit_elem.Text = file_finit_elem.FileName; };
+            file_finit_elem_open.Click += (sender1, e1) => { file_finit_elem.ShowDialog(); };
+            dlgNewFigureFile.Controls.Add(button_color);
+            dlgNewFigureFile.Controls.Add(label_coord);
+            dlgNewFigureFile.Controls.Add(textBox_coord_file);
+            dlgNewFigureFile.Controls.Add(textBox_finit_elem);
+            dlgNewFigureFile.Controls.Add(label_finit_elem);
+            dlgNewFigureFile.Controls.Add(file_coord_open);
+            dlgNewFigureFile.Controls.Add(file_finit_elem_open);
+            dlgNewFigureFile.Controls.Add(button_ok);
+            //textBox_coord_file.Text = "coord_default.txt";
+            //textBox_finit_elem.Text = "finit_default.txt";
+            if (dlgNewFigureFile.ShowDialog() == DialogResult.OK && textBox_coord_file.Text != "" && textBox_finit_elem.Text != "")
+            {
+                string file_content = string.Empty;
+                StreamReader reader_coord = new StreamReader(textBox_coord_file.Text);
+
+                bool error_flag = false;
+                while ((file_content = reader_coord.ReadLine()) != null && !error_flag)
+                {
+                    string[] x_y_z_coord = file_content.Split(' ');
+                    if (x_y_z_coord.Length == 3)
+                    {
+                        DataCoordElem dataCoord = new DataCoordElem();
+                        dataCoord.X = double.Parse(x_y_z_coord[0]);
+                        dataCoord.Y = double.Parse(x_y_z_coord[1]);
+                        dataCoord.Z = double.Parse(x_y_z_coord[2]);
+                        list_coord.Add(dataCoord);
+                    }
+                    else
+                    {
+                        error_flag = true;
+                    }
+                }
+                reader_coord = new StreamReader(textBox_finit_elem.Text);
+                file_content = string.Empty;
+
+                while ((file_content = reader_coord.ReadLine()) != null && !error_flag)
+                {
+                    string[] finit_elem = file_content.Split(' ');
+                    if (finit_elem.Length == 3)
+                    {
+                        DataFinitElem data_temp = new DataFinitElem();
+                        data_temp.first = int.Parse(finit_elem[0]);
+                        data_temp.second = int.Parse(finit_elem[1]);
+                        data_temp.third = int.Parse(finit_elem[2]);
+                        list_finit_elem.Add(data_temp);
+                    }
+                    else
+                    {
+                        error_flag = true;
+                    }
+                }
+                if (!error_flag)
+                {
+                    Vertex[] figure_vertex = new Vertex[list_finit_elem.Count * 3];
+                    Vertex[] figure_vertex_contur = new Vertex[list_finit_elem.Count * 3];
+                    int col = 0;
+                    foreach (DataFinitElem fin in list_finit_elem)
+                    {
+                        Vector4 norm_vec = new Vector4();
+                        norm_vec.X = (float)(list_coord[fin.first].Y * list_coord[fin.third].Z - list_coord[fin.second].Y * list_coord[fin.third].Z - list_coord[fin.first].Y * list_coord[fin.second].Z - list_coord[fin.first].Z * list_coord[fin.third].Y + list_coord[fin.second].Z * list_coord[fin.third].Y + list_coord[fin.first].Z * list_coord[fin.second].Y);
+                        norm_vec.Y = (float)(list_coord[fin.first].Z * list_coord[fin.third].X - list_coord[fin.second].Z * list_coord[fin.third].X - list_coord[fin.first].Z * list_coord[fin.second].X - list_coord[fin.first].X * list_coord[fin.third].Z + list_coord[fin.second].X * list_coord[fin.third].Z + list_coord[fin.first].X * list_coord[fin.second].Z);
+                        norm_vec.Z = (float)(list_coord[fin.first].X * list_coord[fin.third].Y - list_coord[fin.second].X * list_coord[fin.third].Y - list_coord[fin.first].X * list_coord[fin.second].Y - list_coord[fin.first].Y * list_coord[fin.third].X + list_coord[fin.second].Y * list_coord[fin.third].X + list_coord[fin.first].Y * list_coord[fin.second].X);
+                        norm_vec.W = 0.0f;
+                        float len = Math.Abs(norm_vec.X) + Math.Abs(norm_vec.Y) + Math.Abs(norm_vec.Z);
+                        norm_vec.X = norm_vec.X / len;
+                        norm_vec.Y = norm_vec.Y / len;
+                        norm_vec.Z = norm_vec.Z / len;
+                        figure_vertex[col] = new Vertex(new Vector4((float)list_coord[fin.first].X, (float)list_coord[fin.first].Y, (float)list_coord[fin.first].Z, 1.0f), new Vector4(norm_vec.X, norm_vec.Y, norm_vec.Z, 0.0f), new Vector2(0, 0));
+                        figure_vertex[col + 1] = new Vertex(new Vector4((float)list_coord[fin.second].X, (float)list_coord[fin.second].Y, (float)list_coord[fin.second].Z, 1.0f), new Vector4(norm_vec.X, norm_vec.Y, norm_vec.Z, 0.0f), new Vector2(0, 0));
+                        figure_vertex[col + 2] = new Vertex(new Vector4((float)list_coord[fin.third].X, (float)list_coord[fin.third].Y, (float)list_coord[fin.third].Z, 1.0f), new Vector4(norm_vec.X, norm_vec.Y, norm_vec.Z, 0.0f), new Vector2(0, 0));
+                        figure_vertex_contur[col] = new Vertex(new Vector4((float)list_coord[fin.first].X, (float)list_coord[fin.first].Y, (float)list_coord[fin.first].Z, 1.0f), new Vector4(norm_vec.X, norm_vec.Y, norm_vec.Z, 0.0f), new Vector2(0, 0));
+                        figure_vertex_contur[col + 1] = new Vertex(new Vector4((float)list_coord[fin.second].X, (float)list_coord[fin.second].Y, (float)list_coord[fin.second].Z, 1.0f), new Vector4(norm_vec.X, norm_vec.Y, norm_vec.Z, 0.0f), new Vector2(0, 0));
+                        figure_vertex_contur[col + 2] = new Vertex(new Vector4((float)list_coord[fin.third].X, (float)list_coord[fin.third].Y, (float)list_coord[fin.third].Z, 1.0f), new Vector4(norm_vec.X, norm_vec.Y, norm_vec.Z, 0.0f), new Vector2(0, 0));
+                        col += 3;
+                    }
+                    _renderObjects.Add(new RenderObject(figure_vertex, color_surface, RandomColor()));
+                }
+                else
+                {
+                    MessageBox.Show("Ошибка во формате входных данных", "Ошибка");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Не были выбраны файлы", "Ошибка");
+            }
+        }
     }
 }

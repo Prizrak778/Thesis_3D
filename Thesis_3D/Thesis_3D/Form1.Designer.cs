@@ -56,6 +56,7 @@
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.buttonNewAnFigure = new System.Windows.Forms.Button();
+            this.buttonNewFigureFile = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -353,19 +354,30 @@
             // buttonNewAnFigure
             // 
             this.buttonNewAnFigure.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonNewAnFigure.Location = new System.Drawing.Point(738, 409);
+            this.buttonNewAnFigure.Location = new System.Drawing.Point(737, 409);
             this.buttonNewAnFigure.Name = "buttonNewAnFigure";
-            this.buttonNewAnFigure.Size = new System.Drawing.Size(187, 23);
+            this.buttonNewAnFigure.Size = new System.Drawing.Size(189, 23);
             this.buttonNewAnFigure.TabIndex = 10;
             this.buttonNewAnFigure.Text = "Новая фигура(аналитическая)";
             this.buttonNewAnFigure.UseVisualStyleBackColor = true;
             this.buttonNewAnFigure.Click += new System.EventHandler(this.buttonNewAnFigure_Click);
+            // 
+            // buttonNewFigureFile
+            // 
+            this.buttonNewFigureFile.Location = new System.Drawing.Point(738, 439);
+            this.buttonNewFigureFile.Name = "buttonNewFigureFile";
+            this.buttonNewFigureFile.Size = new System.Drawing.Size(188, 23);
+            this.buttonNewFigureFile.TabIndex = 11;
+            this.buttonNewFigureFile.Text = "Новая фигура(из файла)";
+            this.buttonNewFigureFile.UseVisualStyleBackColor = true;
+            this.buttonNewFigureFile.Click += new System.EventHandler(this.buttonNewFigureFile_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(938, 565);
+            this.Controls.Add(this.buttonNewFigureFile);
             this.Controls.Add(this.buttonNewAnFigure);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
@@ -418,6 +430,7 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Button buttonNewAnFigure;
+        private System.Windows.Forms.Button buttonNewFigureFile;
     }
 }
 
