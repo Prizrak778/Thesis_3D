@@ -1043,6 +1043,13 @@ namespace Thesis_3D
                     FormBorderStyle = FormBorderStyle.Sizable,
                     StartPosition = FormStartPosition.CenterScreen,
                 };
+                Label lblCoords = new Label() { Text = "Смещение по осям", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 120, Height = 30, Top = 470, Left = 190 };
+                Label lblCoordX = new Label() { Text = "X:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 468, Left = 315 };
+                Label lblCoordY = new Label() { Text = "Y:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 468, Left = 375 };
+                Label lblCoordZ = new Label() { Text = "Z:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 468, Left = 435 };
+                TextBox textBoxCoordX = new TextBox() { Text = "0", Multiline = false, Width = 40, Height = 30, Top = 465, Left = 335, Anchor = AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom, ScrollBars = ScrollBars.Vertical };
+                TextBox textBoxCoordY = new TextBox() { Text = "0", Multiline = false, Width = 40, Height = 30, Top = 465, Left = 395, Anchor = AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom, ScrollBars = ScrollBars.Vertical };
+                TextBox textBoxCoordZ = new TextBox() { Text = "0", Multiline = false, Width = 40, Height = 30, Top = 465, Left = 455, Anchor = AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom, ScrollBars = ScrollBars.Vertical };
                 Color4 colorSurface = new Color4();
                 colorSurface.R = _renderObjects[_SelectID].Color_obj.X;
                 colorSurface.G = _renderObjects[_SelectID].Color_obj.Y;
@@ -1125,6 +1132,14 @@ namespace Thesis_3D
                 dlgChangeFigure.Controls.Add(lblTrackBar);
                 dlgChangeFigure.Controls.Add(buttonColor);
                 dlgChangeFigure.Controls.Add(lblButtonColor);
+                dlgChangeFigure.Controls.Add(lblCoords);
+                dlgChangeFigure.Controls.Add(lblCoordX);
+                dlgChangeFigure.Controls.Add(lblCoordY);
+                dlgChangeFigure.Controls.Add(lblCoordZ);
+                dlgChangeFigure.Controls.Add(textBoxCoordX);
+                dlgChangeFigure.Controls.Add(textBoxCoordY);
+                dlgChangeFigure.Controls.Add(textBoxCoordZ);
+
                 saveFileCoord.FileOk += (senderCoord, eCoord) =>
                 {
                     if (saveFileCoord.FileName.Length != 0)
@@ -1215,6 +1230,16 @@ namespace Thesis_3D
                     _renderObjects[_SelectID].Color_obj.Y = colorSurface.G;
                     _renderObjects[_SelectID].Color_obj.Z = colorSurface.B;
                     _renderObjects[_SelectID].Color_obj.W = trackBar.Value / 10f;
+                    _renderObjects[_SelectID].changeModelMstrix(new Vector3(float.Parse(textBoxCoordX.Text), float.Parse(textBoxCoordY.Text), float.Parse(textBoxCoordZ.Text)));
+                    if (_renderObjects[_SelectID].TypeObject == TypeObjectRender.LightSourceObject)
+                    {
+                        var lightObject = _lightObjects.Where(x => x.Color_choice == _renderObjects[_SelectID].Color_choice).FirstOrDefault();
+                        if(lightObject != null)
+                        {
+                            lightObject.SetPositionLight(_renderObjects[_SelectID].ModelMatrix);
+                            if (_program_Fong_directed != -1 && lightObject.uboLightInfo != -1) lightObject.UpdatePositionForBlock(_program_Fong_directed);
+                        }
+                    }
                 }
             }
             else
