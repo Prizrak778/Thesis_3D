@@ -35,5 +35,5 @@ void main(void)
     if(sDotN > 0.0)
 		spec = Ls*Ks*pow(max(dot(r, v), 0.0), Shininess);
     gl_Position = view * modelView * vec_position;
-    vs_color = vec4(vec3(ambient + diffuse + spec), 0.0);
+    vs_color = vec4(vec3(ambient + diffuse + spec), 1.0);
 }

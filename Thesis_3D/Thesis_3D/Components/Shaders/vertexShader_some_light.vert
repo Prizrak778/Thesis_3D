@@ -37,7 +37,7 @@ vec4 phongModel(int indexLight, vec4 position, vec3 norm)
 	if(sDotN > 0.0)
 		spec = LightIntensityt[indexLight]*Ks*pow(max(dot(r, v), 0.0), Shininess);
 		
-	return vec4(vec3(ambient + diffuse + spec), 0.0);
+	return vec4(vec3(ambient + diffuse + spec), 1.0);
 }
 
 void main(void)

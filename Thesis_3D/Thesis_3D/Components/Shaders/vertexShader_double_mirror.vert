@@ -40,7 +40,7 @@ void phongModel(vec4 position, vec3 norm, out vec4 color_temp)
 	if(sDotN > 0.0)
 		spec = Ls*Ks*pow(max(dot(r, v), 0.0), Shininess);
 		
-	color_temp = vec4(vec3(ambient + diffuse + spec), 0.0);
+	color_temp = vec4(vec3(ambient + diffuse + spec), 1.0);
 }
 
 void main(void)

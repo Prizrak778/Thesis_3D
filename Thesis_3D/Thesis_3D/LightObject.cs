@@ -20,7 +20,7 @@ namespace Thesis_3D
     class LightObject : RenderObject
     {
         public int uboLightInfo = -1;
-        public int blockSizeLightInfo = -1;
+        public int blockSizeLightInfo = -1; 
         public Vector3 Position;
         public Vector3 Angel_speed;
         public Vector4 Attribute;
@@ -78,7 +78,7 @@ namespace Thesis_3D
             GL.UniformMatrix4(location, false, ref modelview);
         }
 
-        public void IntensityLightUniform(int location)
+        public void IntensityLightVectorUniform(int location)
         {
             GL.Uniform3(location, AmbientIntensity);
         }

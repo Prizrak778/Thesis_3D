@@ -26,7 +26,7 @@ void main(void)
 	vec3 Ld = vec3(1.0, 1.0, 1.0);
 	vec3 La = vec3(0.0, 0.15, 0.0);
 	vec3 Ls = vec3(1.0, 1.0, 1.0);
-	float Shininess = 16.0;
+	float Shininess = 32.0;
 	
 	vec3 tnorm;
 	vec4 eyeCoords;
@@ -46,5 +46,5 @@ void main(void)
 	
 	
 	gl_Position = view * modelView * vec_position;
-	vs_color = vec4(vec3(ambient + diffuse + spec), 0.0);
+	vs_color = vec4(vec3(ambient + diffuse + spec), 1.0);
 }

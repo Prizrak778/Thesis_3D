@@ -39,6 +39,7 @@ namespace Thesis_3D
         private int ssbo; //Буффер для плоских теней
         private int _verticeCount;
         private PolygonMode _polygon;
+        private Vector4 diffusion = Vector4.One;
         public TypeObjectRender TypeObject = TypeObjectRender.SimpleObject;
         public Matrix4 ModelMatrix = Matrix4.CreateTranslation(0, 0, 0);
         public Vector4 Color_obj; //Цвет объекта
@@ -176,7 +177,7 @@ namespace Thesis_3D
         }
         public void ReadBuffer(Vertex[] vertices)
         {
-            GL.GetNamedBufferSubData(_buffer, System.IntPtr.Zero, Vertex.Size * BufferSize(), vertices);
+            GL.GetNamedBufferSubData(_buffer, IntPtr.Zero, Vertex.Size * BufferSize(), vertices);
         }
         public void WriteBuffer(Vertex[] vertices)
         {
@@ -224,6 +225,19 @@ namespace Thesis_3D
 
             _initialized = true;
             GL.VertexArrayVertexBuffer(_vertexArray, 0, _buffer, IntPtr.Zero, Vertex.Size);
+        }
+        public Vector4 getDiffusion()
+        {
+            return diffusion;
+        }
+
+        public void setDiffusion(Vector4 value)
+        {
+            diffusion = new Vector4(Math.Abs(value.X * 10) / 10, Math.Abs(value.Y * 10) / 10, Math.Abs(value.Z * 10) / 10, 1f);
+        }
+        public void diffusionUnifrom(int location)
+        {
+            GL.Uniform4(location, diffusion);
         }
     }
 }

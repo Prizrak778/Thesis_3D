@@ -279,11 +279,11 @@ namespace Thesis_3D
                 _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f, 1, -(float)i + 2.0f, 0.0f), Color4.LightCoral, RandomColor()));
             }
             Vector3 positionLight = new Vector3(1.0f, 3.0f, 1.0f);
-            _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f, positionLight.X, positionLight.Y, positionLight.Z), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(0.2f, -1f, -0.3f), new Vector3(0.3f, 0.3f, 0.0f), new Vector3(1.0f, 0.0f, 5f), _program_Fong_directed));
+            _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f, positionLight.X, positionLight.Y, positionLight.Z), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(0.2f, 1f, 0.3f), new Vector3(0.3f, 0.3f, 0.0f), new Vector3(1.0f, 0.0f, 5f), _program_Fong_directed));
             positionLight = new Vector3(4.0f, 3.0f, 1.0f);
-            _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f, positionLight.X, positionLight.Y, positionLight.Z), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(0.2f, -1f, -0.3f), new Vector3(0.0f, 0.3f, 0.3f), new Vector3(1.0f, 0.0f, 5f)));
+            _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f, positionLight.X, positionLight.Y, positionLight.Z), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(0.2f, 1f, 0.3f), new Vector3(0.0f, 0.3f, 0.3f), new Vector3(1.0f, 0.0f, 5f)));
             positionLight = new Vector3(7.0f, 3.0f, 1.0f);
-            _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f, positionLight.X, positionLight.Y, positionLight.Z), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(0.2f, -1f, -0.3f), new Vector3(0.3f, 0.0f, 0.3f), new Vector3(1.0f, 0.0f, 5f)));
+            _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f, positionLight.X, positionLight.Y, positionLight.Z), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(0.2f, 1f, 0.3f), new Vector3(0.3f, 0.0f, 0.3f), new Vector3(1.0f, 0.0f, 5f)));
             foreach (var obj in _lightObjects)
             {
                 _renderObjects.Add(obj);
@@ -327,7 +327,7 @@ namespace Thesis_3D
             glControl_Resize(glControlThesis3D, EventArgs.Empty);
             GL.Enable(EnableCap.AlphaTest);
             GL.Enable(EnableCap.Blend);
-            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+            GL.BlendFunc(BlendingFactor.DstAlpha, BlendingFactor.OneMinusSrcAlpha);
             GL.Enable(EnableCap.DepthTest);
             GL.Disable(EnableCap.CullFace);
             GL.PatchParameter(PatchParameterInt.PatchVertices, 3);
@@ -588,7 +588,7 @@ namespace Thesis_3D
                     foreach (var light in _lightObjects.Cast<LightObject>().Select((r, i) => new { Row = r, Index = i }))
                     {
                         light.Row.PositionLightUniform(16 + light.Index);
-                        light.Row.IntensityLightUniform(13 + light.Index);
+                        light.Row.IntensityLightVectorUniform(13 + light.Index);
                     }
                 }
                 else if(_program == _program_Fong_fog && countLightObj > 0)
@@ -602,7 +602,12 @@ namespace Thesis_3D
                 }
                 else
                 {
-                    if (countLightObj > 0) _lightObjects[0].PositionLightUniform(18);
+                    if (countLightObj > 0)
+                    {
+                        _lightObjects[0].PositionLightUniform(18);
+                        _lightObjects[0].IntensityLightVectorUniform(24);
+                        renderObject.diffusionUnifrom(25);
+                    }
                 }
                 renderObject.Render();
             }
@@ -855,13 +860,13 @@ namespace Thesis_3D
                         FormBorderStyle = FormBorderStyle.FixedDialog,
                         StartPosition = FormStartPosition.CenterScreen
                     };
-                    Label label_side = new Label() { Text = "Расстояние от центра то границы", Left = 10, Width = 190, Top = 30 };
-                    Label label_shift_lr = new Label() { Text = "Смещение по x", Left = 10, Width = 190, Top = 60 };
-                    Label label_shift_y =  new Label() { Text = "Смещение по y", Left = 10, Width = 190, Top = 90 };
-                    Label label_shift_ud = new Label() { Text = "Смещение по z", Left = 10, Width = 190, Top = 120 };
-                    Label label_angle_x = new Label() { Text = "Угол поворота по оси x", Left = 10, Width = 180, Top = 150 };
-                    Label label_angle_y = new Label() { Text = "Угол поворота по оси y", Left = 10, Width = 180, Top = 180 };
-                    Label label_angle_z = new Label() { Text = "Угол поворота по оси z", Left = 10, Width = 180, Top = 210 };
+                    Label labelSide = new Label() { Text = "Расстояние от центра то границы", Left = 10, Width = 190, Top = 30 };
+                    Label labelShift_lr = new Label() { Text = "Смещение по x", Left = 10, Width = 190, Top = 60 };
+                    Label labelShift_y =  new Label() { Text = "Смещение по y", Left = 10, Width = 190, Top = 90 };
+                    Label labelShift_ud = new Label() { Text = "Смещение по z", Left = 10, Width = 190, Top = 120 };
+                    Label labelAngle_x = new Label() { Text = "Угол поворота по оси x", Left = 10, Width = 180, Top = 150 };
+                    Label labelAngle_y = new Label() { Text = "Угол поворота по оси y", Left = 10, Width = 180, Top = 180 };
+                    Label labelAngle_z = new Label() { Text = "Угол поворота по оси z", Left = 10, Width = 180, Top = 210 };
                     TextBox textBoxSide = new TextBox() { Text = "0", Left = 200, Width = 100, Top = 30 };
                     TextBox textBoxShift_lr = new TextBox() { Text = "0", Left = 200, Width = 100, Top = 60 };
                     TextBox textBoxShift_y = new TextBox() { Text = "0", Left = 200, Width = 100, Top = 90 };
@@ -871,13 +876,13 @@ namespace Thesis_3D
                     NumericUpDown textBoxAngleZ = new NumericUpDown() { Value = 0, Minimum = -360, Maximum = 360, Left = 200, Width = 100, Top = 210 };
                     Button confirmation_new = new Button() { Text = "Ok", Left = 150, Width = 100, Top = 270, DialogResult = DialogResult.OK };
                     ColorDialog colorDialog = new ColorDialog();
-                    dlgNewAnFigure.Controls.Add(label_side);
-                    dlgNewAnFigure.Controls.Add(label_shift_lr);
-                    dlgNewAnFigure.Controls.Add(label_shift_y);
-                    dlgNewAnFigure.Controls.Add(label_shift_ud);
-                    dlgNewAnFigure.Controls.Add(label_angle_x);
-                    dlgNewAnFigure.Controls.Add(label_angle_y);
-                    dlgNewAnFigure.Controls.Add(label_angle_z);
+                    dlgNewAnFigure.Controls.Add(labelSide);
+                    dlgNewAnFigure.Controls.Add(labelShift_lr);
+                    dlgNewAnFigure.Controls.Add(labelShift_y);
+                    dlgNewAnFigure.Controls.Add(labelShift_ud);
+                    dlgNewAnFigure.Controls.Add(labelAngle_x);
+                    dlgNewAnFigure.Controls.Add(labelAngle_y);
+                    dlgNewAnFigure.Controls.Add(labelAngle_z);
                     dlgNewAnFigure.Controls.Add(textBoxSide);
                     dlgNewAnFigure.Controls.Add(textBoxShift_lr);
                     dlgNewAnFigure.Controls.Add(textBoxShift_y);
@@ -1035,6 +1040,7 @@ namespace Thesis_3D
             {
                 Vertex[] vertexObject = new Vertex[_renderObjects[_SelectID].BufferSize()];
                 _renderObjects[_SelectID].ReadBuffer(vertexObject);
+                Vector4 diff = _renderObjects[_SelectID].getDiffusion();
                 Form dlgChangeFigure = new Form()
                 {
                     Text = "Изменение объекта",
@@ -1043,28 +1049,35 @@ namespace Thesis_3D
                     FormBorderStyle = FormBorderStyle.Sizable,
                     StartPosition = FormStartPosition.CenterScreen,
                 };
-                Label lblCoords = new Label() { Text = "Смещение по осям", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 120, Height = 30, Top = 470, Left = 190 };
-                Label lblCoordX = new Label() { Text = "X:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 468, Left = 315 };
-                Label lblCoordY = new Label() { Text = "Y:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 468, Left = 375 };
-                Label lblCoordZ = new Label() { Text = "Z:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 468, Left = 435 };
-                TextBox textBoxCoordX = new TextBox() { Text = "0", Multiline = false, Width = 40, Height = 30, Top = 465, Left = 335, Anchor = AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom, ScrollBars = ScrollBars.Vertical };
-                TextBox textBoxCoordY = new TextBox() { Text = "0", Multiline = false, Width = 40, Height = 30, Top = 465, Left = 395, Anchor = AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom, ScrollBars = ScrollBars.Vertical };
-                TextBox textBoxCoordZ = new TextBox() { Text = "0", Multiline = false, Width = 40, Height = 30, Top = 465, Left = 455, Anchor = AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom, ScrollBars = ScrollBars.Vertical };
+                Label lblCoords = new Label() { Text = "Смещение по осям:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 120, Height = 30, Top = 423, Left = 190 };
+                Label lblCoordX = new Label() { Text = "X:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 423, Left = 315 };
+                Label lblCoordY = new Label() { Text = "Y:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 423, Left = 375 };
+                Label lblCoordZ = new Label() { Text = "Z:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 423, Left = 435 };
+                TextBox textBoxCoordX = new TextBox() { Text = "0", Width = 40, Height = 30, Top = 420, Left = 335, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
+                TextBox textBoxCoordY = new TextBox() { Text = "0", Width = 40, Height = 30, Top = 420, Left = 395, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
+                TextBox textBoxCoordZ = new TextBox() { Text = "0", Width = 40, Height = 30, Top = 420, Left = 455, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
+                Label lblDiffs = new Label() { Text = "Коэффициенты рассеивание:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 120, Height = 30, Top = 380, Left = 190 };
+                Label lblDiffR = new Label() { Text = "R:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 382, Left = 315 };
+                Label lblDiffG = new Label() { Text = "G:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 382, Left = 375 };
+                Label lblDiffB = new Label() { Text = "B:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 382, Left = 435 };
+                TextBox textBoxDiffR = new TextBox() { Text = diff.X.ToString(), Width = 40, Height = 30, Top = 380, Left = 335, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
+                TextBox textBoxDiffG = new TextBox() { Text = diff.Y.ToString(), Width = 40, Height = 30, Top = 380, Left = 395, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
+                TextBox textBoxDiffB = new TextBox() { Text = diff.Z.ToString(), Width = 40, Height = 30, Top = 380, Left = 455, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
                 Color4 colorSurface = new Color4();
                 colorSurface.R = _renderObjects[_SelectID].Color_obj.X;
                 colorSurface.G = _renderObjects[_SelectID].Color_obj.Y;
                 colorSurface.B = _renderObjects[_SelectID].Color_obj.Z;
                 colorSurface.A = _renderObjects[_SelectID].Color_obj.W;
                 ColorDialog colorDialog = new ColorDialog();
-                Label lblButtonColor = new Label() { Text = "Цвет объекта", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 170, Height = 30, Top = 470, Left = 20 };
-                Button buttonColor = new Button() { Text = "", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 70, Height = 30, Top = 462, Left = 100, BackColor = (System.Drawing.Color)colorSurface };
+                Label lblButtonColor = new Label() { Text = "Цвет объекта:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 170, Height = 30, Top = 423, Left = 20 };
+                Button buttonColor = new Button() { Text = "", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 70, Height = 30, Top = 415, Left = 100, BackColor = (System.Drawing.Color)colorSurface };
                 buttonColor.Click += (sender1, e1) => { if (colorDialog.ShowDialog() == DialogResult.OK) { colorSurface = buttonColor.BackColor = colorDialog.Color; } };
-                Label lblTrackBar = new Label() { Text = "Прозрачность объекта", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 170, Height = 30, Top = 415, Left = 20 };
-                TrackBar trackBar = new TrackBar() { Value = (int)(_renderObjects[_SelectID].Color_obj.W * 10f), Minimum = 0, Maximum = 10, Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 170, Height = 10, Top = 415, Left = 150 };
+                Label lblTrackBar = new Label() { Text = "Прозрачность объекта:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 170, Height = 30, Top = 470, Left = 20 };
+                TrackBar trackBar = new TrackBar() { Value = (int)(_renderObjects[_SelectID].Color_obj.W * 10f), Minimum = 0, Maximum = 10, Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 170, Height = 10, Top = 470, Left = 150 };
                 CheckBox checkBox = new CheckBox() { Checked = false, Text = "Изменить структуру фигуры", Width = 170, Height = 30, Top = 375, Left = 20, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
                 TextBox textBoxChangeCoord = new TextBox() { Enabled = false, Multiline = true, Width = 250, Height = 350, Top = 10, Left = 10, Anchor = AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom, ScrollBars = ScrollBars.Vertical };
                 TextBox textBoxChangeFinit = new TextBox() { Enabled = false, Multiline = true, Width = 250, Height = 350, Top = 10, Left = 10, Anchor = AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom, ScrollBars = ScrollBars.Vertical };
-                SplitContainer splitterText = new SplitContainer() { Width = 540, Height = 400, Left = 10, Top = 10, Anchor = AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom, SplitterDistance = 260 };
+                SplitContainer splitterText = new SplitContainer() { Width = 540, Height = 360, Left = 10, Top = 10, Anchor = AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom, SplitterDistance = 260 };
                 Button buttonSave = new Button() { Text = "Save", Top = 20, Left = 550, Width = 100, Height = 25, Anchor = AnchorStyles.Top | AnchorStyles.Right };
                 SaveFileDialog saveFileCoord = new SaveFileDialog();
                 SaveFileDialog saveFileFinit = new SaveFileDialog();
@@ -1125,6 +1138,13 @@ namespace Thesis_3D
                 splitterText.Panel1.Controls.Add(textBoxChangeCoord);
                 splitterText.Panel2.Controls.Add(textBoxChangeFinit);
                 dlgChangeFigure.Controls.Add(checkBox);
+                dlgChangeFigure.Controls.Add(lblDiffs);
+                dlgChangeFigure.Controls.Add(lblDiffR);
+                dlgChangeFigure.Controls.Add(lblDiffG);
+                dlgChangeFigure.Controls.Add(lblDiffB);
+                dlgChangeFigure.Controls.Add(textBoxDiffR);
+                dlgChangeFigure.Controls.Add(textBoxDiffG);
+                dlgChangeFigure.Controls.Add(textBoxDiffB);
                 dlgChangeFigure.Controls.Add(splitterText);
                 dlgChangeFigure.Controls.Add(button_ok);
                 dlgChangeFigure.Controls.Add(buttonSave); 
@@ -1226,10 +1246,8 @@ namespace Thesis_3D
                             MessageBox.Show("Ошибка во формате входных данных", "Ошибка");
                         }
                     }
-                    _renderObjects[_SelectID].Color_obj.X = colorSurface.R;
-                    _renderObjects[_SelectID].Color_obj.Y = colorSurface.G;
-                    _renderObjects[_SelectID].Color_obj.Z = colorSurface.B;
-                    _renderObjects[_SelectID].Color_obj.W = trackBar.Value / 10f;
+                    _renderObjects[_SelectID].setDiffusion(new Vector4(float.Parse(textBoxDiffR.Text), float.Parse(textBoxDiffG.Text), float.Parse(textBoxDiffB.Text), 1.0f));
+                    _renderObjects[_SelectID].Color_obj = new Vector4(colorSurface.R, colorSurface.G, colorSurface.B, trackBar.Value / 10f);
                     _renderObjects[_SelectID].changeModelMstrix(new Vector3(float.Parse(textBoxCoordX.Text), float.Parse(textBoxCoordY.Text), float.Parse(textBoxCoordZ.Text)));
                     if (_renderObjects[_SelectID].TypeObject == TypeObjectRender.LightSourceObject)
                     {

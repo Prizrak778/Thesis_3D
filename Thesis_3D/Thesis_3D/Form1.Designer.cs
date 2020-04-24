@@ -64,14 +64,14 @@
             this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
-            // glControl1
+            // glControlThesis3D
             // 
             this.glControlThesis3D.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.glControlThesis3D.BackColor = System.Drawing.Color.Black;
             this.glControlThesis3D.Location = new System.Drawing.Point(12, 12);
-            this.glControlThesis3D.Name = "glControl1";
+            this.glControlThesis3D.Name = "glControlThesis3D";
             this.glControlThesis3D.Size = new System.Drawing.Size(733, 563);
             this.glControlThesis3D.TabIndex = 0;
             this.glControlThesis3D.VSync = false;
@@ -388,6 +388,7 @@
             // 
             // buttonRemoveFigure
             // 
+            this.buttonRemoveFigure.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonRemoveFigure.Location = new System.Drawing.Point(751, 498);
             this.buttonRemoveFigure.Name = "buttonRemoveFigure";
             this.buttonRemoveFigure.Size = new System.Drawing.Size(189, 23);
