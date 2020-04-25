@@ -77,10 +77,13 @@ namespace Thesis_3D
                 );
             GL.UniformMatrix4(location, false, ref modelview);
         }
-
         public void IntensityLightVectorUniform(int location)
         {
             GL.Uniform3(location, AmbientIntensity);
+        }
+        public void lighVecNormalizedUniform(int location)
+        {
+            GL.Uniform3(location, LightVecNormalized);
         }
         private void InitBufferForBlock(int program)
         {

@@ -279,11 +279,11 @@ namespace Thesis_3D
                 _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f, 1, -(float)i + 2.0f, 0.0f), Color4.LightCoral, RandomColor()));
             }
             Vector3 positionLight = new Vector3(1.0f, 3.0f, 1.0f);
-            _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f, positionLight.X, positionLight.Y, positionLight.Z), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(0.2f, 1f, 0.3f), new Vector3(0.3f, 0.3f, 0.0f), new Vector3(1.0f, 0.0f, 5f), _program_Fong_directed));
-            positionLight = new Vector3(4.0f, 3.0f, 1.0f);
-            _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f, positionLight.X, positionLight.Y, positionLight.Z), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(0.2f, 1f, 0.3f), new Vector3(0.0f, 0.3f, 0.3f), new Vector3(1.0f, 0.0f, 5f)));
-            positionLight = new Vector3(7.0f, 3.0f, 1.0f);
-            _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f, positionLight.X, positionLight.Y, positionLight.Z), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(0.2f, 1f, 0.3f), new Vector3(0.3f, 0.0f, 0.3f), new Vector3(1.0f, 0.0f, 5f)));
+            _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f, positionLight.X, positionLight.Y, positionLight.Z), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.3f, 0.3f, 0.0f), new Vector3(1.0f, 0.0f, 5f), _program_Fong_directed));
+            positionLight = new Vector3(4.0f, 3.0f, 1.0f);                                                                                                                                                                                     
+            _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f, positionLight.X, positionLight.Y, positionLight.Z), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.0f, 0.3f, 0.3f), new Vector3(1.0f, 0.0f, 5f)));
+            positionLight = new Vector3(7.0f, 3.0f, 1.0f);                                                                                                                                                                                     
+            _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f, positionLight.X, positionLight.Y, positionLight.Z), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.3f, 0.0f, 0.3f), new Vector3(1.0f, 0.0f, 5f)));
             foreach (var obj in _lightObjects)
             {
                 _renderObjects.Add(obj);
@@ -933,12 +933,16 @@ namespace Thesis_3D
             TextBox textBoxFinitElem = new TextBox { Text = "", Left = 100, Width = 120, Top = 60 };
             TextBox textBoxCoordFile = new TextBox { Text = "", Left = 100, Width = 120, Top = 30 };
             Label lblFinitElem = new Label() { Text = "Элементы", Left = 10, Width = 60, Top = 60 };
-            OpenFileDialog fileDialogCoord = new OpenFileDialog();
-            fileDialogCoord.InitialDirectory = Application.ExecutablePath;
-            fileDialogCoord.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
-            OpenFileDialog fileDialogFinitElem = new OpenFileDialog();
-            fileDialogFinitElem.InitialDirectory = Application.ExecutablePath;
-            fileDialogFinitElem.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+            OpenFileDialog fileDialogCoord = new OpenFileDialog
+            {
+                InitialDirectory = Application.ExecutablePath,
+                Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*"
+            };
+            OpenFileDialog fileDialogFinitElem = new OpenFileDialog
+            {
+                InitialDirectory = Application.ExecutablePath,
+                Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*"
+            };
             Button buttonFileCoordOpen = new Button() { Text = "Открыть файл", Left = 230, Width = 100, Top = 30 };
             Color4 colorSurface = Color4.White;
             ColorDialog colorDialog = new ColorDialog();
@@ -1040,6 +1044,7 @@ namespace Thesis_3D
             {
                 Vertex[] vertexObject = new Vertex[_renderObjects[_SelectID].BufferSize()];
                 _renderObjects[_SelectID].ReadBuffer(vertexObject);
+                var typeObject = _renderObjects[_SelectID].TypeObject;
                 Vector4 diff = _renderObjects[_SelectID].getDiffusion();
                 Form dlgChangeFigure = new Form()
                 {
@@ -1056,7 +1061,7 @@ namespace Thesis_3D
                 TextBox textBoxCoordX = new TextBox() { Text = "0", Width = 40, Height = 30, Top = 420, Left = 335, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
                 TextBox textBoxCoordY = new TextBox() { Text = "0", Width = 40, Height = 30, Top = 420, Left = 395, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
                 TextBox textBoxCoordZ = new TextBox() { Text = "0", Width = 40, Height = 30, Top = 420, Left = 455, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
-                Label lblDiffs = new Label() { Text = "Коэффициенты рассеивание:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 120, Height = 30, Top = 380, Left = 190 };
+                Label lblDiffs = new Label() { Text = typeObject == TypeObjectRender.LightSourceObject? "Интенсивность освещения" : "Коэффициенты рассеивание:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 120, Height = 30, Top = 380, Left = 190 };
                 Label lblDiffR = new Label() { Text = "R:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 382, Left = 315 };
                 Label lblDiffG = new Label() { Text = "G:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 382, Left = 375 };
                 Label lblDiffB = new Label() { Text = "B:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 382, Left = 435 };
@@ -1246,18 +1251,19 @@ namespace Thesis_3D
                             MessageBox.Show("Ошибка во формате входных данных", "Ошибка");
                         }
                     }
-                    _renderObjects[_SelectID].setDiffusion(new Vector4(float.Parse(textBoxDiffR.Text), float.Parse(textBoxDiffG.Text), float.Parse(textBoxDiffB.Text), 1.0f));
                     _renderObjects[_SelectID].Color_obj = new Vector4(colorSurface.R, colorSurface.G, colorSurface.B, trackBar.Value / 10f);
                     _renderObjects[_SelectID].changeModelMstrix(new Vector3(float.Parse(textBoxCoordX.Text), float.Parse(textBoxCoordY.Text), float.Parse(textBoxCoordZ.Text)));
-                    if (_renderObjects[_SelectID].TypeObject == TypeObjectRender.LightSourceObject)
+                    if (typeObject == TypeObjectRender.LightSourceObject)
                     {
                         var lightObject = _lightObjects.Where(x => x.Color_choice == _renderObjects[_SelectID].Color_choice).FirstOrDefault();
-                        if(lightObject != null)
+                        lightObject.AmbientIntensity = new Vector3(float.Parse(textBoxDiffR.Text), float.Parse(textBoxDiffG.Text), float.Parse(textBoxDiffB.Text));
+                        if (lightObject != null)
                         {
                             lightObject.SetPositionLight(_renderObjects[_SelectID].ModelMatrix);
                             if (_program_Fong_directed != -1 && lightObject.uboLightInfo != -1) lightObject.UpdatePositionForBlock(_program_Fong_directed);
                         }
                     }
+                    else _renderObjects[_SelectID].setDiffusion(new Vector4(float.Parse(textBoxDiffR.Text), float.Parse(textBoxDiffG.Text), float.Parse(textBoxDiffB.Text), 1.0f));
                 }
             }
             else
