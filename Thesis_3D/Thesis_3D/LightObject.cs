@@ -28,7 +28,7 @@ namespace Thesis_3D
         public Vector3 AmbientIntensity;
         public Vector4 ColorRadiation;
         private Vector3 StartPosition;
-        public LightObject(Vertex[] vertices, Color4 color, Color4 color_choice, Vector3 position, Vector4 attribute, Vector3 lighVecNormalized, Vector3 ambientIntensity, Vector3 angle_speed, int programBlock = -1, string nameBlock = null) : base(vertices, color, color_choice, TypeObjectRender.LightSourceObject)
+        public LightObject(Vertex[] vertices, Color4 color, Color4 color_choice, Vector3 position, Vector4 attribute, Vector3 lighVecNormalized, Vector3 ambientIntensity, Vector3 angle_speed, int programBlock = -1, string nameBlock = null) : base(vertices, position, color, color_choice, TypeObjectRender.LightSourceObject)
         {
             Position = position; //Позиция источника
             StartPosition = position;

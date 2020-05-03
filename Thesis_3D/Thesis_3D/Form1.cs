@@ -39,6 +39,8 @@ namespace Thesis_3D
 
         private List<RenderObject> _renderObjects = new List<RenderObject>();
         private List<LightObject> _lightObjects = new List<LightObject>();
+        private RenderObject primaryRenderObject;
+        private LightObject primaryLightObject;
         private List<Color4> color4s_unique = new List<Color4>();
         private List<int> listProgram = new List<int>();
         private Vector2 lastMousePos = new Vector2(30f, 140f);
@@ -118,7 +120,7 @@ namespace Thesis_3D
                 angel * (float)Math.PI / 180f,
                 aspectRatio,
                 0.01f,
-                40f);
+                400f);
             _ViewMatrix = camera1.GetViewMatrix();
             _MVP = _ViewMatrix * _projectionMatrix;
         }
@@ -268,22 +270,26 @@ namespace Thesis_3D
             }
             comboBoxShaders.Items.AddRange(new object[] { "Обычные цвета", "Т.И. без отражения", "Т.И. с отражением", "Т.И. с двойным отражением", "Т.И. с плоским затенением", "Несколько Т.И.", "Направленный источник", "Затенение по Фонгу", "Затенение по Фонгу с использованием вектора полпути", "Узконаправленный источник", "Туман", "Плоское затенение для одного элемента" });
             comboBoxShaders.SelectedIndex = 0;
-            _renderObjects.Add(new RenderObject(ObjectCreate.CreatePlane(1.5f, 0.0f, 0.0f, 0.0f, 0, 0, 45), Color4.LightCyan, RandomColor(), plane: true));
-            _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f, 0.0f, 2.0f, 0.0f), Color4.LightCoral, RandomColor()));
+            Vector3 positionObject = new Vector3(0.0f, 0.0f, 0.0f);
+            _renderObjects.Add(new RenderObject(ObjectCreate.CreatePlane(1.5f, positionObject, 0, 0, 45), positionObject, Color4.LightCyan, RandomColor(), plane: true));
+            positionObject = new Vector3(0.0f, 2.0f, 0.0f);
+            _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f, positionObject), positionObject, Color4.LightCoral, RandomColor()));
             for (int i = 0; i < 10; i++)
             {
-                _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f, (float)i + 1, 2.0f, 0.0f), Color4.LightCoral, RandomColor()));
+                positionObject = new Vector3((float)i + 1, 2.0f, 0.0f);
+                _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f, positionObject), positionObject, Color4.LightCoral, RandomColor()));
             }
             for (int i = 0; i < 10; i++)
             {
-                _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f, 1, -(float)i + 2.0f, 0.0f), Color4.LightCoral, RandomColor()));
+                positionObject = new Vector3(1, -(float)i + 2.0f, 0.0f);
+                _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f, positionObject), positionObject, Color4.LightCoral, RandomColor()));
             }
             Vector3 positionLight = new Vector3(1.0f, 3.0f, 1.0f);
-            _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f, positionLight.X, positionLight.Y, positionLight.Z), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.3f, 0.3f, 0.0f), new Vector3(1.0f, 0.0f, 5f), _program_Fong_directed));
+            _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f, positionLight), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.3f, 0.3f, 0.0f), new Vector3(1.0f, 0.0f, 5f), _program_Fong_directed));
             positionLight = new Vector3(4.0f, 3.0f, 1.0f);                                                                                                                                                                                     
-            _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f, positionLight.X, positionLight.Y, positionLight.Z), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.0f, 0.3f, 0.3f), new Vector3(1.0f, 0.0f, 5f)));
+            _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f, positionLight), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.0f, 0.3f, 0.3f), new Vector3(1.0f, 0.0f, 5f)));
             positionLight = new Vector3(7.0f, 3.0f, 1.0f);                                                                                                                                                                                     
-            _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f, positionLight.X, positionLight.Y, positionLight.Z), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.3f, 0.0f, 0.3f), new Vector3(1.0f, 0.0f, 5f)));
+            _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f, positionLight), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.3f, 0.0f, 0.3f), new Vector3(1.0f, 0.0f, 5f)));
             foreach (var obj in _lightObjects)
             {
                 _renderObjects.Add(obj);
@@ -790,8 +796,9 @@ namespace Thesis_3D
                         {
                             colorCube = colorDialog.Color;
                         }
-                        Vertex[] figure_vertex = ObjectCreate.CreateSolidCube(float.Parse(textBoxSide.Text, System.Globalization.NumberStyles.Float), float.Parse(textBoxShift_lr.Text), float.Parse(textBoxShift_y.Text), float.Parse(textBoxShift_ud.Text));
-                        _renderObjects.Add(new RenderObject(figure_vertex, colorCube, RandomColor()));
+                        Vector3 position = new Vector3(float.Parse(textBoxShift_lr.Text), float.Parse(textBoxShift_y.Text), float.Parse(textBoxShift_ud.Text));
+                        Vertex[] figure_vertex = ObjectCreate.CreateSolidCube(float.Parse(textBoxSide.Text, System.Globalization.NumberStyles.Float), position);
+                        _renderObjects.Add(new RenderObject(figure_vertex, position, colorCube, RandomColor()));
                     }
                 }
                 else if (comboBoxTypeFigure.Text == "Сфера")
@@ -846,8 +853,10 @@ namespace Thesis_3D
                         {
                             colorcube = colorDialog.Color;
                         }
-                        Vertex[] figure_vertex = ObjectCreate.CreateSphere(float.Parse(textBoxSide.Text), float.Parse(textBoxShift_lr.Text), float.Parse(textBoxShift_y.Text), float.Parse(textBoxShift_ud.Text), Convert.ToInt32(textBoxNx.Text), Convert.ToInt32(textBoxNy.Text), Convert.ToInt32(textBoxk1.Text), Convert.ToInt32(textBoxk2.Text));
-                        _renderObjects.Add(new RenderObject(figure_vertex, colorcube, RandomColor()));
+
+                        Vector3 position = new Vector3(float.Parse(textBoxShift_lr.Text), float.Parse(textBoxShift_y.Text), float.Parse(textBoxShift_ud.Text));
+                        Vertex[] figure_vertex = ObjectCreate.CreateSphere(float.Parse(textBoxSide.Text), position, Convert.ToInt32(textBoxNx.Text), Convert.ToInt32(textBoxNy.Text), Convert.ToInt32(textBoxk1.Text), Convert.ToInt32(textBoxk2.Text));
+                        _renderObjects.Add(new RenderObject(figure_vertex, position, colorcube, RandomColor()));
                     }
                 }
                 else if (comboBoxTypeFigure.Text == "Плоскость")
@@ -898,12 +907,14 @@ namespace Thesis_3D
                         {
                             colorcube = colorDialog.Color;
                         }
-                        Vertex[] figure_vertex = ObjectCreate.CreatePlane(float.Parse(textBoxSide.Text), float.Parse(textBoxShift_lr.Text), float.Parse(textBoxShift_y.Text), float.Parse(textBoxShift_ud.Text), (int)textBoxAngleX.Value, (int)textBoxAngleY.Value, (int)textBoxAngleZ.Value);
-                        _renderObjects.Add(new RenderObject(figure_vertex, colorcube, RandomColor()));
+                        Vector3 position = new Vector3(float.Parse(textBoxShift_lr.Text), float.Parse(textBoxShift_y.Text), float.Parse(textBoxShift_ud.Text));
+                        Vertex[] figure_vertex = ObjectCreate.CreatePlane(float.Parse(textBoxSide.Text), position, (int)textBoxAngleX.Value, (int)textBoxAngleY.Value, (int)textBoxAngleZ.Value);
+                        _renderObjects.Add(new RenderObject(figure_vertex, position, colorcube, RandomColor()));
                     }
                 }
             }
         }
+        //Это всё нужно вынести в отельный модуль
         public class DataCoordElem
         {
             public double X { get; set; }
@@ -1025,7 +1036,7 @@ namespace Thesis_3D
                         figureVertex[col + 2] = new Vertex(new Vector4((float)listCoord[fin.third].X, (float)listCoord[fin.third].Y, (float)listCoord[fin.third].Z, 1.0f), new Vector4(normVec.X, normVec.Y, normVec.Z, 0.0f), new Vector2(0, 0));
                         col += 3;
                     }
-                    _renderObjects.Add(new RenderObject(figureVertex, colorSurface, RandomColor()));
+                    _renderObjects.Add(new RenderObject(figureVertex, figureVertex[0]._Position.Xyz, colorSurface, RandomColor()));
                 }
                 else
                 {

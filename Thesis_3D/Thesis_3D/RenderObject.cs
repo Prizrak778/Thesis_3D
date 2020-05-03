@@ -39,15 +39,17 @@ namespace Thesis_3D
         private int ssbo; //Буффер для плоских теней
         private int _verticeCount;
         private PolygonMode _polygon;
+        private Vector3 _startPosition = Vector3.Zero;
         private Vector4 diffusion = Vector4.One;
         public TypeObjectRender TypeObject = TypeObjectRender.SimpleObject;
         public Matrix4 ModelMatrix = Matrix4.CreateTranslation(0, 0, 0);
         public Vector4 Color_obj; //Цвет объекта
         public Vector4 Color_choice; //Цвет объекта для буффера выбора
-        public RenderObject(Vertex[] vertices, Color4 color, Color4 color_choice, TypeObjectRender typeObject = TypeObjectRender.SimpleObject, bool plane = false)
+        public RenderObject(Vertex[] vertices, Vector3 startPosition, Color4 color, Color4 color_choice, TypeObjectRender typeObject = TypeObjectRender.SimpleObject, bool plane = false)
         {
             _verticeCount = vertices.Length;
             _vertexArray = GL.GenVertexArray();
+            _startPosition = startPosition;
             TypeObject = typeObject;
             GL.GenBuffers(1, out _buffer);
             //PolygonMode.Line
@@ -238,6 +240,12 @@ namespace Thesis_3D
         public void diffusionUnifrom(int location)
         {
             GL.Uniform4(location, diffusion);
+        }
+        public Vector4 getPositionRenderObject()
+        {
+            Vector3 translation = ModelMatrix.ExtractTranslation();
+            translation += _startPosition;
+            return new Vector4(translation, 1.0f);
         }
     }
 }

@@ -30,6 +30,10 @@ namespace Thesis_3D
     }
     class ObjectCreate
     {
+        public static Vertex[] CreateSolidCube(float side, Vector3 shift)//размер куба, смещение y/-y, смещение x/-x, смещение z/-z цвет
+        {
+            return CreateSolidCube(side, shift.X, shift.Y, shift.Z);
+        }
         public static Vertex[] CreateSolidCube(float side, float shift_lr, float shift_y, float shift_ud)//размер куба, смещение y/-y, смещение x/-x, смещение z/-z цвет
         {
             side = side / 2f;
@@ -93,7 +97,10 @@ namespace Thesis_3D
             };
             return vertices;
         }
-
+        public static Vertex[] CreatePlane(float side, Vector3 shift, int alpha_x = 90, int alpha_y = 90, int alpha_z = 90)
+        {
+            return CreatePlane(side, shift.X, shift.Y, shift.Z, alpha_x, alpha_y, alpha_z);
+        }
         public static Vertex[] CreatePlane(float side, float shift_lr, float shift_y, float shift_ud, int alpha_x = 90, int alpha_y = 90, int alpha_z = 90)
         {
             alpha_x %= 360;
@@ -134,7 +141,10 @@ namespace Thesis_3D
             };
             return vertices.ToArray();
         }
-
+        public static Vertex[] CreateSphere(float side, Vector3 shift, int nx, int ny, float k1, float k2)
+        {
+            return CreateSphere(side, shift.X, shift.Y, shift.Z, nx, ny, k1, k2);
+        }
         public static Vertex[] CreateSphere(float side, float shift_lr, float shift_y, float shift_ud, int nx, int ny, float k1, float k2)
         {
             Vector4[] coord_s = new Vector4[(nx + 1) * 2 * ny];
