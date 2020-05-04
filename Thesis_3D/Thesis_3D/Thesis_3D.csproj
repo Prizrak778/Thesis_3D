@@ -72,19 +72,28 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Camera.cs" />
+    <Compile Include="DlgNewAnFigure.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DlgNewAnFigure.Designer.cs">
+      <DependentUpon>DlgNewAnFigure.cs</DependentUpon>
+    </Compile>
     <Compile Include="LightObject.cs" />
     <Compile Include="ObjectCreate.cs" />
     <Compile Include="RenderObject.cs" />
-    <Compile Include="Form1.cs">
+    <Compile Include="Thesis3DForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="Thesis3DForm.Designer.cs">
+      <DependentUpon>Thesis3DForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <EmbeddedResource Include="DlgNewAnFigure.resx">
+      <DependentUpon>DlgNewAnFigure.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Thesis3DForm.resx">
+      <DependentUpon>Thesis3DForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

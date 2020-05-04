@@ -16,7 +16,7 @@ using OpenTK.Platform;
 
 namespace Thesis_3D
 {
-    public partial class Form1 : Form
+    public partial class Thesis3DForm : Form
     {
         Camera camera1 = new Camera();
         private Matrix4 _projectionMatrix;
@@ -131,7 +131,7 @@ namespace Thesis_3D
             _program = listProgram[Index];
         }
 
-        public Form1()
+        public Thesis3DForm()
         {
             OpenTK.Toolkit.Init();
             InitializeComponent();
@@ -732,6 +732,7 @@ namespace Thesis_3D
 
         private void buttonNewAnFigure_Click(object sender, EventArgs e)
         {
+            TypeObjectCreate typeObjectCreate = TypeObjectCreate.SolidCube;
             //По хорошему форму стоит вынести отдельно
             Form dlgNewAnFigure = new Form()
             {
@@ -762,155 +763,23 @@ namespace Thesis_3D
             {
                 if (comboBoxTypeFigure.Text == "Куб")
                 {
-                    dlgNewAnFigure = new Form()
-                    {
-                        Text = "Данные для фигуры",
-                        Width = 350,
-                        Height = 240,
-                        FormBorderStyle = FormBorderStyle.FixedDialog,
-                        StartPosition = FormStartPosition.CenterScreen
-                    };
-                    Label labelSide = new Label() { Text = "Расстояние от центра то границы", Left = 10, Width = 190, Top = 30 };
-                    Label labelShift_lr = new Label() { Text = "Смещение по x", Left = 10, Width = 190, Top = 60 };
-                    Label labelShift_y = new Label() { Text = "Смещение по y", Left = 10, Width = 190, Top = 90 };
-                    Label labelShift_ud = new Label() { Text = "Смещение по z", Left = 10, Width = 190, Top = 120 };
-                    TextBox textBoxSide = new TextBox() { Text = "0", Left = 200, Width = 100, Top = 30 };
-                    TextBox textBoxShift_lr = new TextBox() { Text = "0", Left = 200, Width = 100, Top = 60 };
-                    TextBox textBoxShift_y = new TextBox() { Text = "0", Left = 200, Width = 100, Top = 90 };
-                    TextBox textBoxShift_ud = new TextBox() { Text = "0", Left = 200, Width = 100, Top = 120 };
-                    Button confirmation_new = new Button() { Text = "Ok", Left = 200, Width = 100, Top = 150, DialogResult = DialogResult.OK };
-                    ColorDialog colorDialog = new ColorDialog();
-                    dlgNewAnFigure.Controls.Add(labelSide);
-                    dlgNewAnFigure.Controls.Add(labelShift_lr);
-                    dlgNewAnFigure.Controls.Add(labelShift_y);
-                    dlgNewAnFigure.Controls.Add(labelShift_ud);
-                    dlgNewAnFigure.Controls.Add(textBoxSide);
-                    dlgNewAnFigure.Controls.Add(textBoxShift_lr);
-                    dlgNewAnFigure.Controls.Add(textBoxShift_y);
-                    dlgNewAnFigure.Controls.Add(textBoxShift_ud);
-                    dlgNewAnFigure.Controls.Add(confirmation_new);
-                    if (dlgNewAnFigure.ShowDialog() == DialogResult.OK)
-                    {
-                        Color4 colorCube = Color4.White;
-                        if (colorDialog.ShowDialog() == DialogResult.OK)
-                        {
-                            colorCube = colorDialog.Color;
-                        }
-                        Vector3 position = new Vector3(float.Parse(textBoxShift_lr.Text), float.Parse(textBoxShift_y.Text), float.Parse(textBoxShift_ud.Text));
-                        Vertex[] figure_vertex = ObjectCreate.CreateSolidCube(float.Parse(textBoxSide.Text, System.Globalization.NumberStyles.Float), position);
-                        _renderObjects.Add(new RenderObject(figure_vertex, position, colorCube, RandomColor()));
-                    }
+                    typeObjectCreate = TypeObjectCreate.SolidCube;
                 }
                 else if (comboBoxTypeFigure.Text == "Сфера")
                 {
-                    dlgNewAnFigure = new Form()
-                    {
-                        Text = "Данные для фигуры",
-                        Width = 350,
-                        Height = 340,
-                        FormBorderStyle = FormBorderStyle.FixedDialog,
-                        StartPosition = FormStartPosition.CenterScreen
-                    };
-                    Label label_side = new Label() { Text = "Расстояние от центра то границы", Left = 10, Width = 190, Top = 30 };
-                    Label label_shift_lr = new Label() { Text = "Смещение по x", Left = 10, Width = 190, Top = 60 };
-                    Label label_shift_y = new Label() { Text = "Смещение по y", Left = 10, Width = 190, Top = 90 };
-                    Label label_shift_ud = new Label() { Text = "Смещение по z", Left = 10, Width = 190, Top = 120 };
-                    Label label_nx = new Label() { Text = "Количество разбиений по x", Left = 10, Width = 180, Top = 150 };
-                    Label label_ny = new Label() { Text = "Количество разбиений по y", Left = 10, Width = 180, Top = 180 };
-                    Label label_k1 = new Label() { Text = "Коэффициент сжатия по x", Left = 10, Width = 180, Top = 210 };
-                    Label label_k2 = new Label() { Text = "Коэффициент сжатия по y", Left = 10, Width = 180, Top = 240 };
-                    TextBox textBoxSide = new TextBox() { Text = "0", Left = 200, Width = 100, Top = 30 };
-                    TextBox textBoxShift_lr = new TextBox() { Text = "0", Left = 200, Width = 100, Top = 60 };
-                    TextBox textBoxShift_y = new TextBox() { Text = "0", Left = 200, Width = 100, Top = 90 };
-                    TextBox textBoxShift_ud = new TextBox() { Text = "0", Left = 200, Width = 100, Top = 120 };
-                    TextBox textBoxNx = new TextBox() { Text = "0", Left = 200, Width = 100, Top = 150 };
-                    TextBox textBoxNy = new TextBox() { Text = "0", Left = 200, Width = 100, Top = 180 };
-                    TextBox textBoxk1 = new TextBox() { Text = "0", Left = 200, Width = 100, Top = 210 };
-                    TextBox textBoxk2 = new TextBox() { Text = "0", Left = 200, Width = 100, Top = 240 };
-                    Button confirmation_new = new Button() { Text = "Ok", Left = 150, Width = 100, Top = 270, DialogResult = DialogResult.OK };
-                    ColorDialog colorDialog = new ColorDialog();
-                    dlgNewAnFigure.Controls.Add(label_side);
-                    dlgNewAnFigure.Controls.Add(label_shift_lr);
-                    dlgNewAnFigure.Controls.Add(label_shift_y);
-                    dlgNewAnFigure.Controls.Add(label_shift_ud);
-                    dlgNewAnFigure.Controls.Add(label_nx);
-                    dlgNewAnFigure.Controls.Add(label_ny);
-                    dlgNewAnFigure.Controls.Add(label_k1);
-                    dlgNewAnFigure.Controls.Add(label_k2);
-                    dlgNewAnFigure.Controls.Add(textBoxSide);
-                    dlgNewAnFigure.Controls.Add(textBoxShift_lr);
-                    dlgNewAnFigure.Controls.Add(textBoxShift_y);
-                    dlgNewAnFigure.Controls.Add(textBoxShift_ud);
-                    dlgNewAnFigure.Controls.Add(textBoxNx);
-                    dlgNewAnFigure.Controls.Add(textBoxNy);
-                    dlgNewAnFigure.Controls.Add(textBoxk1);
-                    dlgNewAnFigure.Controls.Add(textBoxk2);
-                    dlgNewAnFigure.Controls.Add(confirmation_new);
-                    if (dlgNewAnFigure.ShowDialog() == DialogResult.OK)
-                    {
-                        Color4 colorcube = Color4.White;
-                        if (colorDialog.ShowDialog() == DialogResult.OK)
-                        {
-                            colorcube = colorDialog.Color;
-                        }
-
-                        Vector3 position = new Vector3(float.Parse(textBoxShift_lr.Text), float.Parse(textBoxShift_y.Text), float.Parse(textBoxShift_ud.Text));
-                        Vertex[] figure_vertex = ObjectCreate.CreateSphere(float.Parse(textBoxSide.Text), position, Convert.ToInt32(textBoxNx.Text), Convert.ToInt32(textBoxNy.Text), Convert.ToInt32(textBoxk1.Text), Convert.ToInt32(textBoxk2.Text));
-                        _renderObjects.Add(new RenderObject(figure_vertex, position, colorcube, RandomColor()));
-                    }
+                    typeObjectCreate = TypeObjectCreate.Sphere;
                 }
                 else if (comboBoxTypeFigure.Text == "Плоскость")
                 {
-                    dlgNewAnFigure = new Form()
-                    {
-                        Text = "Данные для фигуры",
-                        Width = 350,
-                        Height = 340,
-                        FormBorderStyle = FormBorderStyle.FixedDialog,
-                        StartPosition = FormStartPosition.CenterScreen
-                    };
-                    Label labelSide = new Label() { Text = "Расстояние от центра то границы", Left = 10, Width = 190, Top = 30 };
-                    Label labelShift_lr = new Label() { Text = "Смещение по x", Left = 10, Width = 190, Top = 60 };
-                    Label labelShift_y =  new Label() { Text = "Смещение по y", Left = 10, Width = 190, Top = 90 };
-                    Label labelShift_ud = new Label() { Text = "Смещение по z", Left = 10, Width = 190, Top = 120 };
-                    Label labelAngle_x = new Label() { Text = "Угол поворота по оси x", Left = 10, Width = 180, Top = 150 };
-                    Label labelAngle_y = new Label() { Text = "Угол поворота по оси y", Left = 10, Width = 180, Top = 180 };
-                    Label labelAngle_z = new Label() { Text = "Угол поворота по оси z", Left = 10, Width = 180, Top = 210 };
-                    TextBox textBoxSide = new TextBox() { Text = "0", Left = 200, Width = 100, Top = 30 };
-                    TextBox textBoxShift_lr = new TextBox() { Text = "0", Left = 200, Width = 100, Top = 60 };
-                    TextBox textBoxShift_y = new TextBox() { Text = "0", Left = 200, Width = 100, Top = 90 };
-                    TextBox textBoxShift_ud = new TextBox() { Text = "0", Left = 200, Width = 100, Top = 120 };
-                    NumericUpDown textBoxAngleX = new NumericUpDown() { Value = 0, Minimum = -360, Maximum = 360, Left = 200, Width = 100, Top = 150 };
-                    NumericUpDown textBoxAngleY = new NumericUpDown() { Value = 0, Minimum = -360, Maximum = 360, Left = 200, Width = 100, Top = 180 };
-                    NumericUpDown textBoxAngleZ = new NumericUpDown() { Value = 0, Minimum = -360, Maximum = 360, Left = 200, Width = 100, Top = 210 };
-                    Button confirmation_new = new Button() { Text = "Ok", Left = 150, Width = 100, Top = 270, DialogResult = DialogResult.OK };
-                    ColorDialog colorDialog = new ColorDialog();
-                    dlgNewAnFigure.Controls.Add(labelSide);
-                    dlgNewAnFigure.Controls.Add(labelShift_lr);
-                    dlgNewAnFigure.Controls.Add(labelShift_y);
-                    dlgNewAnFigure.Controls.Add(labelShift_ud);
-                    dlgNewAnFigure.Controls.Add(labelAngle_x);
-                    dlgNewAnFigure.Controls.Add(labelAngle_y);
-                    dlgNewAnFigure.Controls.Add(labelAngle_z);
-                    dlgNewAnFigure.Controls.Add(textBoxSide);
-                    dlgNewAnFigure.Controls.Add(textBoxShift_lr);
-                    dlgNewAnFigure.Controls.Add(textBoxShift_y);
-                    dlgNewAnFigure.Controls.Add(textBoxShift_ud);
-                    dlgNewAnFigure.Controls.Add(textBoxAngleX);
-                    dlgNewAnFigure.Controls.Add(textBoxAngleY);
-                    dlgNewAnFigure.Controls.Add(textBoxAngleZ);
-                    dlgNewAnFigure.Controls.Add(confirmation_new);
-                    if (dlgNewAnFigure.ShowDialog() == DialogResult.OK)
-                    {
-                        Color4 colorcube = Color4.White;
-                        if (colorDialog.ShowDialog() == DialogResult.OK)
-                        {
-                            colorcube = colorDialog.Color;
-                        }
-                        Vector3 position = new Vector3(float.Parse(textBoxShift_lr.Text), float.Parse(textBoxShift_y.Text), float.Parse(textBoxShift_ud.Text));
-                        Vertex[] figure_vertex = ObjectCreate.CreatePlane(float.Parse(textBoxSide.Text), position, (int)textBoxAngleX.Value, (int)textBoxAngleY.Value, (int)textBoxAngleZ.Value);
-                        _renderObjects.Add(new RenderObject(figure_vertex, position, colorcube, RandomColor()));
-                    }
+                    typeObjectCreate = TypeObjectCreate.Plane;
+                }
+                DlgNewAnFigure dlgNewAn = new DlgNewAnFigure(typeObjectCreate);
+                if (dlgNewAn.ShowDialog() == DialogResult.OK)
+                {
+                    Color4 colorcube = dlgNewAn.colorObject;
+                    Vector3 position = dlgNewAn.position;
+                    Vertex[] figure_vertex = dlgNewAn.figureVertex;
+                    _renderObjects.Add(new RenderObject(figure_vertex, position, colorcube, RandomColor()));
                 }
             }
         }

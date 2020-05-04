@@ -1,6 +1,6 @@
 ﻿namespace Thesis_3D
 {
-    partial class Form1
+    partial class Thesis3DForm
     {
         /// <summary>
         /// Обязательная переменная конструктора.

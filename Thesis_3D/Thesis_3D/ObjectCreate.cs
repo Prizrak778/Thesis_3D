@@ -7,6 +7,12 @@ using OpenTK;
 
 namespace Thesis_3D
 {
+    public enum TypeObjectCreate
+    {
+        SolidCube,
+        Plane,
+        Sphere
+    };
     public struct Vertex
     {
         public const int Size = (4 + 4 + 2) * 4; // size of struct in bytes
