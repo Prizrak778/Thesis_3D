@@ -101,6 +101,17 @@ namespace Thesis_3D
                 position = new Vector3(float.Parse(textBoxShiftX.Text), float.Parse(textBoxShiftY.Text), float.Parse(textBoxShiftZ.Text));
                 figureVertex = ObjectCreate.CreateSolidCube(float.Parse(textBoxSide.Text, System.Globalization.NumberStyles.Float), position);
             }
+            if (_typeObjectCreate == TypeObjectCreate.Plane)
+            {
+                position = new Vector3(float.Parse(textBoxShiftX.Text), float.Parse(textBoxShiftY.Text), float.Parse(textBoxShiftZ.Text));
+                figureVertex = ObjectCreate.CreatePlane(float.Parse(textBoxSide.Text, System.Globalization.NumberStyles.Float), position, (int)numericUpDownAngelX.Value, (int)numericUpDownAngelY.Value, (int)numericUpDownAngelZ.Value);
+            }
+            if (_typeObjectCreate == TypeObjectCreate.Sphere)
+            {
+                position = new Vector3(float.Parse(textBoxShiftX.Text), float.Parse(textBoxShiftY.Text), float.Parse(textBoxShiftZ.Text));
+                figureVertex = ObjectCreate.CreateSphere(float.Parse(textBoxSide.Text, System.Globalization.NumberStyles.Float), position, int.Parse(textBoxColBreakX.Text), int.Parse(textBoxColBreakY.Text), int.Parse(textBoxKoeffSX.Text), int.Parse(textBoxKoeffSY.Text));
+            }
+            Close();
         }
 
         private void textBoxSide_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
