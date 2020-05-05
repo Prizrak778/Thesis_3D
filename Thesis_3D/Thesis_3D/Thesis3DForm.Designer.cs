@@ -59,6 +59,7 @@
             this.buttonNewFigureFile = new System.Windows.Forms.Button();
             this.buttonChangeFigure = new System.Windows.Forms.Button();
             this.buttonRemoveFigure = new System.Windows.Forms.Button();
+            this.buttonTrajectory = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -72,7 +73,7 @@
             this.glControlThesis3D.BackColor = System.Drawing.Color.Black;
             this.glControlThesis3D.Location = new System.Drawing.Point(12, 12);
             this.glControlThesis3D.Name = "glControlThesis3D";
-            this.glControlThesis3D.Size = new System.Drawing.Size(733, 563);
+            this.glControlThesis3D.Size = new System.Drawing.Size(733, 578);
             this.glControlThesis3D.TabIndex = 0;
             this.glControlThesis3D.VSync = false;
             // 
@@ -337,7 +338,7 @@
             // 
             this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(748, 540);
+            this.label5.Location = new System.Drawing.Point(748, 555);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(30, 13);
             this.label5.TabIndex = 8;
@@ -347,7 +348,7 @@
             // 
             this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(748, 562);
+            this.label6.Location = new System.Drawing.Point(748, 577);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(47, 13);
             this.label6.TabIndex = 9;
@@ -397,11 +398,23 @@
             this.buttonRemoveFigure.UseVisualStyleBackColor = true;
             this.buttonRemoveFigure.Click += new System.EventHandler(this.buttonRemoveFigure_Click);
             // 
-            // Form1
+            // buttonTrajectory
+            // 
+            this.buttonTrajectory.Enabled = false;
+            this.buttonTrajectory.Location = new System.Drawing.Point(752, 527);
+            this.buttonTrajectory.Name = "buttonTrajectory";
+            this.buttonTrajectory.Size = new System.Drawing.Size(188, 23);
+            this.buttonTrajectory.TabIndex = 14;
+            this.buttonTrajectory.Text = "Траектория движения объекта";
+            this.buttonTrajectory.UseVisualStyleBackColor = true;
+            this.buttonTrajectory.Click += new System.EventHandler(this.buttonTrajectory_Click);
+            // 
+            // Thesis3DForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(952, 587);
+            this.ClientSize = new System.Drawing.Size(952, 602);
+            this.Controls.Add(this.buttonTrajectory);
             this.Controls.Add(this.buttonRemoveFigure);
             this.Controls.Add(this.buttonChangeFigure);
             this.Controls.Add(this.buttonNewFigureFile);
@@ -416,7 +429,7 @@
             this.Controls.Add(this.checkBox2);
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.glControlThesis3D);
-            this.Name = "Form1";
+            this.Name = "Thesis3DForm";
             this.Text = "Form1";
             this.groupBox1.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
@@ -460,6 +473,7 @@
         private System.Windows.Forms.Button buttonNewFigureFile;
         private System.Windows.Forms.Button buttonChangeFigure;
         private System.Windows.Forms.Button buttonRemoveFigure;
+        private System.Windows.Forms.Button buttonTrajectory;
     }
 }
 

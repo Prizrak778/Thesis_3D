@@ -122,7 +122,7 @@ namespace Thesis_3D
             colIter = (int)((max - min) / step);
             modifier = nameFunc.ToUpper().Equals("X") || nameFunc.ToUpper().Equals("Y") || nameFunc.ToUpper().Equals("Z") ? 1f: (float)(Math.PI * 2 / 180);
         }
-        public void NextValueAndSetStep()
+        public void NextValueAndSetSignStep()
         {
             if (Iter >= colIter) signIter = -1;
             if (Iter <= 0) signIter = 1;
@@ -132,6 +132,12 @@ namespace Thesis_3D
         public bool ValidateTrajectoryFunc()
         {
             return !(min > max || startVal > max || startVal < min);
+        }
+        public double getValue()
+        {
+            var localVal = koeff * mathFunc(Val * modifier);
+            NextValueAndSetSignStep();
+            return localVal;
         }
     }
 }

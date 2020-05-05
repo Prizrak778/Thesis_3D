@@ -408,7 +408,7 @@ namespace Thesis_3D
                 GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
                 int pixel = new int();
-                Render_select_color_buf();
+                RenderSelectColorBuf();
                 GL.ReadPixels(e.X, glControlThesis3D.Height - e.Y, 1, 1, PixelFormat.Bgra, PixelType.UnsignedByte, ref pixel);
 
                 Color color = Color.FromArgb(pixel);
@@ -429,11 +429,13 @@ namespace Thesis_3D
             {
                 buttonChangeFigure.Enabled = true;
                 buttonRemoveFigure.Enabled = true;
+                buttonTrajectory.Enabled = true;
             }
             else
             {
                 buttonChangeFigure.Enabled = false;
                 buttonRemoveFigure.Enabled = false;
+                buttonTrajectory.Enabled = false;
             }
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
         }
@@ -526,7 +528,7 @@ namespace Thesis_3D
         #endregion
 
         
-        private void Render_select_color_buf()
+        private void RenderSelectColorBuf()
         {
             CreateProjection();
             GL.UniformMatrix4(21, false, ref _projectionMatrix);
@@ -540,14 +542,14 @@ namespace Thesis_3D
                 temp_color.Y = color4s_unique[iter].G / 255;
                 temp_color.Z = color4s_unique[iter].B / 255;
                 temp_color.W = color4s_unique[iter].A / 255;
-                Render_figure(renderObject, PolygonMode.Fill);
+                RenderFigure(renderObject, PolygonMode.Fill);
                 GL.Uniform4(19, ref temp_color);
                 renderObject.Render();
                 iter++;
             }
         }
 
-        private void Render_figure(RenderObject renderObject, PolygonMode polygon)
+        private void RenderFigure(RenderObject renderObject, PolygonMode polygon)
         {
             renderObject.Bind();
             GL.UniformMatrix4(20, false, ref _MVP);
@@ -579,14 +581,14 @@ namespace Thesis_3D
                         GL.UniformMatrix4(23, false, ref _renderObjects[0].ModelMatrix);
                         GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 5, _renderObjects[0].ShadowProjectBuffer());
                         GL.BindBuffer(BufferTarget.ShaderStorageBuffer, 0);
-                        Render_figure(renderObject, PolygonMode.Fill);
+                        RenderFigure(renderObject, PolygonMode.Fill);
                         _lightObjects[0].PositionLightUniform(18);
                         renderObject.Render();
                         
                     }
                     GL.UseProgram(_program_Fong);
                 }
-                Render_figure(renderObject, PolygonMode.Fill);
+                RenderFigure(renderObject, PolygonMode.Fill);
                 Vector4 color = renderObject.Color_obj;
                 GL.Uniform4(19, ref color);
                 if (_program == _program_some_light)
@@ -624,7 +626,7 @@ namespace Thesis_3D
                 foreach (var renderObject in _renderObjects)
                 {
                     
-                    Render_figure(renderObject, PolygonMode.Line);
+                    RenderFigure(renderObject, PolygonMode.Line);
                     Vector4 color = new Vector4(0, 0, 0, 255);
                     GL.Uniform4(19, ref color);
 
@@ -634,7 +636,7 @@ namespace Thesis_3D
             if(_SelectID > -1)
             {
                 GL.LineWidth(7);
-                Render_figure(_renderObjects[_SelectID], PolygonMode.Line);
+                RenderFigure(_renderObjects[_SelectID], PolygonMode.Line);
                 Vector4 color = new Vector4(0, 0, 0, 255);
                 GL.Uniform4(19, ref color);
                 _renderObjects[_SelectID].Render_line();
@@ -1171,6 +1173,48 @@ namespace Thesis_3D
             else
             {
                 MessageBox.Show("Этот объект нельзя удалить");
+            }
+        }
+
+        private void buttonTrajectory_Click(object sender, EventArgs e)
+        {
+            if (_SelectID > 0)
+            {
+                Form dlgChangeTrajectory = new Form()
+                {
+                    Text = "Изменение траектории движения",
+                    Width = 680,
+                    Height = 550,
+                    FormBorderStyle = FormBorderStyle.Sizable,
+                    StartPosition = FormStartPosition.CenterScreen,
+                };
+                CheckBox checkBoxUseTrajectory = new CheckBox() { Checked = false, Text = "Использовать траекторию движения", Width = 170, Height = 30, Top = 15, Left = 20, Anchor = AnchorStyles.Left | AnchorStyles.Top };
+                ComboBox comboBoxTargetObject = new ComboBox() { DropDownStyle = ComboBoxStyle.DropDownList, Text = "Куб", Left = 140, Width = 145, Top = 50, Enabled = checkBoxUseTrajectory.Checked };
+                Label lblTargetObject = new Label() { Text = "Целевой объект:", Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 120, Height = 30, Top = 50, Left = 20 };
+                Label lblCoords = new Label() { Text = "Координаты точки", Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 120, Height = 30, Top = 80, Left = 20 };
+                Label lblCoordsX = new Label() { Text = "X:", Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 120, Height = 30, Top = 80, Left = 20 };
+                Label lblCoordsY = new Label() { Text = "Y:", Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 120, Height = 30, Top = 80, Left = 20 };
+                Label lblCoordsZ = new Label() { Text = "Z:", Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 120, Height = 30, Top = 80, Left = 20 };
+                checkBoxUseTrajectory.CheckedChanged += (senderT, eT) =>
+                {
+                    comboBoxTargetObject.Enabled = checkBoxUseTrajectory.Checked;
+                };
+                comboBoxTargetObject.Items.AddRange( new object []
+                {
+                        "Объект",
+                        "Точка"
+                });
+                dlgChangeTrajectory.Controls.Add(checkBoxUseTrajectory);
+                dlgChangeTrajectory.Controls.Add(lblCoords);
+                dlgChangeTrajectory.Controls.Add(comboBoxTargetObject);
+                if (dlgChangeTrajectory.ShowDialog() == DialogResult.OK)
+                {
+                    if(checkBoxUseTrajectory.Checked)
+                    {
+
+                    }
+                    _renderObjects[_SelectID].trajctoryRenderObject.useTrajectory = checkBoxUseTrajectory.Checked;
+                }
             }
         }
     }

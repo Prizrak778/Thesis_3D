@@ -10,6 +10,11 @@ using OpenTK.Graphics;
 
 namespace Thesis_3D
 {
+    public enum TargetTrajectory
+    {
+        Point,
+        Object
+    };
     public enum TypeObjectRender
     {
         SimpleObject,
@@ -31,6 +36,55 @@ namespace Thesis_3D
     {
         public Vector4 point;
     }
+    public class TrajctoryRenderObject
+    {
+        public bool useTrajectory;
+        public TrajectoryFunctions trajectoryFunctionsX;
+        public TrajectoryFunctions trajectoryFunctionsY;
+        public TrajectoryFunctions trajectoryFunctionsZ;
+        Vector4 colorObject;
+        Vector4 point;
+        TargetTrajectory target;
+        public TrajctoryRenderObject()
+        {
+            useTrajectory = false;
+        }
+        public TrajctoryRenderObject(TrajectoryFunctions locTrajectoryFunctionsX, TrajectoryFunctions locTrajectoryFunctionsY, TrajectoryFunctions locTrajectoryFunctionsZ, TargetTrajectory locTarget, Vector4 vectorTarget)
+        {
+            useTrajectory = true;
+            trajectoryFunctionsX = locTrajectoryFunctionsX;
+            trajectoryFunctionsY = locTrajectoryFunctionsY;
+            trajectoryFunctionsZ = locTrajectoryFunctionsZ;
+            if(target == TargetTrajectory.Object)
+            {
+                colorObject = vectorTarget;
+            }
+            else
+            {
+                point = vectorTarget;
+            }
+        }
+        public void SetObject(Vector4 colorChoice)
+        {
+            colorObject = colorChoice;
+        }
+        public Vector4 GetObject()
+        {
+            return colorObject;
+        }
+        public Vector3 getValue()
+        {
+            if (useTrajectory)
+            {
+                float X = (float)(trajectoryFunctionsX.getValue());
+                float Y = (float)(trajectoryFunctionsY.getValue());
+                float Z = (float)(trajectoryFunctionsZ.getValue());
+                return new Vector3(X, Y, Z);
+            }
+            return Vector3.Zero;
+        }
+    }
+
     public class RenderObject : IDisposable
     {
         private bool _initialized;
@@ -42,11 +96,13 @@ namespace Thesis_3D
         private Vector3 _startPosition = Vector3.Zero;
         private Vector4 diffusion = Vector4.One;
         public TypeObjectRender TypeObject = TypeObjectRender.SimpleObject;
+        public TrajctoryRenderObject trajctoryRenderObject;
         public Matrix4 ModelMatrix = Matrix4.CreateTranslation(0, 0, 0);
         public Vector4 Color_obj; //Цвет объекта
         public Vector4 Color_choice; //Цвет объекта для буффера выбора
         public RenderObject(Vertex[] vertices, Vector3 startPosition, Color4 color, Color4 color_choice, TypeObjectRender typeObject = TypeObjectRender.SimpleObject, bool plane = false)
         {
+            trajctoryRenderObject = new TrajctoryRenderObject();
             _verticeCount = vertices.Length;
             _vertexArray = GL.GenVertexArray();
             _startPosition = startPosition;
