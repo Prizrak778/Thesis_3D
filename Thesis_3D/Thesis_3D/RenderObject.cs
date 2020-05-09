@@ -312,5 +312,9 @@ namespace Thesis_3D
             translation += _startPosition;
             return new Vector4(translation, 1.0f);
         }
+        public Vector3 getStartPosition()
+        {
+            return _startPosition;
+        }
     }
 }

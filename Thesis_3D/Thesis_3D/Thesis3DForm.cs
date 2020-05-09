@@ -548,6 +548,10 @@ namespace Thesis_3D
                 iter++;
             }
         }
+        private RenderObject RenderObjectFind(Vector4 colorChoice)
+        {
+            return _renderObjects.Where(x => x.Color_choice == colorChoice).FirstOrDefault();
+        }
 
         private void RenderFigure(RenderObject renderObject, PolygonMode polygon)
         {
@@ -616,6 +620,19 @@ namespace Thesis_3D
                         _lightObjects[0].IntensityLightVectorUniform(24);
                         renderObject.diffusionUnifrom(25);
                     }
+                }
+                if (renderObject.trajctoryRenderObject.useTrajectory)
+                {
+                    renderObject.ModelMatrix.ClearTranslation();
+                    Vector3 pointTarget = Vector3.Zero;
+                    if (renderObject.trajctoryRenderObject.target == TargetTrajectory.Object)
+                    {
+                        RenderObject renderObjectTarget = RenderObjectFind(renderObject.trajctoryRenderObject.GetObject());
+                        pointTarget = renderObjectTarget != null ? renderObject.getPositionRenderObject().Xyz : Vector3.Zero;
+                    }
+                    else pointTarget = renderObject.trajctoryRenderObject.GetPoint().Xyz;
+                    Vector3 translation = -(renderObject.getStartPosition()) + renderObject.trajctoryRenderObject.getValue() + pointTarget;
+                    renderObject.ModelMatrix = Matrix4.CreateTranslation(translation);
                 }
                 renderObject.Render();
             }
@@ -1210,7 +1227,7 @@ namespace Thesis_3D
                 };
                 comboBoxTargetObject.Items.AddRange( new object []
                 {
-                        "Объект",
+                        //"Объект",
                         "Точка"
                 });
                 comboBoxTargetObject.SelectedItem = "Точка";
@@ -1231,7 +1248,6 @@ namespace Thesis_3D
                 dlgChangeTrajectory.Controls.Add(buttonOk);
                 if (dlgChangeTrajectory.ShowDialog() == DialogResult.OK)
                 {
-                    _renderObjects[_SelectID].trajctoryRenderObject.useTrajectory = checkBoxUseTrajectory.Checked;
                     if (checkBoxUseTrajectory.Checked)
                     {
                         TrajectoryFunctionsForm trajectoryFunctionsForm = new TrajectoryFunctionsForm();
@@ -1239,11 +1255,15 @@ namespace Thesis_3D
                         {
                             if(trajectoryFunctionsForm.trajectoryFunctionsX.ValidateTrajectoryFunc() && trajectoryFunctionsForm.trajectoryFunctionsY.ValidateTrajectoryFunc() && trajectoryFunctionsForm.trajectoryFunctionsZ.ValidateTrajectoryFunc())
                             {
+                                _renderObjects[_SelectID].trajctoryRenderObject.useTrajectory = true;
                                 _renderObjects[_SelectID].trajctoryRenderObject.target = Convert.ToString(comboBoxTargetObject.SelectedItem) == "Точка" ? TargetTrajectory.Point : TargetTrajectory.Object;
                                 _renderObjects[_SelectID].trajctoryRenderObject.trajectoryFunctionsX = trajectoryFunctionsForm.trajectoryFunctionsX;
                                 _renderObjects[_SelectID].trajctoryRenderObject.trajectoryFunctionsY = trajectoryFunctionsForm.trajectoryFunctionsY;
                                 _renderObjects[_SelectID].trajctoryRenderObject.trajectoryFunctionsZ = trajectoryFunctionsForm.trajectoryFunctionsZ;
-                                Convert.ToString(comboBoxTargetObject.SelectedItem) == "Точка" ? _renderObjects[_SelectID].trajctoryRenderObject.SetPoint(new Vector4(float.Parse(textBoxX.Text), float.Parse(textBoxY.Text), float.Parse(textBoxZ.Text), 1.0f)) : ;
+                                if (Convert.ToString(comboBoxTargetObject.SelectedItem) == "Точка")
+                                    _renderObjects[_SelectID].trajctoryRenderObject.SetPoint(new Vector4(float.Parse(textBoxX.Text), float.Parse(textBoxY.Text), float.Parse(textBoxZ.Text), 1.0f));
+                                else
+                                    _renderObjects[_SelectID].trajctoryRenderObject.SetPoint(new Vector4(float.Parse(textBoxX.Text), float.Parse(textBoxY.Text), float.Parse(textBoxZ.Text), 1.0f));
                             }
                             else
                             {

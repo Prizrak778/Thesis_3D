@@ -41,7 +41,7 @@ namespace Thesis_3D
         {
             char symbolT = e.KeyChar;
 
-            if (!char.IsDigit(symbolT) || symbolT != '-' || symbolT != ',' || symbolT != '.')
+            if (!char.IsDigit(symbolT) && symbolT != '-' && symbolT != ',' && symbolT != '\b')
             {
                 e.Handled = true;
             }
@@ -126,8 +126,8 @@ namespace Thesis_3D
         {
             if (Iter >= colIter) signIter = -1;
             if (Iter <= 0) signIter = 1;
-            if (Iter <= 0) signIter = 0;
             Val = Val + signIter * step;
+            Iter += signIter;
         }
         public bool ValidateTrajectoryFunc()
         {
