@@ -1243,6 +1243,7 @@ namespace Thesis_3D
                                 _renderObjects[_SelectID].trajctoryRenderObject.trajectoryFunctionsX = trajectoryFunctionsForm.trajectoryFunctionsX;
                                 _renderObjects[_SelectID].trajctoryRenderObject.trajectoryFunctionsY = trajectoryFunctionsForm.trajectoryFunctionsY;
                                 _renderObjects[_SelectID].trajctoryRenderObject.trajectoryFunctionsZ = trajectoryFunctionsForm.trajectoryFunctionsZ;
+                                Convert.ToString(comboBoxTargetObject.SelectedItem) == "Точка" ? _renderObjects[_SelectID].trajctoryRenderObject.SetPoint(new Vector4(float.Parse(textBoxX.Text), float.Parse(textBoxY.Text), float.Parse(textBoxZ.Text), 1.0f)) : ;
                             }
                             else
                             {

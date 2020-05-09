@@ -73,6 +73,14 @@ namespace Thesis_3D
         {
             return colorObject;
         }
+        public void SetPoint(Vector4 vectorTarget)
+        {
+            point = vectorTarget;
+        }
+        public Vector4 GetPoint()
+        {
+            return point;
+        }
         public Vector3 getValue()
         {
             if (useTrajectory)
