@@ -39,9 +39,9 @@ namespace Thesis_3D
 
         private void textBoxKoeffX_KeyPress(object sender, KeyPressEventArgs e)
         {
-            char number = e.KeyChar;
+            char symbolT = e.KeyChar;
 
-            if (!char.IsDigit(number) || number == '-' || number == ',' || number == '.')
+            if (!char.IsDigit(symbolT) || symbolT != '-' || symbolT != ',' || symbolT != '.')
             {
                 e.Handled = true;
             }

@@ -718,9 +718,9 @@ namespace Thesis_3D
 
         private void textBox1_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
         {
-            char number = e.KeyChar;
+            char symbolT = e.KeyChar;
 
-            if (!char.IsDigit(number))
+            if (!char.IsDigit(symbolT) && symbolT != '-' && symbolT != '.' && symbolT != '\b')
             {
                 e.Handled = true;
             }
@@ -1180,40 +1180,80 @@ namespace Thesis_3D
         {
             if (_SelectID > 0)
             {
+                bool useTrajection = _renderObjects[_SelectID].trajctoryRenderObject.useTrajectory;
                 Form dlgChangeTrajectory = new Form()
                 {
                     Text = "Изменение траектории движения",
-                    Width = 680,
-                    Height = 550,
+                    Width = 480,
+                    Height = 250,
                     FormBorderStyle = FormBorderStyle.Sizable,
                     StartPosition = FormStartPosition.CenterScreen,
                 };
-                CheckBox checkBoxUseTrajectory = new CheckBox() { Checked = false, Text = "Использовать траекторию движения", Width = 170, Height = 30, Top = 15, Left = 20, Anchor = AnchorStyles.Left | AnchorStyles.Top };
-                ComboBox comboBoxTargetObject = new ComboBox() { DropDownStyle = ComboBoxStyle.DropDownList, Text = "Куб", Left = 140, Width = 145, Top = 50, Enabled = checkBoxUseTrajectory.Checked };
-                Label lblTargetObject = new Label() { Text = "Целевой объект:", Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 120, Height = 30, Top = 50, Left = 20 };
+                CheckBox checkBoxUseTrajectory = new CheckBox() { Checked = useTrajection, Text = "Использовать траекторию движения", Width = 170, Height = 30, Top = 15, Left = 20, Anchor = AnchorStyles.Left | AnchorStyles.Top };
+                ComboBox comboBoxTargetObject = new ComboBox() { Enabled = checkBoxUseTrajectory.Checked, DropDownStyle = ComboBoxStyle.DropDownList, Text = "Куб", Left = 140, Width = 145, Top = 50 };
+                Label lblTargetObject = new Label() { Text = "Целевой объект:", Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 120, Height = 30, Top = 53, Left = 20 };
                 Label lblCoords = new Label() { Text = "Координаты точки", Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 120, Height = 30, Top = 80, Left = 20 };
-                Label lblCoordsX = new Label() { Text = "X:", Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 120, Height = 30, Top = 80, Left = 20 };
-                Label lblCoordsY = new Label() { Text = "Y:", Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 120, Height = 30, Top = 80, Left = 20 };
-                Label lblCoordsZ = new Label() { Text = "Z:", Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 120, Height = 30, Top = 80, Left = 20 };
+                Label lblCoordsX = new Label() { Text = "X:", Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 20, Height = 30, Top = 113, Left = 20 };
+                Label lblCoordsY = new Label() { Text = "Y:", Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 20, Height = 30, Top = 113, Left = 80 };
+                Label lblCoordsZ = new Label() { Text = "Z:", Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 20, Height = 30, Top = 113, Left = 140 };
+                TextBox textBoxX = new TextBox() { Enabled = checkBoxUseTrajectory.Checked, Text = "0", Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 40, Height = 30, Top = 110, Left = 40 };
+                TextBox textBoxY = new TextBox() { Enabled = checkBoxUseTrajectory.Checked, Text = "0", Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 40, Height = 30, Top = 110, Left = 100 };
+                TextBox textBoxZ = new TextBox() { Enabled = checkBoxUseTrajectory.Checked, Text = "0", Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 40, Height = 30, Top = 110, Left = 160 };
+                Button buttonOk = new Button() { Text = "Ok", Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 40, Height = 30, Top = 170, Left = 200, DialogResult = DialogResult.OK };
+                textBoxX.KeyPress += textBox1_KeyPress;
+                textBoxY.KeyPress += textBox1_KeyPress;
+                textBoxZ.KeyPress += textBox1_KeyPress;
                 checkBoxUseTrajectory.CheckedChanged += (senderT, eT) =>
                 {
                     comboBoxTargetObject.Enabled = checkBoxUseTrajectory.Checked;
+                    textBoxX.Enabled = textBoxY.Enabled = textBoxZ.Enabled = checkBoxUseTrajectory.Checked && Convert.ToString(comboBoxTargetObject.SelectedItem) == "Точка";
                 };
                 comboBoxTargetObject.Items.AddRange( new object []
                 {
                         "Объект",
                         "Точка"
                 });
+                comboBoxTargetObject.SelectedItem = "Точка";
+                comboBoxTargetObject.SelectedValueChanged += (senderT, eT) =>
+                {
+                    textBoxX.Enabled = textBoxY.Enabled = textBoxZ.Enabled = checkBoxUseTrajectory.Checked && Convert.ToString(comboBoxTargetObject.SelectedItem) == "Точка";
+                };
                 dlgChangeTrajectory.Controls.Add(checkBoxUseTrajectory);
                 dlgChangeTrajectory.Controls.Add(lblCoords);
                 dlgChangeTrajectory.Controls.Add(comboBoxTargetObject);
+                dlgChangeTrajectory.Controls.Add(lblTargetObject);
+                dlgChangeTrajectory.Controls.Add(lblCoordsX);
+                dlgChangeTrajectory.Controls.Add(lblCoordsY);
+                dlgChangeTrajectory.Controls.Add(lblCoordsZ);
+                dlgChangeTrajectory.Controls.Add(textBoxX);
+                dlgChangeTrajectory.Controls.Add(textBoxY);
+                dlgChangeTrajectory.Controls.Add(textBoxZ);
+                dlgChangeTrajectory.Controls.Add(buttonOk);
                 if (dlgChangeTrajectory.ShowDialog() == DialogResult.OK)
                 {
-                    if(checkBoxUseTrajectory.Checked)
-                    {
-
-                    }
                     _renderObjects[_SelectID].trajctoryRenderObject.useTrajectory = checkBoxUseTrajectory.Checked;
+                    if (checkBoxUseTrajectory.Checked)
+                    {
+                        TrajectoryFunctionsForm trajectoryFunctionsForm = new TrajectoryFunctionsForm();
+                        if (trajectoryFunctionsForm.ShowDialog() == DialogResult.OK)
+                        {
+                            if(trajectoryFunctionsForm.trajectoryFunctionsX.ValidateTrajectoryFunc() && trajectoryFunctionsForm.trajectoryFunctionsY.ValidateTrajectoryFunc() && trajectoryFunctionsForm.trajectoryFunctionsZ.ValidateTrajectoryFunc())
+                            {
+                                _renderObjects[_SelectID].trajctoryRenderObject.target = Convert.ToString(comboBoxTargetObject.SelectedItem) == "Точка" ? TargetTrajectory.Point : TargetTrajectory.Object;
+                                _renderObjects[_SelectID].trajctoryRenderObject.trajectoryFunctionsX = trajectoryFunctionsForm.trajectoryFunctionsX;
+                                _renderObjects[_SelectID].trajctoryRenderObject.trajectoryFunctionsY = trajectoryFunctionsForm.trajectoryFunctionsY;
+                                _renderObjects[_SelectID].trajctoryRenderObject.trajectoryFunctionsZ = trajectoryFunctionsForm.trajectoryFunctionsZ;
+                            }
+                            else
+                            {
+                                _renderObjects[_SelectID].trajctoryRenderObject.useTrajectory = false;
+                            }
+                        }
+                        else
+                        {
+                            _renderObjects[_SelectID].trajctoryRenderObject.useTrajectory = false;
+                        }
+                    }
                 }
             }
         }

@@ -44,7 +44,7 @@ namespace Thesis_3D
         public TrajectoryFunctions trajectoryFunctionsZ;
         Vector4 colorObject;
         Vector4 point;
-        TargetTrajectory target;
+        public TargetTrajectory target;
         public TrajctoryRenderObject()
         {
             useTrajectory = false;
@@ -55,7 +55,8 @@ namespace Thesis_3D
             trajectoryFunctionsX = locTrajectoryFunctionsX;
             trajectoryFunctionsY = locTrajectoryFunctionsY;
             trajectoryFunctionsZ = locTrajectoryFunctionsZ;
-            if(target == TargetTrajectory.Object)
+            target = locTarget;
+            if (locTarget == TargetTrajectory.Object)
             {
                 colorObject = vectorTarget;
             }
