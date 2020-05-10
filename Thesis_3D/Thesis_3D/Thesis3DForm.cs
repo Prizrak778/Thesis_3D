@@ -993,7 +993,7 @@ namespace Thesis_3D
                 Button button_ok = new Button() { Text = "Ok", Top = 50, Left = 550, Width = 100, Height = 25, Anchor = AnchorStyles.Top | AnchorStyles.Right, DialogResult = DialogResult.OK };
                 int i = vertexObject.Length;
                 int colFinElement = i / 3;
-                Triangls[] triangls_select = new Triangls[colFinElement];
+                Triangls[] trianglsSelect = new Triangls[colFinElement];
                 PointUnik[] pointUnik = new PointUnik[i];
                 int colUnik = 0;
                 for (int iter = 0; iter < vertexObject.Length; iter++)
@@ -1125,25 +1125,25 @@ namespace Thesis_3D
                         }
                         if (!errorFlag)
                         {
-                            Vertex[] figure_vertex = new Vertex[listFinitElem.Count * 3];
+                            Vertex[] figureVertex = new Vertex[listFinitElem.Count * 3];
                             int col = 0;
                             foreach (DataFinitElem fin in listFinitElem)
                             {
-                                Vector4 norm_vec = new Vector4();
-                                norm_vec.X = (float)(listCoord[fin.first].Y * listCoord[fin.third].Z - listCoord[fin.second].Y * listCoord[fin.third].Z - listCoord[fin.first].Y * listCoord[fin.second].Z - listCoord[fin.first].Z * listCoord[fin.third].Y + listCoord[fin.second].Z * listCoord[fin.third].Y + listCoord[fin.first].Z * listCoord[fin.second].Y);
-                                norm_vec.Y = (float)(listCoord[fin.first].Z * listCoord[fin.third].X - listCoord[fin.second].Z * listCoord[fin.third].X - listCoord[fin.first].Z * listCoord[fin.second].X - listCoord[fin.first].X * listCoord[fin.third].Z + listCoord[fin.second].X * listCoord[fin.third].Z + listCoord[fin.first].X * listCoord[fin.second].Z);
-                                norm_vec.Z = (float)(listCoord[fin.first].X * listCoord[fin.third].Y - listCoord[fin.second].X * listCoord[fin.third].Y - listCoord[fin.first].X * listCoord[fin.second].Y - listCoord[fin.first].Y * listCoord[fin.third].X + listCoord[fin.second].Y * listCoord[fin.third].X + listCoord[fin.first].Y * listCoord[fin.second].X);
-                                norm_vec.W = 0.0f;
-                                float len = Math.Abs(norm_vec.X) + Math.Abs(norm_vec.Y) + Math.Abs(norm_vec.Z);
-                                norm_vec.X = norm_vec.X / len;
-                                norm_vec.Y = norm_vec.Y / len;
-                                norm_vec.Z = norm_vec.Z / len;
-                                figure_vertex[col] = new Vertex(new Vector4((float)listCoord[fin.first].X, (float)listCoord[fin.first].Y, (float)listCoord[fin.first].Z, 1.0f), new Vector4(norm_vec.X, norm_vec.Y, norm_vec.Z, 0.0f), new Vector2(0, 0));
-                                figure_vertex[col + 1] = new Vertex(new Vector4((float)listCoord[fin.second].X, (float)listCoord[fin.second].Y, (float)listCoord[fin.second].Z, 1.0f), new Vector4(norm_vec.X, norm_vec.Y, norm_vec.Z, 0.0f), new Vector2(0, 0));
-                                figure_vertex[col + 2] = new Vertex(new Vector4((float)listCoord[fin.third].X, (float)listCoord[fin.third].Y, (float)listCoord[fin.third].Z, 1.0f), new Vector4(norm_vec.X, norm_vec.Y, norm_vec.Z, 0.0f), new Vector2(0, 0));
+                                Vector4 normVec = new Vector4();
+                                normVec.X = (float)(listCoord[fin.first].Y * listCoord[fin.third].Z - listCoord[fin.second].Y * listCoord[fin.third].Z - listCoord[fin.first].Y * listCoord[fin.second].Z - listCoord[fin.first].Z * listCoord[fin.third].Y + listCoord[fin.second].Z * listCoord[fin.third].Y + listCoord[fin.first].Z * listCoord[fin.second].Y);
+                                normVec.Y = (float)(listCoord[fin.first].Z * listCoord[fin.third].X - listCoord[fin.second].Z * listCoord[fin.third].X - listCoord[fin.first].Z * listCoord[fin.second].X - listCoord[fin.first].X * listCoord[fin.third].Z + listCoord[fin.second].X * listCoord[fin.third].Z + listCoord[fin.first].X * listCoord[fin.second].Z);
+                                normVec.Z = (float)(listCoord[fin.first].X * listCoord[fin.third].Y - listCoord[fin.second].X * listCoord[fin.third].Y - listCoord[fin.first].X * listCoord[fin.second].Y - listCoord[fin.first].Y * listCoord[fin.third].X + listCoord[fin.second].Y * listCoord[fin.third].X + listCoord[fin.first].Y * listCoord[fin.second].X);
+                                normVec.W = 0.0f;
+                                float len = Math.Abs(normVec.X) + Math.Abs(normVec.Y) + Math.Abs(normVec.Z);
+                                normVec.X = normVec.X / len;
+                                normVec.Y = normVec.Y / len;
+                                normVec.Z = normVec.Z / len;
+                                figureVertex[col] = new Vertex(new Vector4((float)listCoord[fin.first].X, (float)listCoord[fin.first].Y, (float)listCoord[fin.first].Z, 1.0f), new Vector4(normVec.X, normVec.Y, normVec.Z, 0.0f), new Vector2(0, 0));
+                                figureVertex[col + 1] = new Vertex(new Vector4((float)listCoord[fin.second].X, (float)listCoord[fin.second].Y, (float)listCoord[fin.second].Z, 1.0f), new Vector4(normVec.X, normVec.Y, normVec.Z, 0.0f), new Vector2(0, 0));
+                                figureVertex[col + 2] = new Vertex(new Vector4((float)listCoord[fin.third].X, (float)listCoord[fin.third].Y, (float)listCoord[fin.third].Z, 1.0f), new Vector4(normVec.X, normVec.Y, normVec.Z, 0.0f), new Vector2(0, 0));
                                 col += 3;
                             }
-                            _renderObjects[_SelectID].WriteBuffer(figure_vertex);
+                            _renderObjects[_SelectID].WriteBuffer(figureVertex);
                         }
                         else
                         {
@@ -1198,6 +1198,7 @@ namespace Thesis_3D
             if (_SelectID > 0)
             {
                 bool useTrajection = _renderObjects[_SelectID].trajctoryRenderObject.useTrajectory;
+                Vector3 target = new Vector3(_renderObjects[_SelectID].trajctoryRenderObject.GetPoint());
                 Form dlgChangeTrajectory = new Form()
                 {
                     Text = "Изменение траектории движения",
@@ -1213,9 +1214,9 @@ namespace Thesis_3D
                 Label lblCoordsX = new Label() { Text = "X:", Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 20, Height = 30, Top = 113, Left = 20 };
                 Label lblCoordsY = new Label() { Text = "Y:", Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 20, Height = 30, Top = 113, Left = 80 };
                 Label lblCoordsZ = new Label() { Text = "Z:", Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 20, Height = 30, Top = 113, Left = 140 };
-                TextBox textBoxX = new TextBox() { Enabled = checkBoxUseTrajectory.Checked, Text = "0", Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 40, Height = 30, Top = 110, Left = 40 };
-                TextBox textBoxY = new TextBox() { Enabled = checkBoxUseTrajectory.Checked, Text = "0", Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 40, Height = 30, Top = 110, Left = 100 };
-                TextBox textBoxZ = new TextBox() { Enabled = checkBoxUseTrajectory.Checked, Text = "0", Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 40, Height = 30, Top = 110, Left = 160 };
+                TextBox textBoxX = new TextBox() { Enabled = checkBoxUseTrajectory.Checked, Text = Convert.ToString(target.X), Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 40, Height = 30, Top = 110, Left = 40 };
+                TextBox textBoxY = new TextBox() { Enabled = checkBoxUseTrajectory.Checked, Text = Convert.ToString(target.Y), Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 40, Height = 30, Top = 110, Left = 100 };
+                TextBox textBoxZ = new TextBox() { Enabled = checkBoxUseTrajectory.Checked, Text = Convert.ToString(target.Z), Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 40, Height = 30, Top = 110, Left = 160 };
                 Button buttonOk = new Button() { Text = "Ok", Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 40, Height = 30, Top = 170, Left = 200, DialogResult = DialogResult.OK };
                 textBoxX.KeyPress += textBox1_KeyPress;
                 textBoxY.KeyPress += textBox1_KeyPress;
@@ -1250,7 +1251,7 @@ namespace Thesis_3D
                 {
                     if (checkBoxUseTrajectory.Checked)
                     {
-                        TrajectoryFunctionsForm trajectoryFunctionsForm = new TrajectoryFunctionsForm();
+                        TrajectoryFunctionsForm trajectoryFunctionsForm = new TrajectoryFunctionsForm(_renderObjects[_SelectID].trajctoryRenderObject.trajectoryFunctionsX, _renderObjects[_SelectID].trajctoryRenderObject.trajectoryFunctionsY, _renderObjects[_SelectID].trajctoryRenderObject.trajectoryFunctionsZ);
                         if (trajectoryFunctionsForm.ShowDialog() == DialogResult.OK)
                         {
                             if(trajectoryFunctionsForm.trajectoryFunctionsX.ValidateTrajectoryFunc() && trajectoryFunctionsForm.trajectoryFunctionsY.ValidateTrajectoryFunc() && trajectoryFunctionsForm.trajectoryFunctionsZ.ValidateTrajectoryFunc())

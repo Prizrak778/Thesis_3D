@@ -61,6 +61,9 @@
             this.textBoxStartValZ = new System.Windows.Forms.TextBox();
             this.textBoxStartValX = new System.Windows.Forms.TextBox();
             this.buttonOk = new System.Windows.Forms.Button();
+            this.checkBoxMinMaxValX = new System.Windows.Forms.CheckBox();
+            this.checkBoxMinMaxValY = new System.Windows.Forms.CheckBox();
+            this.checkBoxMinMaxValZ = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // labelX
@@ -369,7 +372,7 @@
             // buttonOk
             // 
             this.buttonOk.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonOk.Location = new System.Drawing.Point(650, 116);
+            this.buttonOk.Location = new System.Drawing.Point(756, 113);
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(100, 23);
             this.buttonOk.TabIndex = 32;
@@ -377,11 +380,44 @@
             this.buttonOk.UseVisualStyleBackColor = true;
             this.buttonOk.Click += new System.EventHandler(this.buttonOk_Click);
             // 
+            // checkBoxMinMaxValX
+            // 
+            this.checkBoxMinMaxValX.AutoSize = true;
+            this.checkBoxMinMaxValX.Location = new System.Drawing.Point(756, 40);
+            this.checkBoxMinMaxValX.Name = "checkBoxMinMaxValX";
+            this.checkBoxMinMaxValX.Size = new System.Drawing.Size(307, 17);
+            this.checkBoxMinMaxValX.TabIndex = 33;
+            this.checkBoxMinMaxValX.Text = "Если значение равно максиму, то сделать минимумом";
+            this.checkBoxMinMaxValX.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxMinMaxValY
+            // 
+            this.checkBoxMinMaxValY.AutoSize = true;
+            this.checkBoxMinMaxValY.Location = new System.Drawing.Point(756, 65);
+            this.checkBoxMinMaxValY.Name = "checkBoxMinMaxValY";
+            this.checkBoxMinMaxValY.Size = new System.Drawing.Size(307, 17);
+            this.checkBoxMinMaxValY.TabIndex = 34;
+            this.checkBoxMinMaxValY.Text = "Если значение равно максиму, то сделать минимумом";
+            this.checkBoxMinMaxValY.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxMinMaxValZ
+            // 
+            this.checkBoxMinMaxValZ.AutoSize = true;
+            this.checkBoxMinMaxValZ.Location = new System.Drawing.Point(756, 91);
+            this.checkBoxMinMaxValZ.Name = "checkBoxMinMaxValZ";
+            this.checkBoxMinMaxValZ.Size = new System.Drawing.Size(307, 17);
+            this.checkBoxMinMaxValZ.TabIndex = 35;
+            this.checkBoxMinMaxValZ.Text = "Если значение равно максиму, то сделать минимумом";
+            this.checkBoxMinMaxValZ.UseVisualStyleBackColor = true;
+            // 
             // TrajectoryFunctionsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(770, 148);
+            this.ClientSize = new System.Drawing.Size(1066, 148);
+            this.Controls.Add(this.checkBoxMinMaxValZ);
+            this.Controls.Add(this.checkBoxMinMaxValY);
+            this.Controls.Add(this.checkBoxMinMaxValX);
             this.Controls.Add(this.buttonOk);
             this.Controls.Add(this.textBoxStartValY);
             this.Controls.Add(this.textBoxStartValZ);
@@ -457,5 +493,8 @@
         private System.Windows.Forms.TextBox textBoxStartValZ;
         private System.Windows.Forms.TextBox textBoxStartValX;
         private System.Windows.Forms.Button buttonOk;
+        private System.Windows.Forms.CheckBox checkBoxMinMaxValX;
+        private System.Windows.Forms.CheckBox checkBoxMinMaxValY;
+        private System.Windows.Forms.CheckBox checkBoxMinMaxValZ;
     }
 }
