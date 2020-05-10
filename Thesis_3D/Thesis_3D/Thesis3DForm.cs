@@ -430,12 +430,18 @@ namespace Thesis_3D
                 buttonChangeFigure.Enabled = true;
                 buttonRemoveFigure.Enabled = true;
                 buttonTrajectory.Enabled = true;
+                labelId.Visible = true;
+                labelIdText.Visible = true;
+                labelIdText.Text = Convert.ToString(_renderObjects[_SelectID].сolorСhoice.Xyz).Replace("(", "").Replace(")", "").Replace(";", "").Replace(" ", "") + " №" + Convert.ToString(_SelectID);
             }
             else
             {
                 buttonChangeFigure.Enabled = false;
                 buttonRemoveFigure.Enabled = false;
                 buttonTrajectory.Enabled = false;
+                labelId.Visible = false; ;
+                labelIdText.Visible = false; ;
+                labelIdText.Text = "-";
             }
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
         }
@@ -515,7 +521,7 @@ namespace Thesis_3D
                 {
                     foreach(var lightObject in _lightObjects)
                     {
-                        if(lightObject.Color_choice == _renderObjects[_SelectID].Color_choice)
+                        if(lightObject.сolorСhoice == _renderObjects[_SelectID].сolorСhoice)
                         {
                             lightObject.SetPositionLight(_renderObjects[_SelectID].ModelMatrix);
                             if (_program_Fong_directed != -1 && lightObject.uboLightInfo != -1) lightObject.UpdatePositionForBlock(_program_Fong_directed);
@@ -550,7 +556,7 @@ namespace Thesis_3D
         }
         private RenderObject RenderObjectFind(Vector4 colorChoice)
         {
-            return _renderObjects.Where(x => x.Color_choice == colorChoice).FirstOrDefault();
+            return _renderObjects.Where(x => x.сolorСhoice == colorChoice).FirstOrDefault();
         }
 
         private void RenderFigure(RenderObject renderObject, PolygonMode polygon)
@@ -579,7 +585,7 @@ namespace Thesis_3D
             {
                 if (_program == _program_shadow_project)
                 {
-                    if (countLightObj > 0 && countRenderObj > 0 && _lightObjects[0].Color_choice != renderObject.Color_choice && _renderObjects[0].Color_choice != renderObject.Color_choice)
+                    if (countLightObj > 0 && countRenderObj > 0 && _lightObjects[0].сolorСhoice != renderObject.сolorСhoice && _renderObjects[0].сolorСhoice != renderObject.сolorСhoice)
                     {
                         GL.UseProgram(_program_shadow_project);
                         GL.UniformMatrix4(23, false, ref _renderObjects[0].ModelMatrix);
@@ -628,7 +634,7 @@ namespace Thesis_3D
                     if (renderObject.trajctoryRenderObject.target == TargetTrajectory.Object)
                     {
                         RenderObject renderObjectTarget = RenderObjectFind(renderObject.trajctoryRenderObject.GetObject());
-                        pointTarget = renderObjectTarget != null ? renderObject.getPositionRenderObject().Xyz : Vector3.Zero;
+                        pointTarget = renderObjectTarget != null ? renderObjectTarget.getPositionRenderObject().Xyz : Vector3.Zero;
                     }
                     else pointTarget = renderObject.trajctoryRenderObject.GetPoint().Xyz;
                     Vector3 translation = -(renderObject.getStartPosition()) + renderObject.trajctoryRenderObject.getValue() + pointTarget;
@@ -1154,7 +1160,7 @@ namespace Thesis_3D
                     _renderObjects[_SelectID].changeModelMstrix(new Vector3(float.Parse(textBoxCoordX.Text), float.Parse(textBoxCoordY.Text), float.Parse(textBoxCoordZ.Text)));
                     if (typeObject == TypeObjectRender.LightSourceObject)
                     {
-                        var lightObject = _lightObjects.Where(x => x.Color_choice == _renderObjects[_SelectID].Color_choice).FirstOrDefault();
+                        var lightObject = _lightObjects.Where(x => x.сolorСhoice == _renderObjects[_SelectID].сolorСhoice).FirstOrDefault();
                         lightObject.AmbientIntensity = new Vector3(float.Parse(textBoxDiffR.Text), float.Parse(textBoxDiffG.Text), float.Parse(textBoxDiffB.Text));
                         if (lightObject != null)
                         {
@@ -1179,11 +1185,11 @@ namespace Thesis_3D
                 if (buffer > -1) GL.DeleteBuffer(buffer);
                 buffer = _renderObjects[_SelectID].RenderBuffer();
                 if (buffer > -1) GL.DeleteBuffer(buffer);
-                var lightObj = _lightObjects.Where(x => x.Color_choice == _renderObjects[_SelectID].Color_choice).FirstOrDefault();
+                var lightObj = _lightObjects.Where(x => x.сolorСhoice == _renderObjects[_SelectID].сolorСhoice).FirstOrDefault();
                 buffer = -1;
                 if (lightObj != null) buffer = lightObj.uboLightInfo;
                 if (buffer > -1) GL.DeleteBuffer(buffer);
-                _lightObjects.Remove(_lightObjects.Where(x => x.Color_choice == _renderObjects[_SelectID].Color_choice).FirstOrDefault());
+                _lightObjects.Remove(_lightObjects.Where(x => x.сolorСhoice == _renderObjects[_SelectID].сolorСhoice).FirstOrDefault());
                 _renderObjects.Remove(_renderObjects[_SelectID]);
                 _SelectID = -1;
             }
@@ -1193,49 +1199,75 @@ namespace Thesis_3D
             }
         }
 
+        class IdRenderObject
+        {
+            public string Text { get; set; }
+            public Vector4 colorChoices { get; set; }
+        }
+            
+
         private void buttonTrajectory_Click(object sender, EventArgs e)
         {
             if (_SelectID > 0)
             {
                 bool useTrajection = _renderObjects[_SelectID].trajctoryRenderObject.useTrajectory;
                 Vector3 target = new Vector3(_renderObjects[_SelectID].trajctoryRenderObject.GetPoint());
+                Vector4 colorObject = _renderObjects[_SelectID].trajctoryRenderObject.GetObject();
+                TargetTrajectory targetEnum = _renderObjects[_SelectID].trajctoryRenderObject.target;
                 Form dlgChangeTrajectory = new Form()
                 {
                     Text = "Изменение траектории движения",
                     Width = 480,
-                    Height = 250,
+                    Height = 270,
                     FormBorderStyle = FormBorderStyle.Sizable,
                     StartPosition = FormStartPosition.CenterScreen,
                 };
                 CheckBox checkBoxUseTrajectory = new CheckBox() { Checked = useTrajection, Text = "Использовать траекторию движения", Width = 170, Height = 30, Top = 15, Left = 20, Anchor = AnchorStyles.Left | AnchorStyles.Top };
-                ComboBox comboBoxTargetObject = new ComboBox() { Enabled = checkBoxUseTrajectory.Checked, DropDownStyle = ComboBoxStyle.DropDownList, Text = "Куб", Left = 140, Width = 145, Top = 50 };
+                ComboBox comboBoxTargetObject = new ComboBox() { Enabled = checkBoxUseTrajectory.Checked, DropDownStyle = ComboBoxStyle.DropDownList, Text = "Объект", Left = 140, Width = 145, Top = 50 };
                 Label lblTargetObject = new Label() { Text = "Целевой объект:", Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 120, Height = 30, Top = 53, Left = 20 };
                 Label lblCoords = new Label() { Text = "Координаты точки", Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 120, Height = 30, Top = 80, Left = 20 };
                 Label lblCoordsX = new Label() { Text = "X:", Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 20, Height = 30, Top = 113, Left = 20 };
                 Label lblCoordsY = new Label() { Text = "Y:", Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 20, Height = 30, Top = 113, Left = 80 };
                 Label lblCoordsZ = new Label() { Text = "Z:", Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 20, Height = 30, Top = 113, Left = 140 };
-                TextBox textBoxX = new TextBox() { Enabled = checkBoxUseTrajectory.Checked, Text = Convert.ToString(target.X), Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 40, Height = 30, Top = 110, Left = 40 };
-                TextBox textBoxY = new TextBox() { Enabled = checkBoxUseTrajectory.Checked, Text = Convert.ToString(target.Y), Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 40, Height = 30, Top = 110, Left = 100 };
-                TextBox textBoxZ = new TextBox() { Enabled = checkBoxUseTrajectory.Checked, Text = Convert.ToString(target.Z), Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 40, Height = 30, Top = 110, Left = 160 };
-                Button buttonOk = new Button() { Text = "Ok", Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 40, Height = 30, Top = 170, Left = 200, DialogResult = DialogResult.OK };
+                Label objectId = new Label() { Text = "Id объект", Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 80, Height = 30, Top = 143, Left = 20 };
+                Button buttonOk = new Button() { Text = "Ok", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 40, Height = 30, Top = 200, Left = 200, DialogResult = DialogResult.OK };
+                comboBoxTargetObject.Items.AddRange( new object []
+                {
+                        "Объект",
+                        "Точка"
+                });
+                comboBoxTargetObject.SelectedItem = targetEnum == TargetTrajectory.Point ? "Точка" : "Объект"; //Дефолтное значение Enum == Enum[0]
+                TextBox textBoxX = new TextBox() { Enabled = checkBoxUseTrajectory.Checked && Convert.ToString(comboBoxTargetObject.SelectedItem) == "Точка", Text = Convert.ToString(target.X), Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 40, Height = 30, Top = 110, Left = 40 };
+                TextBox textBoxY = new TextBox() { Enabled = checkBoxUseTrajectory.Checked && Convert.ToString(comboBoxTargetObject.SelectedItem) == "Точка", Text = Convert.ToString(target.Y), Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 40, Height = 30, Top = 110, Left = 100 };
+                TextBox textBoxZ = new TextBox() { Enabled = checkBoxUseTrajectory.Checked && Convert.ToString(comboBoxTargetObject.SelectedItem) == "Точка", Text = Convert.ToString(target.Z), Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 40, Height = 30, Top = 110, Left = 160 };
                 textBoxX.KeyPress += textBox1_KeyPress;
                 textBoxY.KeyPress += textBox1_KeyPress;
                 textBoxZ.KeyPress += textBox1_KeyPress;
+                ComboBox comboBoxIds = new ComboBox() { DropDownStyle = ComboBoxStyle.DropDownList, Enabled = checkBoxUseTrajectory.Checked && Convert.ToString(comboBoxTargetObject.SelectedItem) == "Объект", Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 180, Height = 30, Top = 175, Left = 20 };
+                comboBoxTargetObject.SelectedValueChanged += (senderT, eT) =>
+                {
+                    comboBoxIds.Enabled = checkBoxUseTrajectory.Checked && Convert.ToString(comboBoxTargetObject.SelectedItem) == "Объект";
+                    textBoxX.Enabled = textBoxY.Enabled = textBoxZ.Enabled = checkBoxUseTrajectory.Checked && Convert.ToString(comboBoxTargetObject.SelectedItem) == "Точка";
+                };
                 checkBoxUseTrajectory.CheckedChanged += (senderT, eT) =>
                 {
                     comboBoxTargetObject.Enabled = checkBoxUseTrajectory.Checked;
+                    comboBoxIds.Enabled = checkBoxUseTrajectory.Checked && Convert.ToString(comboBoxTargetObject.SelectedItem) == "Объект";
                     textBoxX.Enabled = textBoxY.Enabled = textBoxZ.Enabled = checkBoxUseTrajectory.Checked && Convert.ToString(comboBoxTargetObject.SelectedItem) == "Точка";
                 };
-                comboBoxTargetObject.Items.AddRange( new object []
+                List<IdRenderObject> idsRenderObject = new List<IdRenderObject>();
+                foreach (var renderObect in _renderObjects.Select((r, i) => new { Row = r, Index = i }))
                 {
-                        //"Объект",
-                        "Точка"
-                });
-                comboBoxTargetObject.SelectedItem = "Точка";
-                comboBoxTargetObject.SelectedValueChanged += (senderT, eT) =>
-                {
-                    textBoxX.Enabled = textBoxY.Enabled = textBoxZ.Enabled = checkBoxUseTrajectory.Checked && Convert.ToString(comboBoxTargetObject.SelectedItem) == "Точка";
-                };
+                    idsRenderObject.Add(new IdRenderObject {
+                        colorChoices = renderObect.Row.сolorСhoice,
+                        Text = Convert.ToString(renderObect.Row.сolorСhoice.Xyz).Replace("(", "").Replace(")", "").Replace(";", "").Replace(" ", "") + "   №" + Convert.ToString(renderObect.Index)
+                    });
+                }
+                comboBoxIds.Items.AddRange(idsRenderObject.Cast<object>().ToArray());
+                comboBoxIds.DisplayMember = "Text";
+                comboBoxIds.ValueMember = "colorChoices";
+                comboBoxIds.SelectedItem = (idsRenderObject).Where(x => x.colorChoices == colorObject).FirstOrDefault();
+                
                 dlgChangeTrajectory.Controls.Add(checkBoxUseTrajectory);
                 dlgChangeTrajectory.Controls.Add(lblCoords);
                 dlgChangeTrajectory.Controls.Add(comboBoxTargetObject);
@@ -1246,6 +1278,8 @@ namespace Thesis_3D
                 dlgChangeTrajectory.Controls.Add(textBoxX);
                 dlgChangeTrajectory.Controls.Add(textBoxY);
                 dlgChangeTrajectory.Controls.Add(textBoxZ);
+                dlgChangeTrajectory.Controls.Add(objectId);
+                dlgChangeTrajectory.Controls.Add(comboBoxIds);
                 dlgChangeTrajectory.Controls.Add(buttonOk);
                 if (dlgChangeTrajectory.ShowDialog() == DialogResult.OK)
                 {
@@ -1264,7 +1298,7 @@ namespace Thesis_3D
                                 if (Convert.ToString(comboBoxTargetObject.SelectedItem) == "Точка")
                                     _renderObjects[_SelectID].trajctoryRenderObject.SetPoint(new Vector4(float.Parse(textBoxX.Text), float.Parse(textBoxY.Text), float.Parse(textBoxZ.Text), 1.0f));
                                 else
-                                    _renderObjects[_SelectID].trajctoryRenderObject.SetPoint(new Vector4(float.Parse(textBoxX.Text), float.Parse(textBoxY.Text), float.Parse(textBoxZ.Text), 1.0f));
+                                    _renderObjects[_SelectID].trajctoryRenderObject.SetObject(((IdRenderObject)comboBoxIds.SelectedItem).colorChoices);
                             }
                             else
                             {
@@ -1276,6 +1310,7 @@ namespace Thesis_3D
                             _renderObjects[_SelectID].trajctoryRenderObject.useTrajectory = false;
                         }
                     }
+                    _renderObjects[_SelectID].trajctoryRenderObject.useTrajectory = checkBoxUseTrajectory.Checked;
                 }
             }
         }

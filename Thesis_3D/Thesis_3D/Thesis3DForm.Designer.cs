@@ -60,6 +60,8 @@
             this.buttonChangeFigure = new System.Windows.Forms.Button();
             this.buttonRemoveFigure = new System.Windows.Forms.Button();
             this.buttonTrajectory = new System.Windows.Forms.Button();
+            this.labelId = new System.Windows.Forms.Label();
+            this.labelIdText = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -71,9 +73,9 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.glControlThesis3D.BackColor = System.Drawing.Color.Black;
-            this.glControlThesis3D.Location = new System.Drawing.Point(12, 12);
+            this.glControlThesis3D.Location = new System.Drawing.Point(9, 12);
             this.glControlThesis3D.Name = "glControlThesis3D";
-            this.glControlThesis3D.Size = new System.Drawing.Size(733, 578);
+            this.glControlThesis3D.Size = new System.Drawing.Size(733, 605);
             this.glControlThesis3D.TabIndex = 0;
             this.glControlThesis3D.VSync = false;
             // 
@@ -341,7 +343,7 @@
             // 
             this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(748, 555);
+            this.label5.Location = new System.Drawing.Point(751, 556);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(30, 13);
             this.label5.TabIndex = 8;
@@ -351,7 +353,7 @@
             // 
             this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(748, 577);
+            this.label6.Location = new System.Drawing.Point(751, 578);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(47, 13);
             this.label6.TabIndex = 9;
@@ -412,11 +414,33 @@
             this.buttonTrajectory.UseVisualStyleBackColor = true;
             this.buttonTrajectory.Click += new System.EventHandler(this.buttonTrajectory_Click);
             // 
+            // labelId
+            // 
+            this.labelId.AutoSize = true;
+            this.labelId.Location = new System.Drawing.Point(751, 604);
+            this.labelId.Name = "labelId";
+            this.labelId.Size = new System.Drawing.Size(19, 13);
+            this.labelId.TabIndex = 15;
+            this.labelId.Text = "Id:";
+            this.labelId.Visible = false;
+            // 
+            // labelIdText
+            // 
+            this.labelIdText.AutoSize = true;
+            this.labelIdText.Location = new System.Drawing.Point(776, 604);
+            this.labelIdText.Name = "labelIdText";
+            this.labelIdText.Size = new System.Drawing.Size(10, 13);
+            this.labelIdText.TabIndex = 16;
+            this.labelIdText.Text = "-";
+            this.labelIdText.Visible = false;
+            // 
             // Thesis3DForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(952, 602);
+            this.ClientSize = new System.Drawing.Size(952, 629);
+            this.Controls.Add(this.labelIdText);
+            this.Controls.Add(this.labelId);
             this.Controls.Add(this.buttonTrajectory);
             this.Controls.Add(this.buttonRemoveFigure);
             this.Controls.Add(this.buttonChangeFigure);
@@ -477,6 +501,8 @@
         private System.Windows.Forms.Button buttonChangeFigure;
         private System.Windows.Forms.Button buttonRemoveFigure;
         private System.Windows.Forms.Button buttonTrajectory;
+        private System.Windows.Forms.Label labelId;
+        private System.Windows.Forms.Label labelIdText;
     }
 }
 

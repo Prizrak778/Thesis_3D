@@ -108,7 +108,7 @@ namespace Thesis_3D
         public TrajctoryRenderObject trajctoryRenderObject;
         public Matrix4 ModelMatrix = Matrix4.CreateTranslation(0, 0, 0);
         public Vector4 Color_obj; //Цвет объекта
-        public Vector4 Color_choice; //Цвет объекта для буффера выбора
+        public Vector4 сolorСhoice; //Цвет объекта для буффера выбора
         public RenderObject(Vertex[] vertices, Vector3 startPosition, Color4 color, Color4 color_choice, TypeObjectRender typeObject = TypeObjectRender.SimpleObject, bool plane = false)
         {
             trajctoryRenderObject = new TrajctoryRenderObject();
@@ -160,10 +160,10 @@ namespace Thesis_3D
             Color_obj.Y = color.G;
             Color_obj.Z = color.B;
             Color_obj.W = color.A;
-            Color_choice.X = color_choice.R;
-            Color_choice.Y = color_choice.G;
-            Color_choice.Z = color_choice.B;
-            Color_choice.W = color_choice.A;
+            сolorСhoice.X = color_choice.R;
+            сolorСhoice.Y = color_choice.G;
+            сolorСhoice.Z = color_choice.B;
+            сolorСhoice.W = color_choice.A;
             if (plane) bufferProjectionShadow(vertices);
         }
         public void Bind()//Сохранение буфера для дальнейшей отрисовки
