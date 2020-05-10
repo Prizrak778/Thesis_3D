@@ -96,83 +96,83 @@ namespace Thesis_3D
 
     public class RenderObject : IDisposable
     {
-        private bool _initialized;
-        private int _vertexArray;
-        private int _buffer; //Буффер в котором хранится объект
+        private bool _Initialized;
+        private int _VertexArray;
+        private int _Buffer; //Буффер в котором хранится объект
         private int ssbo; //Буффер для плоских теней
-        private int _verticeCount;
-        private PolygonMode _polygon;
-        private Vector3 _startPosition = Vector3.Zero;
-        private Vector4 diffusion = Vector4.One;
+        private int _VerticeCount;
+        private PolygonMode _Polygon;
+        private Vector3 _StartPosition = Vector3.Zero;
+        private Vector4 Diffusion = Vector4.One;
         public TypeObjectRender TypeObject = TypeObjectRender.SimpleObject;
         public TrajctoryRenderObject trajctoryRenderObject;
         public Matrix4 ModelMatrix = Matrix4.CreateTranslation(0, 0, 0);
-        public Vector4 Color_obj; //Цвет объекта
-        public Vector4 сolorСhoice; //Цвет объекта для буффера выбора
+        public Vector4 ColorObj; //Цвет объекта
+        public Vector4 ColorСhoice; //Цвет объекта для буффера выбора
         public RenderObject(Vertex[] vertices, Vector3 startPosition, Color4 color, Color4 color_choice, TypeObjectRender typeObject = TypeObjectRender.SimpleObject, bool plane = false)
         {
             trajctoryRenderObject = new TrajctoryRenderObject();
-            _verticeCount = vertices.Length;
-            _vertexArray = GL.GenVertexArray();
-            _startPosition = startPosition;
+            _VerticeCount = vertices.Length;
+            _VertexArray = GL.GenVertexArray();
+            _StartPosition = startPosition;
             TypeObject = typeObject;
-            GL.GenBuffers(1, out _buffer);
+            GL.GenBuffers(1, out _Buffer);
             //PolygonMode.Line
-            GL.BindVertexArray(_vertexArray);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, _buffer);
-            GL.NamedBufferStorage(_buffer, Vertex.Size * _verticeCount,          // the size needed by this buffer
+            GL.BindVertexArray(_VertexArray);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, _Buffer);
+            GL.NamedBufferStorage(_Buffer, Vertex.Size * _VerticeCount,          // the size needed by this buffer
                 vertices,                                                        // data to initialize with
                 BufferStorageFlags.MapWriteBit);                                 // at this point we will only write to the buffer
                                                                                  // create vertex array and buffer here
 
-            GL.VertexArrayAttribBinding(_vertexArray, 1, 0);
-            GL.EnableVertexArrayAttrib(_vertexArray, 1);
+            GL.VertexArrayAttribBinding(_VertexArray, 1, 0);
+            GL.EnableVertexArrayAttrib(_VertexArray, 1);
             GL.VertexArrayAttribFormat(
-                _vertexArray,
+                _VertexArray,
                 1,                                                               // attribute index, from the shader location = 0
                 4,                                                               // size of attribute, vec4
                 VertexAttribType.Float,                                          // contains floats
                 false,                                                           // does not need to be normalized as it is already, floats ignore this flag anyway
                 0);                                                              // relative offset, first item
 
-            GL.VertexArrayAttribBinding(_vertexArray, 2, 0);
-            GL.EnableVertexArrayAttrib(_vertexArray, 2);
+            GL.VertexArrayAttribBinding(_VertexArray, 2, 0);
+            GL.EnableVertexArrayAttrib(_VertexArray, 2);
             GL.VertexArrayAttribFormat(
-                _vertexArray,
+                _VertexArray,
                 2,                                                               // attribute index, from the shader location = 1
                 4,                                                               // size of attribute, vec4
                 VertexAttribType.Float,                                          // contains floats
                 false,                                                           // does not need to be normalized as it is already, floats ignore this flag anyway
                 16);                                                             // relative offset after a vec4
-            GL.VertexArrayAttribBinding(_vertexArray, 3, 0);
-            GL.EnableVertexArrayAttrib(_vertexArray, 3);
+            GL.VertexArrayAttribBinding(_VertexArray, 3, 0);
+            GL.EnableVertexArrayAttrib(_VertexArray, 3);
             GL.VertexArrayAttribFormat(
-                _vertexArray,
+                _VertexArray,
                 3,                                                               // attribute index, from the shader location = 2
                 4,                                                               // size of attribute, vec4
                 VertexAttribType.Float,                                          // contains floats
                 false,                                                           // does not need to be normalized as it is already, floats ignore this flag anyway
                 32);                                                             // relative offset after a vec4 + vec4
 
-            _initialized = true;
-            GL.VertexArrayVertexBuffer(_vertexArray, 0, _buffer, IntPtr.Zero, Vertex.Size);
-            Color_obj.X = color.R;
-            Color_obj.Y = color.G;
-            Color_obj.Z = color.B;
-            Color_obj.W = color.A;
-            сolorСhoice.X = color_choice.R;
-            сolorСhoice.Y = color_choice.G;
-            сolorСhoice.Z = color_choice.B;
-            сolorСhoice.W = color_choice.A;
+            _Initialized = true;
+            GL.VertexArrayVertexBuffer(_VertexArray, 0, _Buffer, IntPtr.Zero, Vertex.Size);
+            ColorObj.X = color.R;
+            ColorObj.Y = color.G;
+            ColorObj.Z = color.B;
+            ColorObj.W = color.A;
+            ColorСhoice.X = color_choice.R;
+            ColorСhoice.Y = color_choice.G;
+            ColorСhoice.Z = color_choice.B;
+            ColorСhoice.W = color_choice.A;
             if (plane) bufferProjectionShadow(vertices);
         }
         public void Bind()//Сохранение буфера для дальнейшей отрисовки
         {
-            GL.BindVertexArray(_vertexArray);
+            GL.BindVertexArray(_VertexArray);
         }
         public int RenderBuffer()//вернуть номер буффера
         {
-            return _buffer;
+            return _Buffer;
         }
         public int ShadowProjectBuffer()//вернуть номер буффера
         {
@@ -180,17 +180,17 @@ namespace Thesis_3D
         }
         public void Render()//Отрисовка(пока только треугольником)
         {
-            GL.DrawArrays(PrimitiveType.Triangles, 0, _verticeCount);
+            GL.DrawArrays(PrimitiveType.Triangles, 0, _VerticeCount);
         }
         public void PolygonMode_now(PolygonMode polygon)//тип полигона для отрисовки(Fill, Line, Point)
         {
-            _polygon = polygon;
+            _Polygon = polygon;
             GL.PolygonMode(MaterialFace.FrontAndBack, polygon);
         }
         public void Render_line()//Отрисовка(пока только треугольником)
         {
             //GL.DrawArrays(PrimitiveType.Lines, 0, _verticeCount);
-            GL.DrawArrays(PrimitiveType.Triangles, 0, _verticeCount);
+            GL.DrawArrays(PrimitiveType.Triangles, 0, _VerticeCount);
         }
         public void Dispose()
         {
@@ -201,11 +201,11 @@ namespace Thesis_3D
         {
             if (disposing)
             {
-                if (_initialized)
+                if (_Initialized)
                 {
-                    GL.DeleteVertexArray(_vertexArray);
-                    GL.DeleteBuffer(_buffer);
-                    _initialized = false;
+                    GL.DeleteVertexArray(_VertexArray);
+                    GL.DeleteBuffer(_Buffer);
+                    _Initialized = false;
                 }
             }
         }
@@ -240,81 +240,81 @@ namespace Thesis_3D
         }
         public int BufferSize()
         {
-            return _verticeCount;
+            return _VerticeCount;
         }
         public void ReadBuffer(Vertex[] vertices)
         {
-            GL.GetNamedBufferSubData(_buffer, IntPtr.Zero, Vertex.Size * BufferSize(), vertices);
+            GL.GetNamedBufferSubData(_Buffer, IntPtr.Zero, Vertex.Size * BufferSize(), vertices);
         }
         public void WriteBuffer(Vertex[] vertices)
         {
-            GL.DeleteVertexArray(_vertexArray);
-            GL.DeleteBuffer(_buffer);
-            _verticeCount = vertices.Length;
-            _vertexArray = GL.GenVertexArray();
-            GL.GenBuffers(1, out _buffer);
+            GL.DeleteVertexArray(_VertexArray);
+            GL.DeleteBuffer(_Buffer);
+            _VerticeCount = vertices.Length;
+            _VertexArray = GL.GenVertexArray();
+            GL.GenBuffers(1, out _Buffer);
 
-            GL.BindVertexArray(_vertexArray);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, _buffer);
-            GL.NamedBufferStorage(_buffer, Vertex.Size * vertices.Length,        // the size needed by this buffer
+            GL.BindVertexArray(_VertexArray);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, _Buffer);
+            GL.NamedBufferStorage(_Buffer, Vertex.Size * vertices.Length,        // the size needed by this buffer
                 vertices,                                                        // data to initialize with
                 BufferStorageFlags.MapWriteBit);                                 // at this point we will only write to the buffer
                                                                                  // create vertex array and buffer here
 
-            GL.VertexArrayAttribBinding(_vertexArray, 1, 0);
-            GL.EnableVertexArrayAttrib(_vertexArray, 1);
+            GL.VertexArrayAttribBinding(_VertexArray, 1, 0);
+            GL.EnableVertexArrayAttrib(_VertexArray, 1);
             GL.VertexArrayAttribFormat(
-                _vertexArray,
+                _VertexArray,
                 1,                                                               // attribute index, from the shader location = 0
                 4,                                                               // size of attribute, vec4
                 VertexAttribType.Float,                                          // contains floats
                 false,                                                           // does not need to be normalized as it is already, floats ignore this flag anyway
                 0);                                                              // relative offset, first item
 
-            GL.VertexArrayAttribBinding(_vertexArray, 2, 0);
-            GL.EnableVertexArrayAttrib(_vertexArray, 2);
+            GL.VertexArrayAttribBinding(_VertexArray, 2, 0);
+            GL.EnableVertexArrayAttrib(_VertexArray, 2);
             GL.VertexArrayAttribFormat(
-                _vertexArray,
+                _VertexArray,
                 2,                                                               // attribute index, from the shader location = 1
                 4,                                                               // size of attribute, vec4
                 VertexAttribType.Float,                                          // contains floats
                 false,                                                           // does not need to be normalized as it is already, floats ignore this flag anyway
                 16);                                                             // relative offset after a vec4
-            GL.VertexArrayAttribBinding(_vertexArray, 3, 0);
-            GL.EnableVertexArrayAttrib(_vertexArray, 3);
+            GL.VertexArrayAttribBinding(_VertexArray, 3, 0);
+            GL.EnableVertexArrayAttrib(_VertexArray, 3);
             GL.VertexArrayAttribFormat(
-                _vertexArray,
+                _VertexArray,
                 3,                                                               // attribute index, from the shader location = 2
                 4,                                                               // size of attribute, vec4
                 VertexAttribType.Float,                                          // contains floats
                 false,                                                           // does not need to be normalized as it is already, floats ignore this flag anyway
                 32);                                                             // relative offset after a vec4 + vec4
 
-            _initialized = true;
-            GL.VertexArrayVertexBuffer(_vertexArray, 0, _buffer, IntPtr.Zero, Vertex.Size);
+            _Initialized = true;
+            GL.VertexArrayVertexBuffer(_VertexArray, 0, _Buffer, IntPtr.Zero, Vertex.Size);
         }
         public Vector4 getDiffusion()
         {
-            return diffusion;
+            return Diffusion;
         }
 
         public void setDiffusion(Vector4 value)
         {
-            diffusion = new Vector4(Math.Abs(value.X * 10) / 10, Math.Abs(value.Y * 10) / 10, Math.Abs(value.Z * 10) / 10, 1f);
+            Diffusion = new Vector4(Math.Abs(value.X * 10) / 10, Math.Abs(value.Y * 10) / 10, Math.Abs(value.Z * 10) / 10, 1f);
         }
         public void diffusionUnifrom(int location)
         {
-            GL.Uniform4(location, diffusion);
+            GL.Uniform4(location, Diffusion);
         }
         public Vector4 getPositionRenderObject()
         {
             Vector3 translation = ModelMatrix.ExtractTranslation();
-            translation += _startPosition;
+            translation += _StartPosition;
             return new Vector4(translation, 1.0f);
         }
         public Vector3 getStartPosition()
         {
-            return _startPosition;
+            return _StartPosition;
         }
     }
 }

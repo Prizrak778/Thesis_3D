@@ -432,7 +432,7 @@ namespace Thesis_3D
                 buttonTrajectory.Enabled = true;
                 labelId.Visible = true;
                 labelIdText.Visible = true;
-                labelIdText.Text = Convert.ToString(_renderObjects[_SelectID].сolorСhoice.Xyz).Replace("(", "").Replace(")", "").Replace(";", "").Replace(" ", "") + " №" + Convert.ToString(_SelectID);
+                labelIdText.Text = Convert.ToString(_renderObjects[_SelectID].ColorСhoice.Xyz).Replace("(", "").Replace(")", "").Replace(";", "").Replace(" ", "") + " №" + Convert.ToString(_SelectID);
             }
             else
             {
@@ -521,7 +521,7 @@ namespace Thesis_3D
                 {
                     foreach(var lightObject in _lightObjects)
                     {
-                        if(lightObject.сolorСhoice == _renderObjects[_SelectID].сolorСhoice)
+                        if(lightObject.ColorСhoice == _renderObjects[_SelectID].ColorСhoice)
                         {
                             lightObject.SetPositionLight(_renderObjects[_SelectID].ModelMatrix);
                             if (_program_Fong_directed != -1 && lightObject.uboLightInfo != -1) lightObject.UpdatePositionForBlock(_program_Fong_directed);
@@ -556,7 +556,7 @@ namespace Thesis_3D
         }
         private RenderObject RenderObjectFind(Vector4 colorChoice)
         {
-            return _renderObjects.Where(x => x.сolorСhoice == colorChoice).FirstOrDefault();
+            return _renderObjects.Where(x => x.ColorСhoice == colorChoice).FirstOrDefault();
         }
 
         private void RenderFigure(RenderObject renderObject, PolygonMode polygon)
@@ -585,7 +585,7 @@ namespace Thesis_3D
             {
                 if (_program == _program_shadow_project)
                 {
-                    if (countLightObj > 0 && countRenderObj > 0 && _lightObjects[0].сolorСhoice != renderObject.сolorСhoice && _renderObjects[0].сolorСhoice != renderObject.сolorСhoice)
+                    if (countLightObj > 0 && countRenderObj > 0 && _lightObjects[0].ColorСhoice != renderObject.ColorСhoice && _renderObjects[0].ColorСhoice != renderObject.ColorСhoice)
                     {
                         GL.UseProgram(_program_shadow_project);
                         GL.UniformMatrix4(23, false, ref _renderObjects[0].ModelMatrix);
@@ -599,7 +599,7 @@ namespace Thesis_3D
                     GL.UseProgram(_program_Fong);
                 }
                 RenderFigure(renderObject, PolygonMode.Fill);
-                Vector4 color = renderObject.Color_obj;
+                Vector4 color = renderObject.ColorObj;
                 GL.Uniform4(19, ref color);
                 if (_program == _program_some_light)
                 {
@@ -974,16 +974,16 @@ namespace Thesis_3D
                 TextBox textBoxDiffG = new TextBox() { Text = diff.Y.ToString(), Width = 40, Height = 30, Top = 380, Left = 395, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
                 TextBox textBoxDiffB = new TextBox() { Text = diff.Z.ToString(), Width = 40, Height = 30, Top = 380, Left = 455, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
                 Color4 colorSurface = new Color4();
-                colorSurface.R = _renderObjects[_SelectID].Color_obj.X;
-                colorSurface.G = _renderObjects[_SelectID].Color_obj.Y;
-                colorSurface.B = _renderObjects[_SelectID].Color_obj.Z;
-                colorSurface.A = _renderObjects[_SelectID].Color_obj.W;
+                colorSurface.R = _renderObjects[_SelectID].ColorObj.X;
+                colorSurface.G = _renderObjects[_SelectID].ColorObj.Y;
+                colorSurface.B = _renderObjects[_SelectID].ColorObj.Z;
+                colorSurface.A = _renderObjects[_SelectID].ColorObj.W;
                 ColorDialog colorDialog = new ColorDialog();
                 Label lblButtonColor = new Label() { Text = "Цвет объекта:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 170, Height = 30, Top = 423, Left = 20 };
                 Button buttonColor = new Button() { Text = "", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 70, Height = 30, Top = 415, Left = 100, BackColor = (System.Drawing.Color)colorSurface };
                 buttonColor.Click += (sender1, e1) => { if (colorDialog.ShowDialog() == DialogResult.OK) { colorSurface = buttonColor.BackColor = colorDialog.Color; } };
                 Label lblTrackBar = new Label() { Text = "Прозрачность объекта:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 170, Height = 30, Top = 470, Left = 20 };
-                TrackBar trackBar = new TrackBar() { Value = (int)(_renderObjects[_SelectID].Color_obj.W * 10f), Minimum = 0, Maximum = 10, Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 170, Height = 10, Top = 470, Left = 150 };
+                TrackBar trackBar = new TrackBar() { Value = (int)(_renderObjects[_SelectID].ColorObj.W * 10f), Minimum = 0, Maximum = 10, Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 170, Height = 10, Top = 470, Left = 150 };
                 CheckBox checkBox = new CheckBox() { Checked = false, Text = "Изменить структуру фигуры", Width = 170, Height = 30, Top = 375, Left = 20, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
                 TextBox textBoxChangeCoord = new TextBox() { Enabled = false, Multiline = true, Width = 250, Height = 350, Top = 10, Left = 10, Anchor = AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom, ScrollBars = ScrollBars.Vertical };
                 TextBox textBoxChangeFinit = new TextBox() { Enabled = false, Multiline = true, Width = 250, Height = 350, Top = 10, Left = 10, Anchor = AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom, ScrollBars = ScrollBars.Vertical };
@@ -1156,11 +1156,11 @@ namespace Thesis_3D
                             MessageBox.Show("Ошибка во формате входных данных", "Ошибка");
                         }
                     }
-                    _renderObjects[_SelectID].Color_obj = new Vector4(colorSurface.R, colorSurface.G, colorSurface.B, trackBar.Value / 10f);
+                    _renderObjects[_SelectID].ColorObj = new Vector4(colorSurface.R, colorSurface.G, colorSurface.B, trackBar.Value / 10f);
                     _renderObjects[_SelectID].changeModelMstrix(new Vector3(float.Parse(textBoxCoordX.Text), float.Parse(textBoxCoordY.Text), float.Parse(textBoxCoordZ.Text)));
                     if (typeObject == TypeObjectRender.LightSourceObject)
                     {
-                        var lightObject = _lightObjects.Where(x => x.сolorСhoice == _renderObjects[_SelectID].сolorСhoice).FirstOrDefault();
+                        var lightObject = _lightObjects.Where(x => x.ColorСhoice == _renderObjects[_SelectID].ColorСhoice).FirstOrDefault();
                         lightObject.AmbientIntensity = new Vector3(float.Parse(textBoxDiffR.Text), float.Parse(textBoxDiffG.Text), float.Parse(textBoxDiffB.Text));
                         if (lightObject != null)
                         {
@@ -1185,11 +1185,11 @@ namespace Thesis_3D
                 if (buffer > -1) GL.DeleteBuffer(buffer);
                 buffer = _renderObjects[_SelectID].RenderBuffer();
                 if (buffer > -1) GL.DeleteBuffer(buffer);
-                var lightObj = _lightObjects.Where(x => x.сolorСhoice == _renderObjects[_SelectID].сolorСhoice).FirstOrDefault();
+                var lightObj = _lightObjects.Where(x => x.ColorСhoice == _renderObjects[_SelectID].ColorСhoice).FirstOrDefault();
                 buffer = -1;
                 if (lightObj != null) buffer = lightObj.uboLightInfo;
                 if (buffer > -1) GL.DeleteBuffer(buffer);
-                _lightObjects.Remove(_lightObjects.Where(x => x.сolorСhoice == _renderObjects[_SelectID].сolorСhoice).FirstOrDefault());
+                _lightObjects.Remove(_lightObjects.Where(x => x.ColorСhoice == _renderObjects[_SelectID].ColorСhoice).FirstOrDefault());
                 _renderObjects.Remove(_renderObjects[_SelectID]);
                 _SelectID = -1;
             }
@@ -1259,8 +1259,8 @@ namespace Thesis_3D
                 foreach (var renderObect in _renderObjects.Select((r, i) => new { Row = r, Index = i }))
                 {
                     idsRenderObject.Add(new IdRenderObject {
-                        colorChoices = renderObect.Row.сolorСhoice,
-                        Text = Convert.ToString(renderObect.Row.сolorСhoice.Xyz).Replace("(", "").Replace(")", "").Replace(";", "").Replace(" ", "") + "   №" + Convert.ToString(renderObect.Index)
+                        colorChoices = renderObect.Row.ColorСhoice,
+                        Text = Convert.ToString(renderObect.Row.ColorСhoice.Xyz).Replace("(", "").Replace(")", "").Replace(";", "").Replace(" ", "") + "   №" + Convert.ToString(renderObect.Index)
                     });
                 }
                 comboBoxIds.Items.AddRange(idsRenderObject.Cast<object>().ToArray());
