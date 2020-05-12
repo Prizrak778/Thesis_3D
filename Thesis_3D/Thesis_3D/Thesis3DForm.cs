@@ -18,7 +18,7 @@ namespace Thesis_3D
 {
     public partial class Thesis3DForm : Form
     {
-        Camera camera1 = new Camera();
+        Camera cameraFirstFace = new Camera();
         private Matrix4 _projectionMatrix;
         private Matrix4 _ViewMatrix;
         private Matrix4 _MVP; //Modal * View * Matrix
@@ -26,6 +26,7 @@ namespace Thesis_3D
         private int _program = -1;
         private int _program_contour = -1;
         private int _program_some_light = -1;
+        private int _program_Lgh_directed_solar_effect = -1;
         private int _program_Fong_directed = -1;
         private int _program_Fong_fog = -1;
         private int _program_shadow_project = -1;
@@ -40,6 +41,7 @@ namespace Thesis_3D
         private List<RenderObject> _renderObjects = new List<RenderObject>();
         private List<LightObject> _lightObjects = new List<LightObject>();
         private RenderObject primaryRenderObject;
+        private RenderObject primarySphereAt;
         private LightObject primaryLightObject;
         private List<Color4> color4s_unique = new List<Color4>();
         private List<int> listProgram = new List<int>();
@@ -121,7 +123,7 @@ namespace Thesis_3D
                 aspectRatio,
                 0.01f,
                 400f);
-            _ViewMatrix = camera1.GetViewMatrix();
+            _ViewMatrix = cameraFirstFace.GetViewMatrix();
             _MVP = _ViewMatrix * _projectionMatrix;
         }
         #endregion
@@ -255,6 +257,14 @@ namespace Thesis_3D
             }
             _program_shadow_project = _program;
             listProgram.Add(_program);
+            VertexShader = @"Components\Shaders\vertexShader_Lgh_directed_solar_effect.vert";
+            FragentShader = @"Components\Shaders\fragmentShader_Lgh_directed_solar_effect.frag";
+            if ((_program = CompileShaders(VertexShader, FragentShader)) == -1)
+            {
+                error = "Ошибка при компиляции шейдера плоских теней";
+                return false;
+            }
+            _program_Lgh_directed_solar_effect = _program;
             return true;
         }
 
@@ -270,8 +280,12 @@ namespace Thesis_3D
             }
             comboBoxShaders.Items.AddRange(new object[] { "Обычные цвета", "Т.И. без отражения", "Т.И. с отражением", "Т.И. с двойным отражением", "Т.И. с плоским затенением", "Несколько Т.И.", "Направленный источник", "Затенение по Фонгу", "Затенение по Фонгу с использованием вектора полпути", "Узконаправленный источник", "Туман", "Плоское затенение для одного элемента" });
             comboBoxShaders.SelectedIndex = 0;
-            Vector3 positionObject = new Vector3(0.0f, 0.0f, 0.0f);
+            Vector3 positionObject = new Vector3(-1.0f, 1.0f, 0.0f);
+            primarySphereAt = new RenderObject(ObjectCreate.CreateSphere(40f, positionObject, 60, 60, 1, 1), positionObject, Color4.DeepSkyBlue, RandomColor());
             _renderObjects.Add(new RenderObject(ObjectCreate.CreatePlane(1.5f, positionObject, 0, 0, 45), positionObject, Color4.LightCyan, RandomColor(), plane: true));
+            primaryRenderObject = _renderObjects[0];
+            positionObject = new Vector3(0.0f, 0.0f, 0.0f);
+            _renderObjects.Add(new RenderObject(ObjectCreate.CreatePlane(15f, positionObject, 0, 0, 0), positionObject, Color4.Green, RandomColor(), plane: true));
             positionObject = new Vector3(0.0f, 2.0f, 0.0f);
             _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f, positionObject), positionObject, Color4.LightCoral, RandomColor()));
             for (int i = 0; i < 10; i++)
@@ -285,7 +299,15 @@ namespace Thesis_3D
                 _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f, positionObject), positionObject, Color4.LightCoral, RandomColor()));
             }
             Vector3 positionLight = new Vector3(1.0f, 3.0f, 1.0f);
-            _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f, positionLight), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.3f, 0.3f, 0.0f), new Vector3(1.0f, 0.0f, 5f), _program_Fong_directed));
+            _lightObjects.Add(new LightObject(ObjectCreate.CreateSphere(5.0f, positionObject, 10, 10, 1, 1), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.3f, 0.3f, 0.0f), new Vector3(1.0f, 0.0f, 5f), _program_Fong_directed));
+            primaryLightObject = _lightObjects[0];
+            primaryLightObject.trajctoryRenderObject = new TrajctoryRenderObject(
+                new TrajectoryFunctions(300, (double x) => (Math.Cos(x)), 0.03f, -180, 180, 0, "cos(x)", true),
+                new TrajectoryFunctions(300, (double x) => (Math.Sin(x)), 0.03f, -180, 180, 0, "sin(y)", true),
+                new TrajectoryFunctions(0, (double x) => (x), 1f, 0, 1, 0, "Z", true),
+                TargetTrajectory.Point,
+                new Vector4(0, 0, 0, 1f)
+                );
             positionLight = new Vector3(4.0f, 3.0f, 1.0f);                                                                                                                                                                                     
             _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f, positionLight), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.0f, 0.3f, 0.3f), new Vector3(1.0f, 0.0f, 5f)));
             positionLight = new Vector3(7.0f, 3.0f, 1.0f);                                                                                                                                                                                     
@@ -327,9 +349,9 @@ namespace Thesis_3D
             glControlThesis3D.KeyDown += new KeyEventHandler(glControl_KeyPressDown);
             glControlThesis3D.MouseWheel += new MouseEventHandler(glControl_MouseWheel);
             glControlThesis3D.MakeCurrent();
-            camera1.Position = new Vector3(0, 2.5f, 2);
-            camera1.Orientation = new Vector3(-(float)Math.PI, -(float)Math.PI, 0);
-            camera1.AddRotation(0, 0);
+            cameraFirstFace.Position = new Vector3(0, 2.5f, 2);
+            cameraFirstFace.Orientation = new Vector3(-(float)Math.PI, -(float)Math.PI, 0);
+            cameraFirstFace.AddRotation(0, 0);
             glControl_Resize(glControlThesis3D, EventArgs.Empty);
             GL.Enable(EnableCap.AlphaTest);
             GL.Enable(EnableCap.Blend);
@@ -376,9 +398,9 @@ namespace Thesis_3D
         void glControl_MouseMove(object sender, MouseEventArgs e)
         {
             Vector2 delta = lastMousePos - new Vector2(e.X, e.Y);
-            if (camera1.Rotation_status)
+            if (cameraFirstFace.Rotation_status)
             {
-                camera1.AddRotation(delta.X, delta.Y);
+                cameraFirstFace.AddRotation(delta.X, delta.Y);
             }
             lastMousePos = new Vector2(e.X, e.Y);
         }
@@ -456,38 +478,38 @@ namespace Thesis_3D
                     this.Close();
                     break;
                 case Keys.J:
-                    camera1.AddRotation(10f, 0f);
+                    cameraFirstFace.AddRotation(10f, 0f);
                     break;
                 case Keys.L:
-                    camera1.AddRotation(-10f, 0f);
+                    cameraFirstFace.AddRotation(-10f, 0f);
                     break;
                 case Keys.I:
-                    camera1.AddRotation(0f, 10f);
+                    cameraFirstFace.AddRotation(0f, 10f);
                     break;
                 case Keys.K:
-                    camera1.AddRotation(0f, -10f);
+                    cameraFirstFace.AddRotation(0f, -10f);
                     break;
                 case Keys.W:
-                    camera1.Move(0f, 0.05f, 0f);
+                    cameraFirstFace.Move(0f, 0.05f, 0f);
                     break;
                 case Keys.S:
-                    camera1.Move(0f, -0.05f, 0f);
+                    cameraFirstFace.Move(0f, -0.05f, 0f);
                     break;
                 case Keys.A:
-                    camera1.Move(-0.05f, 0f, 0f);
+                    cameraFirstFace.Move(-0.05f, 0f, 0f);
                     break;
                 case Keys.D:
-                    camera1.Move(0.05f, 0f, 0f);
+                    cameraFirstFace.Move(0.05f, 0f, 0f);
                     break;
                 case Keys.Q://Вверх по y
-                    camera1.Move(0f, 0f, 0.05f);
+                    cameraFirstFace.Move(0f, 0f, 0.05f);
                     break;
                 case Keys.E://Вниз по y
-                    camera1.Move(0f, 0f, -0.05f);
+                    cameraFirstFace.Move(0f, 0f, -0.05f);
                     break;
                 case Keys.C:
-                    camera1.Rotation_change_status();
-                    checkBox2.Checked = camera1.Rotation_status;
+                    cameraFirstFace.Rotation_change_status();
+                    checkBox2.Checked = cameraFirstFace.Rotation_status;
                     break;
                 case Keys.O:
                     _contour = _contour ? false : true;
@@ -578,21 +600,21 @@ namespace Thesis_3D
 
 
             GL.UseProgram(_program);
-            camera1.SetPositionCamerShader(23);
+            cameraFirstFace.SetPositionCamerShader(23);
             var countLightObj = _lightObjects.Count;
             var countRenderObj = _renderObjects.Count;
             foreach (var renderObject in _renderObjects)
             {
                 if (_program == _program_shadow_project)
                 {
-                    if (countLightObj > 0 && countRenderObj > 0 && _lightObjects[0].ColorСhoice != renderObject.ColorСhoice && _renderObjects[0].ColorСhoice != renderObject.ColorСhoice)
+                    if (countLightObj > 0 && countRenderObj > 0 && primaryLightObject.ColorСhoice != renderObject.ColorСhoice && primaryRenderObject.ColorСhoice != renderObject.ColorСhoice)
                     {
                         GL.UseProgram(_program_shadow_project);
-                        GL.UniformMatrix4(23, false, ref _renderObjects[0].ModelMatrix);
-                        GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 5, _renderObjects[0].ShadowProjectBuffer());
+                        GL.UniformMatrix4(23, false, ref primaryRenderObject.ModelMatrix);
+                        GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 5, primaryRenderObject.ShadowProjectBuffer());
                         GL.BindBuffer(BufferTarget.ShaderStorageBuffer, 0);
                         RenderFigure(renderObject, PolygonMode.Fill);
-                        _lightObjects[0].PositionLightUniform(18);
+                        primaryLightObject.PositionLightUniform(18);
                         renderObject.Render();
                         
                     }
@@ -611,19 +633,19 @@ namespace Thesis_3D
                 }
                 else if(_program == _program_Fong_fog && countLightObj > 0)
                 {
-                    _lightObjects[0].PositionLightUniform(18);
-                    _lightObjects[0].SetAttrFog(25, 1f, 24, 9f, 26, new Vector3(0.3f, 0.3f, 0.3f));
+                    primaryLightObject.PositionLightUniform(18);
+                    primaryLightObject.SetAttrFog(25, 1f, 24, 9f, 26, new Vector3(0.3f, 0.3f, 0.3f));
                 }
                 else if(_program == _program_Fong_directed && countLightObj > 0)
                 {
-                    if(_lightObjects[0].uboLightInfo != -1) GL.BindBufferRange(BufferRangeTarget.UniformBuffer, 24, _lightObjects[0].uboLightInfo, (IntPtr)0, _lightObjects[0].blockSizeLightInfo);
+                    if(primaryLightObject.uboLightInfo != -1) GL.BindBufferRange(BufferRangeTarget.UniformBuffer, 24, primaryLightObject.uboLightInfo, (IntPtr)0, primaryLightObject.blockSizeLightInfo);
                 }
                 else
                 {
                     if (countLightObj > 0)
                     {
-                        _lightObjects[0].PositionLightUniform(18);
-                        _lightObjects[0].IntensityLightVectorUniform(24);
+                        primaryLightObject.PositionLightUniform(18);
+                        primaryLightObject.IntensityLightVectorUniform(24);
                         renderObject.diffusionUnifrom(25);
                     }
                 }
@@ -639,6 +661,19 @@ namespace Thesis_3D
                     else pointTarget = renderObject.trajctoryRenderObject.GetPoint().Xyz;
                     Vector3 translation = -(renderObject.getStartPosition()) + renderObject.trajctoryRenderObject.getValue() + pointTarget;
                     renderObject.ModelMatrix = Matrix4.CreateTranslation(translation);
+                    if (renderObject.TypeObject == TypeObjectRender.LightSourceObject)
+                    {
+                        foreach (var lightObject in _lightObjects)
+                        {
+                            if (lightObject.ColorСhoice == renderObject.ColorСhoice)
+                            {
+                                lightObject.SetPositionLight(renderObject.ModelMatrix);
+                                if (_program_Fong_directed != -1 && lightObject.uboLightInfo != -1) lightObject.UpdatePositionForBlock(_program_Fong_directed);
+                                break; // -_-
+                            }
+                        }
+                    }
+
                 }
                 renderObject.Render();
             }
@@ -664,12 +699,27 @@ namespace Thesis_3D
                 GL.Uniform4(19, ref color);
                 _renderObjects[_SelectID].Render_line();
             }
+
+            GL.UseProgram(_program_Lgh_directed_solar_effect);
+            if (true)//Временно
+            {
+                RenderFigure(primarySphereAt, PolygonMode.Fill);
+                Vector4 color = primarySphereAt.ColorObj;
+                GL.Uniform4(19, ref color);
+                if (countLightObj > 0)
+                {
+                    primaryLightObject.PositionLightUniform(18);
+                    primaryLightObject.IntensityLightVectorUniform(24);
+                    primarySphereAt.diffusionUnifrom(25);
+                }
+                primarySphereAt.Render();
+            }
             glControlThesis3D.SwapBuffers();
 
             TimeSpan timeSpan = DateTime.Now - dateTime;
             _framecount = 1f / (timeSpan.TotalMilliseconds / 1000);
             
-            label5.Text = $"Position:{camera1.Position:0}";
+            label5.Text = $"Position:{cameraFirstFace.Position:0}";
             label6.Text = $"FPS: {_framecount:0}";
 
         }
@@ -681,7 +731,7 @@ namespace Thesis_3D
 
         private void checkBox2_CheckedChanged(object sender, EventArgs e)
         {
-            camera1.Rotation_status = checkBox2.Checked;
+            cameraFirstFace.Rotation_status = checkBox2.Checked;
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -691,52 +741,52 @@ namespace Thesis_3D
 
         private void button1_Click(object sender, EventArgs e)
         {
-            camera1.Move(0, 0, 1.5f);
+            cameraFirstFace.Move(0, 0, 1.5f);
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            camera1.Move(0, 1.5f, 0);
+            cameraFirstFace.Move(0, 1.5f, 0);
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            camera1.Move(0, 0, -1.5f);
+            cameraFirstFace.Move(0, 0, -1.5f);
         }
 
         private void button6_Click(object sender, EventArgs e)
         {
-            camera1.Move(-1.5f, 0.0f, 0);
+            cameraFirstFace.Move(-1.5f, 0.0f, 0);
         }
 
         private void button5_Click(object sender, EventArgs e)
         {
-            camera1.Move(0, -1.5f, 0);
+            cameraFirstFace.Move(0, -1.5f, 0);
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
-            camera1.Move(1.5f, 0, 0);
+            cameraFirstFace.Move(1.5f, 0, 0);
         }
 
         private void button7_Click(object sender, EventArgs e)
         {
-            camera1.AddRotation(0.0f, 10.0f);
+            cameraFirstFace.AddRotation(0.0f, 10.0f);
         }
 
         private void button10_Click(object sender, EventArgs e)
         {
-            camera1.AddRotation(10.0f, 0.0f);
+            cameraFirstFace.AddRotation(10.0f, 0.0f);
         }
 
         private void button9_Click(object sender, EventArgs e)
         {
-            camera1.AddRotation(0.0f, -10.0f);
+            cameraFirstFace.AddRotation(0.0f, -10.0f);
         }
 
         private void button8_Click(object sender, EventArgs e)
         {
-            camera1.AddRotation(-10.0f, 0.0f);
+            cameraFirstFace.AddRotation(-10.0f, 0.0f);
         }
 
         private void textBox1_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
@@ -751,8 +801,8 @@ namespace Thesis_3D
 
         private void button11_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(textBox1.Text) && string.IsNullOrWhiteSpace(textBox2.Text) && string.IsNullOrWhiteSpace(textBox3.Text))
-                camera1.Position = new Vector3((float)Convert.ToDouble(textBox1.Text), (float)Convert.ToDouble(textBox2.Text), (float)Convert.ToDouble(textBox3.Text));
+            if (!string.IsNullOrWhiteSpace(textBox1.Text) && !string.IsNullOrWhiteSpace(textBox2.Text) && !string.IsNullOrWhiteSpace(textBox3.Text))
+                cameraFirstFace.Position = new Vector3((float)Convert.ToDouble(textBox1.Text), (float)Convert.ToDouble(textBox2.Text), (float)Convert.ToDouble(textBox3.Text));
         }
 
         private void buttonNewAnFigure_Click(object sender, EventArgs e)

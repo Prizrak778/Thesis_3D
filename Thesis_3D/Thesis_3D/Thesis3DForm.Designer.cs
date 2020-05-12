@@ -405,6 +405,7 @@
             // 
             // buttonTrajectory
             // 
+            this.buttonTrajectory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonTrajectory.Enabled = false;
             this.buttonTrajectory.Location = new System.Drawing.Point(752, 527);
             this.buttonTrajectory.Name = "buttonTrajectory";
@@ -416,6 +417,7 @@
             // 
             // labelId
             // 
+            this.labelId.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.labelId.AutoSize = true;
             this.labelId.Location = new System.Drawing.Point(751, 604);
             this.labelId.Name = "labelId";
@@ -426,6 +428,7 @@
             // 
             // labelIdText
             // 
+            this.labelIdText.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.labelIdText.AutoSize = true;
             this.labelIdText.Location = new System.Drawing.Point(776, 604);
             this.labelIdText.Name = "labelIdText";
