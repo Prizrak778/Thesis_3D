@@ -7,7 +7,7 @@ layout(location = 20) uniform mat4 view;
 layout(location = 21) uniform mat4 projection;
 layout(location = 22) uniform mat4 modelView;
 layout(location = 24) uniform vec3 Ld;
-layout(location = 25) uniform vec4 Kd;
+layout(location = 25) uniform vec3 Kd;
 
 
 out vec4 vs_color;
@@ -19,7 +19,7 @@ void main(void)
 	vec4 eyeCoords = modelView * vec_position;
 	
 	vec3 s = normalize(vec3(vec_LightPosition - eyeCoords));
-	vec4 all_color = vec4(Ld, 1.0f) * Kd * vec4(max(dot( s, tnorm ), 0.0 ));
+	vec4 all_color = vec4(Ld, 1.0f) * vec4(Kd, 1.0f) * vec4(max(dot( s, tnorm ), 0.0 ));
 	gl_Position = view * modelView * vec_position;
 	vs_color =  vec4(vec4(all_color).xyz + vec4(0.0,0.15,0.0,0.0).xyz, 1.0f);
 }

@@ -25,17 +25,18 @@ namespace Thesis_3D
         public Vector3 Angel_speed;
         public Vector4 Attribute;
         public Vector3 LightVecNormalized;
-        public Vector3 AmbientIntensity;
+        public Vector3 DiffusionIntensity;
+        public Vector3 Ambient = Vector3.One;
         public Vector4 ColorRadiation;
         private Vector3 StartPosition;
-        public LightObject(Vertex[] vertices, Color4 color, Color4 color_choice, Vector3 position, Vector4 attribute, Vector3 lighVecNormalized, Vector3 ambientIntensity, Vector3 angle_speed, int programBlock = -1, string nameBlock = null) : base(vertices, position, color, color_choice, TypeObjectRender.LightSourceObject)
+        public LightObject(Vertex[] vertices, Color4 color, Color4 color_choice, Vector3 position, Vector4 attribute, Vector3 lighVecNormalized, Vector3 diffusionIntensity, Vector3 angle_speed, int programBlock = -1, string nameBlock = null) : base(vertices, position, color, color_choice, TypeObjectRender.LightSourceObject)
         {
             Position = position; //Позиция источника
             StartPosition = position;
             Angel_speed = angle_speed; //X - Скорость и направление Y и Z - угол поворота по соответствующим осям
             Attribute = attribute; //Я ещё придумаю зачем я это добавил
             LightVecNormalized = lighVecNormalized;
-            AmbientIntensity = ambientIntensity;
+            DiffusionIntensity = diffusionIntensity;
             ColorRadiation.X = color.R;
             ColorRadiation.Y = color.G;
             ColorRadiation.Z = color.B;
@@ -79,7 +80,11 @@ namespace Thesis_3D
         }
         public void IntensityLightVectorUniform(int location)
         {
-            GL.Uniform3(location, AmbientIntensity);
+            GL.Uniform3(location, DiffusionIntensity);
+        }
+        public void IntensityAmbient(int location)
+        {
+            GL.Uniform3(location, Ambient);
         }
         public void lighVecNormalizedUniform(int location)
         {
@@ -104,7 +109,7 @@ namespace Thesis_3D
                 GL.GetActiveUniforms(program, 5, indices, ActiveUniformParameter.UniformOffset, offset);
 
                 float[] position_lgh = { Position.X, Position.Y, Position.Z, 0.0f };
-                float[] intensity_lgh = { AmbientIntensity.X, AmbientIntensity.Y, AmbientIntensity.Z }; //интенсивность света
+                float[] intensity_lgh = { DiffusionIntensity.X, DiffusionIntensity.Y, DiffusionIntensity.Z }; //интенсивность света
                 float[] direction_lgh = { LightVecNormalized.X, LightVecNormalized.Y, LightVecNormalized.Z }; //направление света
                 float[] exponent = { 1.0f }; // Экспанента углового ослабления света
                 float[] cutoff = { 30f }; //угол отсечения 
@@ -150,7 +155,7 @@ namespace Thesis_3D
                 GL.GetActiveUniforms(program, 5, indices, ActiveUniformParameter.UniformOffset, offset);
 
                 float[] position_lgh = { Position.X, Position.Y, Position.Z, 0.0f };
-                float[] intensity_lgh = { AmbientIntensity.X, AmbientIntensity.Y, AmbientIntensity.Z }; //интенсивность света
+                float[] intensity_lgh = { DiffusionIntensity.X, DiffusionIntensity.Y, DiffusionIntensity.Z }; //интенсивность света
                 float[] direction_lgh = { LightVecNormalized.X, LightVecNormalized.Y, LightVecNormalized.Z }; //направление света
                 float[] exponent = { 1.0f }; // Экспанента углового ослабления света
                 float[] cutoff = { 30f }; //угол отсечения 
@@ -165,5 +170,6 @@ namespace Thesis_3D
                 GL.BufferSubData(BufferTarget.UniformBuffer, (IntPtr)0, blockSizeLightInfo, blockBuffer);
             }
         }
+
     }
 }

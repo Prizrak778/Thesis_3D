@@ -103,7 +103,8 @@ namespace Thesis_3D
         private int _VerticeCount;
         private PolygonMode _Polygon;
         private Vector3 _StartPosition = Vector3.Zero;
-        private Vector4 Diffusion = Vector4.One;
+        private Vector3 Diffusion = Vector3.One;
+        private Vector3 Ambient = Vector3.One;
         public TypeObjectRender TypeObject = TypeObjectRender.SimpleObject;
         public TrajctoryRenderObject trajctoryRenderObject;
         public Matrix4 ModelMatrix = Matrix4.CreateTranslation(0, 0, 0);
@@ -293,18 +294,30 @@ namespace Thesis_3D
             _Initialized = true;
             GL.VertexArrayVertexBuffer(_VertexArray, 0, _Buffer, IntPtr.Zero, Vertex.Size);
         }
-        public Vector4 getDiffusion()
+        public Vector3 getDiffusion()
         {
             return Diffusion;
         }
 
-        public void setDiffusion(Vector4 value)
+        public void setDiffusion(Vector3 value)
         {
-            Diffusion = new Vector4(Math.Abs(value.X * 10) / 10, Math.Abs(value.Y * 10) / 10, Math.Abs(value.Z * 10) / 10, 1f);
+            Diffusion = new Vector3(Math.Abs(value.X * 10) / 10, Math.Abs(value.Y * 10) / 10, Math.Abs(value.Z * 10) / 10);
         }
         public void diffusionUnifrom(int location)
         {
-            GL.Uniform4(location, Diffusion);
+            GL.Uniform3(location, Diffusion);
+        }
+        public Vector3 getAmbient()
+        {
+            return Ambient;
+        }
+        public void setAmbient(Vector3 value)
+        {
+            Ambient = new Vector3(Math.Abs(value.X * 10) / 10, Math.Abs(value.Y * 10) / 10, Math.Abs(value.Z * 10) / 10);
+        }
+        public void ambientUnifrom(int location)
+        {
+            GL.Uniform3(location, Diffusion);
         }
         public Vector4 getPositionRenderObject()
         {

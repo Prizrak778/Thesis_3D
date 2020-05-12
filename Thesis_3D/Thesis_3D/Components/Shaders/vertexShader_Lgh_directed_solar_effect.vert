@@ -19,11 +19,11 @@ void getEyeSpace(out vec3 norm, out vec4 position)
 
 void main(void)
 {
-	vec3 Kd = vec3(0.0, 0.35, 1.0);
+	vec3 Kd = vec3(0.1, 0.2, 1.0);
 	vec3 Ka = vec3(0.0, 0.0, 0.0);
-	vec3 Ks = vec3(0.0, 0.0, 0.0);
+	vec3 Ks = vec3(0.0, 0.2, 1.0);
 	vec3 LightIntensity = vec3(1.0, 1.0, 1.0);
-	float Shininess = 128.0;
+	float Shininess = 16.0;
 	
 	vec3 tnorm;
 	vec4 eyeCoords;

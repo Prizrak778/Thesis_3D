@@ -308,6 +308,7 @@ namespace Thesis_3D
                 TargetTrajectory.Point,
                 new Vector4(0, 0, 0, 1f)
                 );
+            primaryLightObject.Ambient = new Vector3(0.0f, 0.15f, 0.0f);
             positionLight = new Vector3(4.0f, 3.0f, 1.0f);                                                                                                                                                                                     
             _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f, positionLight), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.0f, 0.3f, 0.3f), new Vector3(1.0f, 0.0f, 5f)));
             positionLight = new Vector3(7.0f, 3.0f, 1.0f);                                                                                                                                                                                     
@@ -646,6 +647,8 @@ namespace Thesis_3D
                     {
                         primaryLightObject.PositionLightUniform(18);
                         primaryLightObject.IntensityLightVectorUniform(24);
+                        primaryLightObject.IntensityAmbient(26);
+                        renderObject.ambientUnifrom(27);
                         renderObject.diffusionUnifrom(25);
                     }
                 }
@@ -1000,7 +1003,7 @@ namespace Thesis_3D
                 Vertex[] vertexObject = new Vertex[_renderObjects[_SelectID].BufferSize()];
                 _renderObjects[_SelectID].ReadBuffer(vertexObject);
                 var typeObject = _renderObjects[_SelectID].TypeObject;
-                Vector4 diff = _renderObjects[_SelectID].getDiffusion();
+                Vector3 diff = _renderObjects[_SelectID].getDiffusion();
                 Form dlgChangeFigure = new Form()
                 {
                     Text = "Изменение объекта",
@@ -1211,14 +1214,14 @@ namespace Thesis_3D
                     if (typeObject == TypeObjectRender.LightSourceObject)
                     {
                         var lightObject = _lightObjects.Where(x => x.ColorСhoice == _renderObjects[_SelectID].ColorСhoice).FirstOrDefault();
-                        lightObject.AmbientIntensity = new Vector3(float.Parse(textBoxDiffR.Text), float.Parse(textBoxDiffG.Text), float.Parse(textBoxDiffB.Text));
+                        lightObject.DiffusionIntensity = new Vector3(float.Parse(textBoxDiffR.Text), float.Parse(textBoxDiffG.Text), float.Parse(textBoxDiffB.Text));
                         if (lightObject != null)
                         {
                             lightObject.SetPositionLight(_renderObjects[_SelectID].ModelMatrix);
                             if (_program_Fong_directed != -1 && lightObject.uboLightInfo != -1) lightObject.UpdatePositionForBlock(_program_Fong_directed);
                         }
                     }
-                    else _renderObjects[_SelectID].setDiffusion(new Vector4(float.Parse(textBoxDiffR.Text), float.Parse(textBoxDiffG.Text), float.Parse(textBoxDiffB.Text), 1.0f));
+                    else _renderObjects[_SelectID].setDiffusion(new Vector3(float.Parse(textBoxDiffR.Text), float.Parse(textBoxDiffG.Text), float.Parse(textBoxDiffB.Text)));
                 }
             }
             else
