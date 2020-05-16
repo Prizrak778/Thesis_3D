@@ -7,8 +7,8 @@ layout(location = 21) uniform mat4 projection;
 layout(location = 22) uniform mat4 modelView;
 layout(location = 23) uniform vec4 CamPosition;
 
-layout(location = 16) uniform vec4 LightPositiont[3];
-layout(location = 13) uniform vec3 LightIntensityt[3]; 
+layout(location = 175) uniform vec4 LightPositiont[3];
+layout(location = 24) uniform vec3 LightIntensityt[3]; 
 
 
 out vec4 vs_color;

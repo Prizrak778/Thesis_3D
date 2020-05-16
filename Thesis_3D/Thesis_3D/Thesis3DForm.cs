@@ -270,6 +270,8 @@ namespace Thesis_3D
 
         protected override void OnLoad(EventArgs e)
         {
+            FileStream filteTest = File.Create("FPSData.txt");
+            filteTest.Close();
             glControlThesis3D.Load += new EventHandler(glControl_Load);
             glControl_Load(glControlThesis3D, EventArgs.Empty);
             Application.Idle += Application_Idle;
@@ -313,6 +315,11 @@ namespace Thesis_3D
             _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f, positionLight), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.0f, 0.3f, 0.3f), new Vector3(1.0f, 0.0f, 5f)));
             positionLight = new Vector3(7.0f, 3.0f, 1.0f);                                                                                                                                                                                     
             _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f, positionLight), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.3f, 0.0f, 0.3f), new Vector3(1.0f, 0.0f, 5f)));
+            /*for (int i = 0; i < 147; i++)
+            {
+                positionLight = new Vector3(10.0f + 3*i, 3.0f, 1.0f);
+                _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f, positionLight), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.3f, 0.0f, 0.3f), new Vector3(1.0f, 0.0f, 5f)));
+            }*/
             foreach (var obj in _lightObjects)
             {
                 _renderObjects.Add(obj);
@@ -592,8 +599,7 @@ namespace Thesis_3D
         }
         private void Render()
         {
-            DateTime dateTime = DateTime.Now;
-
+            var startTime = System.Diagnostics.Stopwatch.StartNew();
             GL.ClearColor(new Color4(0.3f, 0.3f, 0.3f, 1.0f));
             GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, 0);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
@@ -628,8 +634,8 @@ namespace Thesis_3D
                 {
                     foreach (var light in _lightObjects.Cast<LightObject>().Select((r, i) => new { Row = r, Index = i }))
                     {
-                        light.Row.PositionLightUniform(16 + light.Index);
-                        light.Row.IntensityLightVectorUniform(13 + light.Index);
+                        light.Row.PositionLightUniform(175 + light.Index);
+                        light.Row.IntensityLightVectorUniform(24 + light.Index);
                     }
                 }
                 else if(_program == _program_Fong_fog && countLightObj > 0)
@@ -718,10 +724,10 @@ namespace Thesis_3D
                 primarySphereAt.Render();
             }
             glControlThesis3D.SwapBuffers();
-
-            TimeSpan timeSpan = DateTime.Now - dateTime;
-            _framecount = 1f / (timeSpan.TotalMilliseconds / 1000);
-            
+            startTime.Stop();
+            var resultTime = startTime.Elapsed;
+            _framecount = 1f / (resultTime.Ticks / 10000000f);
+            if(checkBoxFps.Checked) File.AppendAllText("FPSData.txt", $"FPS:\t{_framecount:0}" + Environment.NewLine);
             label5.Text = $"Position:{cameraFirstFace.Position:0}";
             label6.Text = $"FPS: {_framecount:0}";
 

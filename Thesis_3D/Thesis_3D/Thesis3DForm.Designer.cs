@@ -62,6 +62,7 @@
             this.buttonTrajectory = new System.Windows.Forms.Button();
             this.labelId = new System.Windows.Forms.Label();
             this.labelIdText = new System.Windows.Forms.Label();
+            this.checkBoxFps = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -75,7 +76,7 @@
             this.glControlThesis3D.BackColor = System.Drawing.Color.Black;
             this.glControlThesis3D.Location = new System.Drawing.Point(9, 12);
             this.glControlThesis3D.Name = "glControlThesis3D";
-            this.glControlThesis3D.Size = new System.Drawing.Size(733, 605);
+            this.glControlThesis3D.Size = new System.Drawing.Size(733, 635);
             this.glControlThesis3D.TabIndex = 0;
             this.glControlThesis3D.VSync = false;
             // 
@@ -343,7 +344,7 @@
             // 
             this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(751, 556);
+            this.label5.Location = new System.Drawing.Point(751, 586);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(30, 13);
             this.label5.TabIndex = 8;
@@ -353,7 +354,7 @@
             // 
             this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(751, 578);
+            this.label6.Location = new System.Drawing.Point(751, 608);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(47, 13);
             this.label6.TabIndex = 9;
@@ -419,7 +420,7 @@
             // 
             this.labelId.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.labelId.AutoSize = true;
-            this.labelId.Location = new System.Drawing.Point(751, 604);
+            this.labelId.Location = new System.Drawing.Point(751, 634);
             this.labelId.Name = "labelId";
             this.labelId.Size = new System.Drawing.Size(19, 13);
             this.labelId.TabIndex = 15;
@@ -430,18 +431,30 @@
             // 
             this.labelIdText.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.labelIdText.AutoSize = true;
-            this.labelIdText.Location = new System.Drawing.Point(776, 604);
+            this.labelIdText.Location = new System.Drawing.Point(776, 634);
             this.labelIdText.Name = "labelIdText";
             this.labelIdText.Size = new System.Drawing.Size(10, 13);
             this.labelIdText.TabIndex = 16;
             this.labelIdText.Text = "-";
             this.labelIdText.Visible = false;
             // 
+            // checkBoxFps
+            // 
+            this.checkBoxFps.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBoxFps.AutoSize = true;
+            this.checkBoxFps.Location = new System.Drawing.Point(754, 556);
+            this.checkBoxFps.Name = "checkBoxFps";
+            this.checkBoxFps.Size = new System.Drawing.Size(124, 17);
+            this.checkBoxFps.TabIndex = 17;
+            this.checkBoxFps.Text = "Запись Fps в файл ";
+            this.checkBoxFps.UseVisualStyleBackColor = true;
+            // 
             // Thesis3DForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(952, 629);
+            this.ClientSize = new System.Drawing.Size(952, 659);
+            this.Controls.Add(this.checkBoxFps);
             this.Controls.Add(this.labelIdText);
             this.Controls.Add(this.labelId);
             this.Controls.Add(this.buttonTrajectory);
@@ -506,6 +519,7 @@
         private System.Windows.Forms.Button buttonTrajectory;
         private System.Windows.Forms.Label labelId;
         private System.Windows.Forms.Label labelIdText;
+        private System.Windows.Forms.CheckBox checkBoxFps;
     }
 }
 
