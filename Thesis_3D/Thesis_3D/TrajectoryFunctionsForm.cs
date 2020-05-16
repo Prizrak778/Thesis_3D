@@ -26,7 +26,7 @@ namespace Thesis_3D
             InitCombobox();
             if(trajectoryFunctionsX != null)
             {
-                comboBoxFuncX.SelectedItem = ((List<ComboboxDataSourceTrajectory>)(comboBoxFuncX.DataSource)).Where(x => x.mathFunc == trajectoryFunctionsX.mathFunc).FirstOrDefault();
+                comboBoxFuncX.SelectedItem = ((List<ComboboxDataSourceTrajectory>)(comboBoxFuncX.DataSource)).Where(x => x.Text == trajectoryFunctionsX.nameFunc).FirstOrDefault();
                 textBoxKoeffX.Text = Convert.ToString(trajectoryFunctionsX.koeff);
                 textBoxStepX.Text = Convert.ToString(trajectoryFunctionsX.step);
                 textBoxMinX.Text = Convert.ToString(trajectoryFunctionsX.min);
@@ -36,7 +36,7 @@ namespace Thesis_3D
             }
             if (trajectoryFunctionsY != null)
             {
-                comboBoxFuncY.SelectedItem = ((List<ComboboxDataSourceTrajectory>)(comboBoxFuncY.DataSource)).Where(x => x.mathFunc == trajectoryFunctionsY.mathFunc).FirstOrDefault();
+                comboBoxFuncY.SelectedItem = ((List<ComboboxDataSourceTrajectory>)(comboBoxFuncY.DataSource)).Where(x => x.Text == trajectoryFunctionsY.nameFunc).FirstOrDefault();
                 textBoxKoeffY.Text = Convert.ToString(trajectoryFunctionsY.koeff);
                 textBoxStepY.Text = Convert.ToString(trajectoryFunctionsY.step);
                 textBoxMinY.Text = Convert.ToString(trajectoryFunctionsY.min);
@@ -46,7 +46,7 @@ namespace Thesis_3D
             }
             if (trajectoryFunctionsZ != null)
             {
-                comboBoxFuncZ.SelectedItem = ((List<ComboboxDataSourceTrajectory>)(comboBoxFuncZ.DataSource)).Where(x => x.mathFunc == trajectoryFunctionsZ.mathFunc).FirstOrDefault();
+                comboBoxFuncZ.SelectedItem = ((List<ComboboxDataSourceTrajectory>)(comboBoxFuncZ.DataSource)).Where(x => x.Text == trajectoryFunctionsZ.nameFunc).FirstOrDefault();
                 textBoxKoeffZ.Text = Convert.ToString(trajectoryFunctionsZ.koeff);
                 textBoxStepZ.Text = Convert.ToString(trajectoryFunctionsZ.step);
                 textBoxMinZ.Text = Convert.ToString(trajectoryFunctionsZ.min);
@@ -130,6 +130,7 @@ namespace Thesis_3D
         public float Val;
         public float modifier;
         public bool reversMove = false;
+        public string nameFunc = string.Empty;
         int colIter;
         int Iter;
         int signIter;
@@ -148,8 +149,9 @@ namespace Thesis_3D
             Iter = 0;
             signIter = 1;
         }
-        public TrajectoryFunctions(float locKoeff, Func<double, double> locMathFunc, float locStep, float locMin, float locMax, float locStartVal, string nameFunc, bool locReversMove)
+        public TrajectoryFunctions(float locKoeff, Func<double, double> locMathFunc, float locStep, float locMin, float locMax, float locStartVal, string locNameFunc, bool locReversMove)
         {
+            //Тут могут быть ошибки на 1 итерацию в связи с тем, что мне лень правильно округлять
             reversMove = locReversMove;
             koeff = locKoeff;
             mathFunc = locMathFunc;
@@ -158,10 +160,11 @@ namespace Thesis_3D
             max = locMax;
             startVal = locStartVal;
             Val = locStartVal;
-            Iter = 0;
+            Iter = (int)((locStartVal - min) / step);
             signIter = 1;
             colIter = (int)((max - min) / step);
-            modifier = nameFunc.ToUpper().Equals("X") || nameFunc.ToUpper().Equals("Y") || nameFunc.ToUpper().Equals("Z") ? 1f: (float)(Math.PI * 2 / 180);
+            modifier = locNameFunc.ToUpper().Equals("X") || locNameFunc.ToUpper().Equals("Y") || locNameFunc.ToUpper().Equals("Z") ? 1f: (float)(Math.PI * 2 / 180);
+            nameFunc = locNameFunc;
         }
         public void NextValueAndSetSignStep()
         {
@@ -189,7 +192,7 @@ namespace Thesis_3D
         }
         public bool ValidateTrajectoryFunc()
         {
-            return !(min > max || startVal > max || startVal < min);
+            return !(min > max || startVal > max || startVal < min || step == 0);
         }
         public double getValue()
         {

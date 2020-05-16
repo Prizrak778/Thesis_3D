@@ -304,7 +304,7 @@ namespace Thesis_3D
             primaryLightObject.trajctoryRenderObject = new TrajctoryRenderObject(
                 new TrajectoryFunctions(300, (double x) => (Math.Cos(x)), 0.03f, -180, 180, 0, "cos(x)", true),
                 new TrajectoryFunctions(300, (double x) => (Math.Sin(x)), 0.03f, -180, 180, 0, "sin(y)", true),
-                new TrajectoryFunctions(0, (double x) => (x), 1f, 0, 1, 0, "Z", true),
+                new TrajectoryFunctions(100, (double x) => (x), 0.001f, -1, 1, 0, "z", false),
                 TargetTrajectory.Point,
                 new Vector4(0, 0, 0, 1f)
                 );
