@@ -1,6 +1,6 @@
 ﻿namespace Thesis_3D
 {
-    partial class DlgNewAnFigure
+    partial class DlgAddEditAnFigure
     {
         /// <summary>
         /// Required designer variable.
@@ -48,15 +48,18 @@
             this.colorDialogObject = new System.Windows.Forms.ColorDialog();
             this.labelColBreakX = new System.Windows.Forms.Label();
             this.labelColBreakY = new System.Windows.Forms.Label();
-            this.labelKoeffSX = new System.Windows.Forms.Label();
-            this.labelKoeffSY = new System.Windows.Forms.Label();
-            this.textBoxKoeffSY = new System.Windows.Forms.TextBox();
-            this.textBoxKoeffSX = new System.Windows.Forms.TextBox();
+            this.labelCoeffSX = new System.Windows.Forms.Label();
+            this.labelCoeffSY = new System.Windows.Forms.Label();
+            this.textBoxCoeffSY = new System.Windows.Forms.TextBox();
+            this.textBoxCoeffSX = new System.Windows.Forms.TextBox();
             this.textBoxColBreakY = new System.Windows.Forms.TextBox();
             this.textBoxColBreakX = new System.Windows.Forms.TextBox();
+            this.trackBarAlpha = new System.Windows.Forms.TrackBar();
+            this.labelAlpha = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAngelX)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAngelY)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAngelZ)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarAlpha)).BeginInit();
             this.SuspendLayout();
             // 
             // labelSide
@@ -70,13 +73,11 @@
             // 
             // textBoxSide
             // 
-            this.textBoxSide.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxSide.Location = new System.Drawing.Point(198, 9);
+            this.textBoxSide.Location = new System.Drawing.Point(198, 5);
             this.textBoxSide.Name = "textBoxSide";
             this.textBoxSide.Size = new System.Drawing.Size(101, 20);
             this.textBoxSide.TabIndex = 1;
-            this.textBoxSide.Text = "0";
+            this.textBoxSide.Text = "1";
             this.textBoxSide.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxSide_KeyPress);
             // 
             // labelShiftX
@@ -108,9 +109,7 @@
             // 
             // textBoxShiftX
             // 
-            this.textBoxShiftX.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxShiftX.Location = new System.Drawing.Point(198, 34);
+            this.textBoxShiftX.Location = new System.Drawing.Point(198, 30);
             this.textBoxShiftX.Name = "textBoxShiftX";
             this.textBoxShiftX.Size = new System.Drawing.Size(101, 20);
             this.textBoxShiftX.TabIndex = 5;
@@ -119,9 +118,7 @@
             // 
             // textBoxShiftY
             // 
-            this.textBoxShiftY.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxShiftY.Location = new System.Drawing.Point(198, 60);
+            this.textBoxShiftY.Location = new System.Drawing.Point(198, 56);
             this.textBoxShiftY.Name = "textBoxShiftY";
             this.textBoxShiftY.Size = new System.Drawing.Size(101, 20);
             this.textBoxShiftY.TabIndex = 6;
@@ -130,9 +127,7 @@
             // 
             // textBoxShiftZ
             // 
-            this.textBoxShiftZ.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxShiftZ.Location = new System.Drawing.Point(198, 86);
+            this.textBoxShiftZ.Location = new System.Drawing.Point(198, 82);
             this.textBoxShiftZ.Name = "textBoxShiftZ";
             this.textBoxShiftZ.Size = new System.Drawing.Size(101, 20);
             this.textBoxShiftZ.TabIndex = 7;
@@ -141,12 +136,10 @@
             // 
             // buttonColor
             // 
-            this.buttonColor.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonColor.BackColor = System.Drawing.SystemColors.GrayText;
-            this.buttonColor.Location = new System.Drawing.Point(198, 113);
+            this.buttonColor.Location = new System.Drawing.Point(198, 112);
             this.buttonColor.Name = "buttonColor";
-            this.buttonColor.Size = new System.Drawing.Size(101, 23);
+            this.buttonColor.Size = new System.Drawing.Size(104, 23);
             this.buttonColor.TabIndex = 8;
             this.buttonColor.UseVisualStyleBackColor = false;
             this.buttonColor.Click += new System.EventHandler(this.buttonColor_Click);
@@ -164,7 +157,7 @@
             // 
             this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonOk.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonOk.Location = new System.Drawing.Point(199, 254);
+            this.buttonOk.Location = new System.Drawing.Point(583, 233);
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(100, 23);
             this.buttonOk.TabIndex = 10;
@@ -175,7 +168,7 @@
             // labelAngelX
             // 
             this.labelAngelX.AutoSize = true;
-            this.labelAngelX.Location = new System.Drawing.Point(12, 150);
+            this.labelAngelX.Location = new System.Drawing.Point(446, 145);
             this.labelAngelX.Name = "labelAngelX";
             this.labelAngelX.Size = new System.Drawing.Size(128, 13);
             this.labelAngelX.TabIndex = 11;
@@ -183,7 +176,7 @@
             // 
             // numericUpDownAngelX
             // 
-            this.numericUpDownAngelX.Location = new System.Drawing.Point(198, 148);
+            this.numericUpDownAngelX.Location = new System.Drawing.Point(580, 143);
             this.numericUpDownAngelX.Maximum = new decimal(new int[] {
             360,
             0,
@@ -201,7 +194,7 @@
             // labelAngelY
             // 
             this.labelAngelY.AutoSize = true;
-            this.labelAngelY.Location = new System.Drawing.Point(12, 174);
+            this.labelAngelY.Location = new System.Drawing.Point(446, 171);
             this.labelAngelY.Name = "labelAngelY";
             this.labelAngelY.Size = new System.Drawing.Size(128, 13);
             this.labelAngelY.TabIndex = 13;
@@ -209,7 +202,7 @@
             // 
             // numericUpDownAngelY
             // 
-            this.numericUpDownAngelY.Location = new System.Drawing.Point(198, 174);
+            this.numericUpDownAngelY.Location = new System.Drawing.Point(580, 169);
             this.numericUpDownAngelY.Maximum = new decimal(new int[] {
             360,
             0,
@@ -226,7 +219,7 @@
             // 
             // numericUpDownAngelZ
             // 
-            this.numericUpDownAngelZ.Location = new System.Drawing.Point(198, 200);
+            this.numericUpDownAngelZ.Location = new System.Drawing.Point(580, 198);
             this.numericUpDownAngelZ.Maximum = new decimal(new int[] {
             360,
             0,
@@ -244,7 +237,7 @@
             // labelAngelZ
             // 
             this.labelAngelZ.AutoSize = true;
-            this.labelAngelZ.Location = new System.Drawing.Point(12, 200);
+            this.labelAngelZ.Location = new System.Drawing.Point(446, 200);
             this.labelAngelZ.Name = "labelAngelZ";
             this.labelAngelZ.Size = new System.Drawing.Size(128, 13);
             this.labelAngelZ.TabIndex = 16;
@@ -253,7 +246,7 @@
             // labelColBreakX
             // 
             this.labelColBreakX.AutoSize = true;
-            this.labelColBreakX.Location = new System.Drawing.Point(12, 148);
+            this.labelColBreakX.Location = new System.Drawing.Point(12, 145);
             this.labelColBreakX.Name = "labelColBreakX";
             this.labelColBreakX.Size = new System.Drawing.Size(148, 13);
             this.labelColBreakX.TabIndex = 17;
@@ -262,77 +255,97 @@
             // labelColBreakY
             // 
             this.labelColBreakY.AutoSize = true;
-            this.labelColBreakY.Location = new System.Drawing.Point(12, 174);
+            this.labelColBreakY.Location = new System.Drawing.Point(12, 171);
             this.labelColBreakY.Name = "labelColBreakY";
             this.labelColBreakY.Size = new System.Drawing.Size(148, 13);
             this.labelColBreakY.TabIndex = 18;
             this.labelColBreakY.Text = "Количество разбиений по Y";
             // 
-            // labelKoeffSX
+            // labelCoeffSX
             // 
-            this.labelKoeffSX.AutoSize = true;
-            this.labelKoeffSX.Location = new System.Drawing.Point(12, 202);
-            this.labelKoeffSX.Name = "labelKoeffSX";
-            this.labelKoeffSX.Size = new System.Drawing.Size(142, 13);
-            this.labelKoeffSX.TabIndex = 19;
-            this.labelKoeffSX.Text = "Коэффициент сжатия по X";
+            this.labelCoeffSX.AutoSize = true;
+            this.labelCoeffSX.Location = new System.Drawing.Point(12, 196);
+            this.labelCoeffSX.Name = "labelCoeffSX";
+            this.labelCoeffSX.Size = new System.Drawing.Size(142, 13);
+            this.labelCoeffSX.TabIndex = 19;
+            this.labelCoeffSX.Text = "Коэффициент сжатия по X";
             // 
-            // labelKoeffSY
+            // labelCoeffSY
             // 
-            this.labelKoeffSY.AutoSize = true;
-            this.labelKoeffSY.Location = new System.Drawing.Point(12, 227);
-            this.labelKoeffSY.Name = "labelKoeffSY";
-            this.labelKoeffSY.Size = new System.Drawing.Size(142, 13);
-            this.labelKoeffSY.TabIndex = 20;
-            this.labelKoeffSY.Text = "Коэффициент сжатия по Y";
+            this.labelCoeffSY.AutoSize = true;
+            this.labelCoeffSY.Location = new System.Drawing.Point(12, 222);
+            this.labelCoeffSY.Name = "labelCoeffSY";
+            this.labelCoeffSY.Size = new System.Drawing.Size(142, 13);
+            this.labelCoeffSY.TabIndex = 20;
+            this.labelCoeffSY.Text = "Коэффициент сжатия по Y";
             // 
-            // textBoxKoeffSY
+            // textBoxCoeffSY
             // 
-            this.textBoxKoeffSY.Location = new System.Drawing.Point(198, 227);
-            this.textBoxKoeffSY.Name = "textBoxKoeffSY";
-            this.textBoxKoeffSY.Size = new System.Drawing.Size(100, 20);
-            this.textBoxKoeffSY.TabIndex = 21;
-            this.textBoxKoeffSY.Text = "0";
-            this.textBoxKoeffSY.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxSide_KeyPress);
+            this.textBoxCoeffSY.Location = new System.Drawing.Point(198, 219);
+            this.textBoxCoeffSY.Name = "textBoxCoeffSY";
+            this.textBoxCoeffSY.Size = new System.Drawing.Size(100, 20);
+            this.textBoxCoeffSY.TabIndex = 21;
+            this.textBoxCoeffSY.Text = "1";
+            this.textBoxCoeffSY.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxSide_KeyPress);
             // 
-            // textBoxKoeffSX
+            // textBoxCoeffSX
             // 
-            this.textBoxKoeffSX.Location = new System.Drawing.Point(198, 201);
-            this.textBoxKoeffSX.Name = "textBoxKoeffSX";
-            this.textBoxKoeffSX.Size = new System.Drawing.Size(100, 20);
-            this.textBoxKoeffSX.TabIndex = 22;
-            this.textBoxKoeffSX.Text = "0";
-            this.textBoxKoeffSX.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxSide_KeyPress);
+            this.textBoxCoeffSX.Location = new System.Drawing.Point(198, 193);
+            this.textBoxCoeffSX.Name = "textBoxCoeffSX";
+            this.textBoxCoeffSX.Size = new System.Drawing.Size(100, 20);
+            this.textBoxCoeffSX.TabIndex = 22;
+            this.textBoxCoeffSX.Text = "1";
+            this.textBoxCoeffSX.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxSide_KeyPress);
             // 
             // textBoxColBreakY
             // 
-            this.textBoxColBreakY.Location = new System.Drawing.Point(198, 174);
+            this.textBoxColBreakY.Location = new System.Drawing.Point(198, 167);
             this.textBoxColBreakY.Name = "textBoxColBreakY";
             this.textBoxColBreakY.Size = new System.Drawing.Size(100, 20);
             this.textBoxColBreakY.TabIndex = 23;
-            this.textBoxColBreakY.Text = "0";
+            this.textBoxColBreakY.Text = "1";
             this.textBoxColBreakY.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxSide_KeyPress);
             // 
             // textBoxColBreakX
             // 
-            this.textBoxColBreakX.Location = new System.Drawing.Point(199, 147);
+            this.textBoxColBreakX.Location = new System.Drawing.Point(199, 142);
             this.textBoxColBreakX.Name = "textBoxColBreakX";
             this.textBoxColBreakX.Size = new System.Drawing.Size(100, 20);
             this.textBoxColBreakX.TabIndex = 24;
-            this.textBoxColBreakX.Text = "0";
+            this.textBoxColBreakX.Text = "1";
             this.textBoxColBreakX.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxSide_KeyPress);
             // 
-            // DlgNewAnFigure
+            // trackBarAlpha
+            // 
+            this.trackBarAlpha.LargeChange = 3;
+            this.trackBarAlpha.Location = new System.Drawing.Point(580, 12);
+            this.trackBarAlpha.Name = "trackBarAlpha";
+            this.trackBarAlpha.Size = new System.Drawing.Size(101, 45);
+            this.trackBarAlpha.TabIndex = 25;
+            this.trackBarAlpha.Value = 10;
+            // 
+            // labelAlpha
+            // 
+            this.labelAlpha.AutoSize = true;
+            this.labelAlpha.Location = new System.Drawing.Point(446, 21);
+            this.labelAlpha.Name = "labelAlpha";
+            this.labelAlpha.Size = new System.Drawing.Size(124, 13);
+            this.labelAlpha.TabIndex = 26;
+            this.labelAlpha.Text = "Прозрачность объекта";
+            // 
+            // DlgAddEditAnFigure
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(329, 292);
+            this.ClientSize = new System.Drawing.Size(717, 268);
+            this.Controls.Add(this.labelAlpha);
+            this.Controls.Add(this.trackBarAlpha);
             this.Controls.Add(this.textBoxColBreakX);
             this.Controls.Add(this.textBoxColBreakY);
-            this.Controls.Add(this.textBoxKoeffSX);
-            this.Controls.Add(this.textBoxKoeffSY);
-            this.Controls.Add(this.labelKoeffSY);
-            this.Controls.Add(this.labelKoeffSX);
+            this.Controls.Add(this.textBoxCoeffSX);
+            this.Controls.Add(this.textBoxCoeffSY);
+            this.Controls.Add(this.labelCoeffSY);
+            this.Controls.Add(this.labelCoeffSX);
             this.Controls.Add(this.labelColBreakY);
             this.Controls.Add(this.labelColBreakX);
             this.Controls.Add(this.labelAngelZ);
@@ -352,11 +365,12 @@
             this.Controls.Add(this.labelShiftX);
             this.Controls.Add(this.textBoxSide);
             this.Controls.Add(this.labelSide);
-            this.Name = "DlgNewAnFigure";
+            this.Name = "DlgAddEditAnFigure";
             this.Text = "Добавление аналитической фигуры";
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAngelX)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAngelY)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAngelZ)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarAlpha)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -384,11 +398,13 @@
         private System.Windows.Forms.ColorDialog colorDialogObject;
         private System.Windows.Forms.Label labelColBreakX;
         private System.Windows.Forms.Label labelColBreakY;
-        private System.Windows.Forms.Label labelKoeffSX;
-        private System.Windows.Forms.Label labelKoeffSY;
-        private System.Windows.Forms.TextBox textBoxKoeffSY;
-        private System.Windows.Forms.TextBox textBoxKoeffSX;
+        private System.Windows.Forms.Label labelCoeffSX;
+        private System.Windows.Forms.Label labelCoeffSY;
+        private System.Windows.Forms.TextBox textBoxCoeffSY;
+        private System.Windows.Forms.TextBox textBoxCoeffSX;
         private System.Windows.Forms.TextBox textBoxColBreakY;
         private System.Windows.Forms.TextBox textBoxColBreakX;
+        private System.Windows.Forms.TrackBar trackBarAlpha;
+        private System.Windows.Forms.Label labelAlpha;
     }
 }

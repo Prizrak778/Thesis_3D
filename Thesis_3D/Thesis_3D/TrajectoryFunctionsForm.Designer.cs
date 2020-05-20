@@ -34,10 +34,10 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
-            this.textBoxKoeffX = new System.Windows.Forms.TextBox();
-            this.textBoxKoeffY = new System.Windows.Forms.TextBox();
+            this.textBoxCoeffX = new System.Windows.Forms.TextBox();
+            this.textBoxCoeffY = new System.Windows.Forms.TextBox();
             this.labelY = new System.Windows.Forms.Label();
-            this.textBoxKoeffZ = new System.Windows.Forms.TextBox();
+            this.textBoxCoeffZ = new System.Windows.Forms.TextBox();
             this.labelZ = new System.Windows.Forms.Label();
             this.comboBoxFuncX = new System.Windows.Forms.ComboBox();
             this.comboBoxFuncY = new System.Windows.Forms.ComboBox();
@@ -120,25 +120,25 @@
             this.label5.TabIndex = 5;
             this.label5.Text = "Начальное значение";
             // 
-            // textBoxKoeffX
+            // textBoxCoeffX
             // 
-            this.textBoxKoeffX.Location = new System.Drawing.Point(42, 36);
-            this.textBoxKoeffX.Name = "textBoxKoeffX";
-            this.textBoxKoeffX.Size = new System.Drawing.Size(100, 20);
-            this.textBoxKoeffX.TabIndex = 6;
-            this.textBoxKoeffX.Text = "1";
-            this.textBoxKoeffX.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.textBoxKoeffX.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxKoeffX_KeyPress);
+            this.textBoxCoeffX.Location = new System.Drawing.Point(42, 36);
+            this.textBoxCoeffX.Name = "textBoxCoeffX";
+            this.textBoxCoeffX.Size = new System.Drawing.Size(100, 20);
+            this.textBoxCoeffX.TabIndex = 6;
+            this.textBoxCoeffX.Text = "1";
+            this.textBoxCoeffX.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.textBoxCoeffX.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxCoeffX_KeyPress);
             // 
-            // textBoxKoeffY
+            // textBoxCoeffY
             // 
-            this.textBoxKoeffY.Location = new System.Drawing.Point(42, 62);
-            this.textBoxKoeffY.Name = "textBoxKoeffY";
-            this.textBoxKoeffY.Size = new System.Drawing.Size(100, 20);
-            this.textBoxKoeffY.TabIndex = 8;
-            this.textBoxKoeffY.Text = "1";
-            this.textBoxKoeffY.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.textBoxKoeffY.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxKoeffX_KeyPress);
+            this.textBoxCoeffY.Location = new System.Drawing.Point(42, 62);
+            this.textBoxCoeffY.Name = "textBoxCoeffY";
+            this.textBoxCoeffY.Size = new System.Drawing.Size(100, 20);
+            this.textBoxCoeffY.TabIndex = 8;
+            this.textBoxCoeffY.Text = "1";
+            this.textBoxCoeffY.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.textBoxCoeffY.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxCoeffX_KeyPress);
             // 
             // labelY
             // 
@@ -149,15 +149,15 @@
             this.labelY.TabIndex = 7;
             this.labelY.Text = "Y";
             // 
-            // textBoxKoeffZ
+            // textBoxCoeffZ
             // 
-            this.textBoxKoeffZ.Location = new System.Drawing.Point(42, 88);
-            this.textBoxKoeffZ.Name = "textBoxKoeffZ";
-            this.textBoxKoeffZ.Size = new System.Drawing.Size(100, 20);
-            this.textBoxKoeffZ.TabIndex = 10;
-            this.textBoxKoeffZ.Text = "1";
-            this.textBoxKoeffZ.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.textBoxKoeffZ.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxKoeffX_KeyPress);
+            this.textBoxCoeffZ.Location = new System.Drawing.Point(42, 88);
+            this.textBoxCoeffZ.Name = "textBoxCoeffZ";
+            this.textBoxCoeffZ.Size = new System.Drawing.Size(100, 20);
+            this.textBoxCoeffZ.TabIndex = 10;
+            this.textBoxCoeffZ.Text = "1";
+            this.textBoxCoeffZ.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.textBoxCoeffZ.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxCoeffX_KeyPress);
             // 
             // labelZ
             // 
@@ -203,7 +203,7 @@
             this.textBoxStepX.TabIndex = 14;
             this.textBoxStepX.Text = "1";
             this.textBoxStepX.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.textBoxStepX.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxKoeffX_KeyPress);
+            this.textBoxStepX.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxCoeffX_KeyPress);
             // 
             // textBoxStepY
             // 
@@ -213,7 +213,7 @@
             this.textBoxStepY.TabIndex = 15;
             this.textBoxStepY.Text = "1";
             this.textBoxStepY.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.textBoxStepY.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxKoeffX_KeyPress);
+            this.textBoxStepY.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxCoeffX_KeyPress);
             // 
             // textBoxStepZ
             // 
@@ -223,7 +223,7 @@
             this.textBoxStepZ.TabIndex = 16;
             this.textBoxStepZ.Text = "1";
             this.textBoxStepZ.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.textBoxStepZ.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxKoeffX_KeyPress);
+            this.textBoxStepZ.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxCoeffX_KeyPress);
             // 
             // label6
             // 
@@ -242,7 +242,7 @@
             this.textBoxMinX.TabIndex = 18;
             this.textBoxMinX.Text = "0";
             this.textBoxMinX.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.textBoxMinX.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxKoeffX_KeyPress);
+            this.textBoxMinX.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxCoeffX_KeyPress);
             // 
             // textBoxMaxX
             // 
@@ -252,7 +252,7 @@
             this.textBoxMaxX.TabIndex = 20;
             this.textBoxMaxX.Text = "1";
             this.textBoxMaxX.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.textBoxMaxX.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxKoeffX_KeyPress);
+            this.textBoxMaxX.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxCoeffX_KeyPress);
             // 
             // label7
             // 
@@ -271,7 +271,7 @@
             this.textBoxMaxZ.TabIndex = 24;
             this.textBoxMaxZ.Text = "1";
             this.textBoxMaxZ.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.textBoxMaxZ.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxKoeffX_KeyPress);
+            this.textBoxMaxZ.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxCoeffX_KeyPress);
             // 
             // label8
             // 
@@ -290,7 +290,7 @@
             this.textBoxMinZ.TabIndex = 22;
             this.textBoxMinZ.Text = "0";
             this.textBoxMinZ.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.textBoxMinZ.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxKoeffX_KeyPress);
+            this.textBoxMinZ.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxCoeffX_KeyPress);
             // 
             // label9
             // 
@@ -309,7 +309,7 @@
             this.textBoxMaxY.TabIndex = 28;
             this.textBoxMaxY.Text = "1";
             this.textBoxMaxY.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.textBoxMaxY.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxKoeffX_KeyPress);
+            this.textBoxMaxY.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxCoeffX_KeyPress);
             // 
             // label10
             // 
@@ -328,7 +328,7 @@
             this.textBoxMinY.TabIndex = 26;
             this.textBoxMinY.Text = "0";
             this.textBoxMinY.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.textBoxMinY.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxKoeffX_KeyPress);
+            this.textBoxMinY.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxCoeffX_KeyPress);
             // 
             // label11
             // 
@@ -347,7 +347,7 @@
             this.textBoxStartValY.TabIndex = 31;
             this.textBoxStartValY.Text = "0";
             this.textBoxStartValY.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.textBoxStartValY.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxKoeffX_KeyPress);
+            this.textBoxStartValY.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxCoeffX_KeyPress);
             // 
             // textBoxStartValZ
             // 
@@ -357,7 +357,7 @@
             this.textBoxStartValZ.TabIndex = 30;
             this.textBoxStartValZ.Text = "0";
             this.textBoxStartValZ.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.textBoxStartValZ.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxKoeffX_KeyPress);
+            this.textBoxStartValZ.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxCoeffX_KeyPress);
             // 
             // textBoxStartValX
             // 
@@ -367,7 +367,7 @@
             this.textBoxStartValX.TabIndex = 29;
             this.textBoxStartValX.Text = "0";
             this.textBoxStartValX.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.textBoxStartValX.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxKoeffX_KeyPress);
+            this.textBoxStartValX.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxCoeffX_KeyPress);
             // 
             // buttonOk
             // 
@@ -440,11 +440,11 @@
             this.Controls.Add(this.comboBoxFuncZ);
             this.Controls.Add(this.comboBoxFuncY);
             this.Controls.Add(this.comboBoxFuncX);
-            this.Controls.Add(this.textBoxKoeffZ);
+            this.Controls.Add(this.textBoxCoeffZ);
             this.Controls.Add(this.labelZ);
-            this.Controls.Add(this.textBoxKoeffY);
+            this.Controls.Add(this.textBoxCoeffY);
             this.Controls.Add(this.labelY);
-            this.Controls.Add(this.textBoxKoeffX);
+            this.Controls.Add(this.textBoxCoeffX);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
@@ -466,10 +466,10 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.TextBox textBoxKoeffX;
-        private System.Windows.Forms.TextBox textBoxKoeffY;
+        private System.Windows.Forms.TextBox textBoxCoeffX;
+        private System.Windows.Forms.TextBox textBoxCoeffY;
         private System.Windows.Forms.Label labelY;
-        private System.Windows.Forms.TextBox textBoxKoeffZ;
+        private System.Windows.Forms.TextBox textBoxCoeffZ;
         private System.Windows.Forms.Label labelZ;
         private System.Windows.Forms.ComboBox comboBoxFuncX;
         private System.Windows.Forms.ComboBox comboBoxFuncY;

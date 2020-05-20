@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using OpenTK;
 
 namespace Thesis_3D
 {
     public enum TypeObjectCreate
     {
+        NonTypeObject,
         SolidCube,
         Plane,
         Sphere
@@ -34,15 +32,145 @@ namespace Thesis_3D
             _TexCoord = vertex._TexCoord;
         }
     }
+    public struct GeometricInfo
+    {
+        public static readonly GeometricInfo DefaultGeometricInfo = new GeometricInfo();
+        //Его расстояние от центра до границы
+        public float side; 
+        //Его стартовое смещение
+        public Vector3 StartPosition;
+        public int colBreakX;
+        public int colBreakY;
+        public int coeffSX;
+        public int coeffSY;
+        //Углы поворота по осямs
+        public int angleX; 
+        public int angleY;
+        public int angleZ;
+        //Тип созданного объекта
+        public TypeObjectCreate typeObjectCreate;
+        //Цвет объектаs
+        public Vector4 ColorObj; 
+
+        public GeometricInfo(GeometricInfo geometricInfo)
+        {
+            side = geometricInfo.side;
+            StartPosition = geometricInfo.StartPosition;
+            colBreakX = geometricInfo.colBreakX;
+            colBreakY = geometricInfo.colBreakY;
+            coeffSX = geometricInfo.coeffSX;
+            coeffSY = geometricInfo.coeffSX;
+            angleX = geometricInfo.angleX;
+            angleY = geometricInfo.angleY;
+            angleZ = geometricInfo.angleZ;
+            typeObjectCreate = geometricInfo.typeObjectCreate;
+            ColorObj = geometricInfo.ColorObj;
+        }
+        public GeometricInfo(Vector3 locStartPosition, Vector4 locColorObj, float locSide = 1.0f, int locColBreakX = 1, int locColBreakY = 1, int locCoeffSX = 1, int locCoeffSY = 1, int locAngleX = 0, int locAngleY = 0, int locAngleZ = 0, TypeObjectCreate locTypeObjectCreate = TypeObjectCreate.NonTypeObject)
+        {
+            side = locSide;
+            StartPosition = locStartPosition;
+            colBreakX = locColBreakX;
+            colBreakY = locColBreakY;
+            coeffSX = locCoeffSX;
+            coeffSY = locCoeffSY;
+            angleX = locAngleX;
+            angleY = locAngleY;
+            angleZ = locAngleZ;
+            typeObjectCreate = locTypeObjectCreate;
+            ColorObj = locColorObj;
+        }
+        public GeometricInfo(Vector4 locColorObj, float shiftx = 0, float shifty = 0, float shiftz = 0, float locSide = 1.0f, int locColBreakX = 1, int locColBreakY = 1, int locCoeffSX = 1, int locCoeffSY = 1, int locAngleX = 0, int locAngleY = 0, int locAngleZ = 0, TypeObjectCreate locTypeObjectCreate = TypeObjectCreate.NonTypeObject)
+        {
+            side = locSide;
+            StartPosition = new Vector3(shiftx, shifty, shiftz);
+            colBreakX = locColBreakX;
+            colBreakY = locColBreakY;
+            coeffSX = locCoeffSX;
+            coeffSY = locCoeffSY;
+            angleX = locAngleX;
+            angleY = locAngleY;
+            angleZ = locAngleZ;
+            typeObjectCreate = locTypeObjectCreate;
+            ColorObj = locColorObj;
+        }
+        public GeometricInfo(Vector3 locStartPosition, float colorR = 0, float colorG = 0, float colorB = 0, float colorA = 0,float locSide = 1.0f, int locColBreakX = 1, int locColBreakY = 1, int locCoeffSX = 1, int locCoeffSY = 1, int locAngleX = 0, int locAngleY = 0, int locAngleZ = 0, TypeObjectCreate locTypeObjectCreate = TypeObjectCreate.NonTypeObject)
+        {
+            side = locSide;
+            StartPosition = locStartPosition;
+            colBreakX = locColBreakX;
+            colBreakY = locColBreakY;
+            coeffSX = locCoeffSX;
+            coeffSY = locCoeffSY;
+            angleX = locAngleX;
+            angleY = locAngleY;
+            angleZ = locAngleZ;
+            typeObjectCreate = locTypeObjectCreate;
+            ColorObj = new Vector4(colorR, colorG, colorB, colorA);
+        }
+        public GeometricInfo(float colorR = 0, float colorG = 0, float colorB = 0, float colorA = 0, float shiftx = 0, float shifty = 0, float shiftz = 0, float locSide = 1.0f, int locColBreakX = 1, int locColBreakY = 1, int locCoeffSX = 1, int locCoeffSY = 1, int locAngleX = 0, int locAngleY = 0, int locAngleZ = 0, TypeObjectCreate locTypeObjectCreate = TypeObjectCreate.NonTypeObject)
+        {
+            side = locSide;
+            StartPosition = new Vector3(shiftx, shifty, shiftz);
+            colBreakX = locColBreakX;
+            colBreakY = locColBreakY;
+            coeffSX = locCoeffSX;
+            coeffSY = locCoeffSY;
+            angleX = locAngleX;
+            angleY = locAngleY;
+            angleZ = locAngleZ;
+            typeObjectCreate = locTypeObjectCreate;
+            ColorObj = new Vector4(colorR, colorG, colorB, colorA);
+        }
+    }
     class ObjectCreate
     {
-        public static Vertex[] CreateSolidCube(float side, Vector3 shift)//размер куба, смещение y/-y, смещение x/-x, смещение z/-z цвет
+        public Vertex[] vertices;
+        public GeometricInfo geometricInfo;
+
+        //Задел на будущее
+        ObjectCreate()
         {
-            return CreateSolidCube(side, shift.X, shift.Y, shift.Z);
+            Vector3 startPosition = Vector3.Zero;
+            Vector4 colorObj = new Vector4(0, 0, 0, 1);
+            geometricInfo = new GeometricInfo(startPosition, colorObj);
+            vertices = CreateSolidCube(geometricInfo.side, startPosition);
         }
-        public static Vertex[] CreateSolidCube(float side, float shift_lr, float shift_y, float shift_ud)//размер куба, смещение y/-y, смещение x/-x, смещение z/-z цвет
+        ObjectCreate(GeometricInfo locGeometricInfo, Vertex[] locVertices)
         {
-            side = side / 2f;
+            geometricInfo = locGeometricInfo;
+            vertices = locVertices;
+        }
+        public static Vertex[] CreateSolidCube(GeometricInfo geometricInfo)//размер куба, смещение y/-y, смещение x/-x, смещение z/-z цвет
+        {
+            return CreateSolidCube(geometricInfo.side, geometricInfo.StartPosition.X, geometricInfo.StartPosition.Y, geometricInfo.StartPosition.Z, geometricInfo.angleX, geometricInfo.angleY, geometricInfo.angleZ);
+        }
+        public static Vertex[] CreateSolidCube(float side, Vector3 shift, int alphaX = 0, int alphaY = 0, int alphaZ = 0)//размер куба, смещение y/-y, смещение x/-x, смещение z/-z цвет
+        {
+            return CreateSolidCube(side, shift.X, shift.Y, shift.Z, alphaX, alphaY, alphaZ);
+        }
+        public static Vertex[] CreateSolidCube(float side, float shift_lr, float shift_y, float shift_ud, int alphaX = 0, int alphaY = 0, int alphaZ = 0)//размер куба, смещение y/-y, смещение x/-x, смещение z/-z цвет
+        {
+            alphaX %= 360;
+            alphaY %= 360;
+            alphaZ %= 360;
+            float angle_x = MathHelper.DegreesToRadians(alphaX);
+            float angle_y = MathHelper.DegreesToRadians(alphaY);
+            float angle_z = MathHelper.DegreesToRadians(alphaZ);
+            Vector3 translation = new Vector3(shift_lr, shift_y, shift_ud);
+
+            Matrix4 matrix4RX = Matrix4.Zero;
+            Matrix4 matrix4RY = Matrix4.Zero;
+            Matrix4 matrix4RZ = Matrix4.Zero;
+            Matrix4.CreateRotationX(angle_x, out matrix4RX);
+            Matrix4.CreateRotationY(angle_y, out matrix4RY);
+            Matrix4.CreateRotationZ(angle_z, out matrix4RZ);
+            Matrix4 transform = matrix4RX * matrix4RY * matrix4RZ;
+
+            //Чуть позже допишу задание с поворотом
+            Vector3 tnormXYZ;
+
+
             Vertex[] vertices =
             {
                 //координаты для треуголника, нормаль, текстурные координаты

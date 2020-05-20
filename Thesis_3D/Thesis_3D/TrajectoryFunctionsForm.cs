@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Thesis_3D
@@ -27,7 +23,7 @@ namespace Thesis_3D
             if(trajectoryFunctionsX != null)
             {
                 comboBoxFuncX.SelectedItem = ((List<ComboboxDataSourceTrajectory>)(comboBoxFuncX.DataSource)).Where(x => x.Text == trajectoryFunctionsX.nameFunc).FirstOrDefault();
-                textBoxKoeffX.Text = Convert.ToString(trajectoryFunctionsX.koeff);
+                textBoxCoeffX.Text = Convert.ToString(trajectoryFunctionsX.Coeff);
                 textBoxStepX.Text = Convert.ToString(trajectoryFunctionsX.step);
                 textBoxMinX.Text = Convert.ToString(trajectoryFunctionsX.min);
                 textBoxMaxX.Text = Convert.ToString(trajectoryFunctionsX.max);
@@ -37,7 +33,7 @@ namespace Thesis_3D
             if (trajectoryFunctionsY != null)
             {
                 comboBoxFuncY.SelectedItem = ((List<ComboboxDataSourceTrajectory>)(comboBoxFuncY.DataSource)).Where(x => x.Text == trajectoryFunctionsY.nameFunc).FirstOrDefault();
-                textBoxKoeffY.Text = Convert.ToString(trajectoryFunctionsY.koeff);
+                textBoxCoeffY.Text = Convert.ToString(trajectoryFunctionsY.Coeff);
                 textBoxStepY.Text = Convert.ToString(trajectoryFunctionsY.step);
                 textBoxMinY.Text = Convert.ToString(trajectoryFunctionsY.min);
                 textBoxMaxY.Text = Convert.ToString(trajectoryFunctionsY.max);
@@ -47,7 +43,7 @@ namespace Thesis_3D
             if (trajectoryFunctionsZ != null)
             {
                 comboBoxFuncZ.SelectedItem = ((List<ComboboxDataSourceTrajectory>)(comboBoxFuncZ.DataSource)).Where(x => x.Text == trajectoryFunctionsZ.nameFunc).FirstOrDefault();
-                textBoxKoeffZ.Text = Convert.ToString(trajectoryFunctionsZ.koeff);
+                textBoxCoeffZ.Text = Convert.ToString(trajectoryFunctionsZ.Coeff);
                 textBoxStepZ.Text = Convert.ToString(trajectoryFunctionsZ.step);
                 textBoxMinZ.Text = Convert.ToString(trajectoryFunctionsZ.min);
                 textBoxMaxZ.Text = Convert.ToString(trajectoryFunctionsZ.max);
@@ -76,7 +72,7 @@ namespace Thesis_3D
             comboBoxFuncX.ValueMember = comboBoxFuncY.ValueMember = comboBoxFuncZ.ValueMember = "mathFunc";
         }
 
-        private void textBoxKoeffX_KeyPress(object sender, KeyPressEventArgs e)
+        private void textBoxCoeffX_KeyPress(object sender, KeyPressEventArgs e)
         {
             char symbolT = e.KeyChar;
 
@@ -89,7 +85,7 @@ namespace Thesis_3D
         private void buttonOk_Click(object sender, EventArgs e)
         {
             ComboboxDataSourceTrajectory selectItemX = (ComboboxDataSourceTrajectory)comboBoxFuncX.SelectedItem;
-            TrajectoryFunctions locTrajectoryFunctionsX = new TrajectoryFunctions(float.Parse(textBoxKoeffX.Text), selectItemX.mathFunc, float.Parse(textBoxStepX.Text), float.Parse(textBoxMinX.Text), float.Parse(textBoxMaxX.Text), float.Parse(textBoxStartValX.Text), selectItemX.Text, checkBoxMinMaxValX.Checked);
+            TrajectoryFunctions locTrajectoryFunctionsX = new TrajectoryFunctions(float.Parse(textBoxCoeffX.Text), selectItemX.mathFunc, float.Parse(textBoxStepX.Text), float.Parse(textBoxMinX.Text), float.Parse(textBoxMaxX.Text), float.Parse(textBoxStartValX.Text), selectItemX.Text, checkBoxMinMaxValX.Checked);
             if (!locTrajectoryFunctionsX.ValidateTrajectoryFunc())
             {
                 MessageBox.Show("Неккоректно заданная траектория для X");
@@ -97,7 +93,7 @@ namespace Thesis_3D
             }
             trajectoryFunctionsX = locTrajectoryFunctionsX;
             ComboboxDataSourceTrajectory selectItemY = (ComboboxDataSourceTrajectory)comboBoxFuncY.SelectedItem;
-            TrajectoryFunctions locTrajectoryFunctionsY = new TrajectoryFunctions(float.Parse(textBoxKoeffY.Text), selectItemY.mathFunc, float.Parse(textBoxStepY.Text), float.Parse(textBoxMinY.Text), float.Parse(textBoxMaxY.Text), float.Parse(textBoxStartValY.Text), selectItemY.Text, checkBoxMinMaxValY.Checked);
+            TrajectoryFunctions locTrajectoryFunctionsY = new TrajectoryFunctions(float.Parse(textBoxCoeffY.Text), selectItemY.mathFunc, float.Parse(textBoxStepY.Text), float.Parse(textBoxMinY.Text), float.Parse(textBoxMaxY.Text), float.Parse(textBoxStartValY.Text), selectItemY.Text, checkBoxMinMaxValY.Checked);
             if (!locTrajectoryFunctionsY.ValidateTrajectoryFunc())
             {
                 MessageBox.Show("Неккоректно заданная траектория для Y");
@@ -105,7 +101,7 @@ namespace Thesis_3D
             }
             trajectoryFunctionsY = locTrajectoryFunctionsY;
             ComboboxDataSourceTrajectory selectItemZ = (ComboboxDataSourceTrajectory)comboBoxFuncZ.SelectedItem;
-            TrajectoryFunctions locTrajectoryFunctionsZ = new TrajectoryFunctions(float.Parse(textBoxKoeffZ.Text), selectItemZ.mathFunc, float.Parse(textBoxStepZ.Text), float.Parse(textBoxMinZ.Text), float.Parse(textBoxMaxZ.Text), float.Parse(textBoxStartValZ.Text), selectItemZ.Text, checkBoxMinMaxValZ.Checked);
+            TrajectoryFunctions locTrajectoryFunctionsZ = new TrajectoryFunctions(float.Parse(textBoxCoeffZ.Text), selectItemZ.mathFunc, float.Parse(textBoxStepZ.Text), float.Parse(textBoxMinZ.Text), float.Parse(textBoxMaxZ.Text), float.Parse(textBoxStartValZ.Text), selectItemZ.Text, checkBoxMinMaxValZ.Checked);
             if (!locTrajectoryFunctionsZ.ValidateTrajectoryFunc())
             {
                 MessageBox.Show("Неккоректно заданная траектория для X");
@@ -121,7 +117,7 @@ namespace Thesis_3D
     }
     public class TrajectoryFunctions
     {
-        public float koeff;
+        public float Coeff;
         public Func<double, double> mathFunc;
         public float step;
         public float min;
@@ -137,7 +133,7 @@ namespace Thesis_3D
 
         public TrajectoryFunctions()
         {
-            koeff = 1;
+            Coeff = 1;
             mathFunc = (double x) => (x);
             step = 1;
             min = 0;
@@ -149,11 +145,11 @@ namespace Thesis_3D
             Iter = 0;
             signIter = 1;
         }
-        public TrajectoryFunctions(float locKoeff, Func<double, double> locMathFunc, float locStep, float locMin, float locMax, float locStartVal, string locNameFunc, bool locReversMove)
+        public TrajectoryFunctions(float locCoeff, Func<double, double> locMathFunc, float locStep, float locMin, float locMax, float locStartVal, string locNameFunc, bool locReversMove)
         {
             //Тут могут быть ошибки на 1 итерацию в связи с тем, что мне лень правильно округлять
             reversMove = locReversMove;
-            koeff = locKoeff;
+            Coeff = locCoeff;
             mathFunc = locMathFunc;
             step = locStep;
             min = locMin;
@@ -196,7 +192,7 @@ namespace Thesis_3D
         }
         public double getValue()
         {
-            var localVal = koeff * mathFunc(Val * modifier);
+            var localVal = Coeff * mathFunc(Val * modifier);
             NextValueAndSetSignStep();
             return localVal;
         }

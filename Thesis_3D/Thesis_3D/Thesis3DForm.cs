@@ -5,14 +5,11 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
-using OpenTK.Platform;
 
 namespace Thesis_3D
 {
@@ -283,25 +280,27 @@ namespace Thesis_3D
             comboBoxShaders.Items.AddRange(new object[] { "Обычные цвета", "Т.И. без отражения", "Т.И. с отражением", "Т.И. с двойным отражением", "Т.И. с плоским затенением", "Несколько Т.И.", "Направленный источник", "Затенение по Фонгу", "Затенение по Фонгу с использованием вектора полпути", "Узконаправленный источник", "Туман", "Плоское затенение для одного элемента" });
             comboBoxShaders.SelectedIndex = 0;
             Vector3 positionObject = new Vector3(-1.0f, 1.0f, 0.0f);
-            primarySphereAt = new RenderObject(ObjectCreate.CreateSphere(40f, positionObject, 60, 60, 1, 1), positionObject, Color4.DeepSkyBlue, RandomColor());
-            _renderObjects.Add(new RenderObject(ObjectCreate.CreatePlane(1.5f, positionObject, 0, 0, 45), positionObject, Color4.LightCyan, RandomColor(), plane: true));
+            primarySphereAt = new RenderObject(ObjectCreate.CreateSphere(40f, positionObject, 60, 60, 1, 1), positionObject, Color4.DeepSkyBlue, RandomColor(), locSide: 40f, locTypeObjectCreate: TypeObjectCreate.Sphere, locColBreakX: 60, locColBreakY: 60, locCoeffSX: 1, locCoeffSY: 1);
+            _renderObjects.Add(new RenderObject(ObjectCreate.CreatePlane(1.5f, positionObject, 0, 0, 45), positionObject, Color4.LightCyan, RandomColor(), plane: true, locSide: 1.5f, locTypeObjectCreate: TypeObjectCreate.Plane, locAngleZ: 45));
             primaryRenderObject = _renderObjects[0];
             positionObject = new Vector3(0.0f, 0.0f, 0.0f);
-            _renderObjects.Add(new RenderObject(ObjectCreate.CreatePlane(15f, positionObject, 0, 0, 0), positionObject, Color4.Green, RandomColor(), plane: true));
+            _renderObjects.Add(new RenderObject(ObjectCreate.CreatePlane(15f, positionObject, 0, 0, 0), positionObject, Color4.Green, RandomColor(), plane: true, locSide: 40f, locTypeObjectCreate: TypeObjectCreate.Plane));
             positionObject = new Vector3(0.0f, 2.0f, 0.0f);
-            _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f, positionObject), positionObject, Color4.LightCoral, RandomColor()));
+            _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f, positionObject), positionObject, Color4.LightCoral, RandomColor(), locSide: 0.5f, locTypeObjectCreate: TypeObjectCreate.SolidCube));
             for (int i = 0; i < 10; i++)
             {
                 positionObject = new Vector3((float)i + 1, 2.0f, 0.0f);
-                _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f, positionObject), positionObject, Color4.LightCoral, RandomColor()));
+                _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f, positionObject), positionObject, Color4.LightCoral, RandomColor(), locSide: 0.5f, locTypeObjectCreate: TypeObjectCreate.SolidCube));
             }
             for (int i = 0; i < 10; i++)
             {
                 positionObject = new Vector3(1, -(float)i + 2.0f, 0.0f);
-                _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f, positionObject), positionObject, Color4.LightCoral, RandomColor()));
+                _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f, positionObject), positionObject, Color4.LightCoral, RandomColor(), locSide: 0.5f, locTypeObjectCreate: TypeObjectCreate.SolidCube));
             }
+            positionObject = new Vector3(1, 4.0f, 0.0f);
+            _renderObjects.Add(new RenderObject(ObjectCreate.CreateSphere(1.5f, positionObject, 60, 60, 1, 1), positionObject, Color4.Brown, RandomColor(), locSide: 1.5f, locTypeObjectCreate: TypeObjectCreate.Sphere, locColBreakX: 60, locColBreakY: 60, locCoeffSX: 1, locCoeffSY: 1));
             Vector3 positionLight = new Vector3(1.0f, 3.0f, 1.0f);
-            _lightObjects.Add(new LightObject(ObjectCreate.CreateSphere(5.0f, positionObject, 10, 10, 1, 1), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.3f, 0.3f, 0.0f), new Vector3(1.0f, 0.0f, 5f), _program_Fong_directed));
+            _lightObjects.Add(new LightObject(ObjectCreate.CreateSphere(5.0f, positionObject, 10, 10, 1, 1), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.3f, 0.3f, 0.0f), new Vector3(1.0f, 0.0f, 5f), _program_Fong_directed, side: 0.5f, locTypeObjectCreate: TypeObjectCreate.SolidCube, locColBreakX: 10, locColBreakY: 10, locCoeffSX: 1, locCoeffSY: 1));
             primaryLightObject = _lightObjects[0];
             primaryLightObject.trajctoryRenderObject = new TrajctoryRenderObject(
                 new TrajectoryFunctions(300, (double x) => (Math.Cos(x)), 0.03f, -180, 180, 0, "cos(x)", true),
@@ -312,13 +311,13 @@ namespace Thesis_3D
                 );
             primaryLightObject.Ambient = new Vector3(0.0f, 0.15f, 0.0f);
             positionLight = new Vector3(4.0f, 3.0f, 1.0f);                                                                                                                                                                                     
-            _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f, positionLight), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.0f, 0.3f, 0.3f), new Vector3(1.0f, 0.0f, 5f)));
+            _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f, positionLight), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.0f, 0.3f, 0.3f), new Vector3(1.0f, 0.0f, 5f), side: 0.1f, locTypeObjectCreate: TypeObjectCreate.SolidCube));
             positionLight = new Vector3(7.0f, 3.0f, 1.0f);                                                                                                                                                                                     
-            _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f, positionLight), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.3f, 0.0f, 0.3f), new Vector3(1.0f, 0.0f, 5f)));
+            _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f, positionLight), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.3f, 0.0f, 0.3f), new Vector3(1.0f, 0.0f, 5f), side: 0.1f, locTypeObjectCreate: TypeObjectCreate.SolidCube));
             /*for (int i = 0; i < 147; i++)
             {
                 positionLight = new Vector3(10.0f + 3*i, 3.0f, 1.0f);
-                _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f, positionLight), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.3f, 0.0f, 0.3f), new Vector3(1.0f, 0.0f, 5f)));
+                _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f, positionLight), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.3f, 0.0f, 0.3f), new Vector3(1.0f, 0.0f, 5f), side: 0.1f, locTypeObjectCreate: TypeObjectCreate.SolidCube));
             }*/
             foreach (var obj in _lightObjects)
             {
@@ -380,7 +379,6 @@ namespace Thesis_3D
         }
         void glControl_Resize(object sender, EventArgs e)
         {
-            
             OpenTK.GLControl c = sender as OpenTK.GLControl;
             CreateProjection();
             if (c.ClientSize.Height == 0)
@@ -547,7 +545,7 @@ namespace Thesis_3D
                         _renderObjects[_SelectID].changeModelMstrix(new Vector3(0, 1, 0));
                         break;
                 }
-                if(_renderObjects[_SelectID].TypeObject == TypeObjectRender.LightSourceObject)
+                if(_renderObjects[_SelectID].TypeObject == TypeObjectRenderLight.LightSourceObject)
                 {
                     foreach(var lightObject in _lightObjects)
                     {
@@ -670,7 +668,7 @@ namespace Thesis_3D
                     else pointTarget = renderObject.trajctoryRenderObject.GetPoint().Xyz;
                     Vector3 translation = -(renderObject.getStartPosition()) + renderObject.trajctoryRenderObject.getValue() + pointTarget;
                     renderObject.ModelMatrix = Matrix4.CreateTranslation(translation);
-                    if (renderObject.TypeObject == TypeObjectRender.LightSourceObject)
+                    if (renderObject.TypeObject == TypeObjectRenderLight.LightSourceObject)
                     {
                         foreach (var lightObject in _lightObjects)
                         {
@@ -857,13 +855,13 @@ namespace Thesis_3D
                 {
                     typeObjectCreate = TypeObjectCreate.Plane;
                 }
-                DlgNewAnFigure dlgNewAn = new DlgNewAnFigure(typeObjectCreate);
+                DlgAddEditAnFigure dlgNewAn = new DlgAddEditAnFigure(typeObjectCreate);
                 if (dlgNewAn.ShowDialog() == DialogResult.OK)
                 {
                     Color4 colorcube = dlgNewAn.colorObject;
                     Vector3 position = dlgNewAn.position;
                     Vertex[] figure_vertex = dlgNewAn.figureVertex;
-                    _renderObjects.Add(new RenderObject(figure_vertex, position, colorcube, RandomColor()));
+                    _renderObjects.Add(new RenderObject(figure_vertex, position, colorcube, RandomColor(), locTypeObjectCreate: typeObjectCreate, locSide: dlgNewAn.side, locColBreakX: dlgNewAn.colBreakX, locColBreakY: dlgNewAn.colBreakY, locCoeffSX: dlgNewAn.coeffSX, locCoeffSY: dlgNewAn.coeffSY, locAngleX: dlgNewAn.angleX, locAngleY: dlgNewAn.angleY, locAngleZ: dlgNewAn.angleZ));
                 }
             }
         }
@@ -989,7 +987,7 @@ namespace Thesis_3D
                         figureVertex[col + 2] = new Vertex(new Vector4((float)listCoord[fin.third].X, (float)listCoord[fin.third].Y, (float)listCoord[fin.third].Z, 1.0f), new Vector4(normVec.X, normVec.Y, normVec.Z, 0.0f), new Vector2(0, 0));
                         col += 3;
                     }
-                    _renderObjects.Add(new RenderObject(figureVertex, figureVertex[0]._Position.Xyz, colorSurface, RandomColor()));
+                    _renderObjects.Add(new RenderObject(figureVertex, figureVertex[0]._Position.Xyz, colorSurface, RandomColor(), locTypeObjectCreate: TypeObjectCreate.NonTypeObject));
                 }
                 else
                 {
@@ -1010,224 +1008,253 @@ namespace Thesis_3D
                 _renderObjects[_SelectID].ReadBuffer(vertexObject);
                 var typeObject = _renderObjects[_SelectID].TypeObject;
                 Vector3 diff = _renderObjects[_SelectID].getDiffusion();
-                Form dlgChangeFigure = new Form()
+                if (_renderObjects[_SelectID].typeObjectCreate == TypeObjectCreate.NonTypeObject)
                 {
-                    Text = "Изменение объекта",
-                    Width = 680,
-                    Height = 550,
-                    FormBorderStyle = FormBorderStyle.Sizable,
-                    StartPosition = FormStartPosition.CenterScreen,
-                };
-                Label lblCoords = new Label() { Text = "Смещение по осям:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 120, Height = 30, Top = 423, Left = 190 };
-                Label lblCoordX = new Label() { Text = "X:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 423, Left = 315 };
-                Label lblCoordY = new Label() { Text = "Y:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 423, Left = 375 };
-                Label lblCoordZ = new Label() { Text = "Z:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 423, Left = 435 };
-                TextBox textBoxCoordX = new TextBox() { Text = "0", Width = 40, Height = 30, Top = 420, Left = 335, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
-                TextBox textBoxCoordY = new TextBox() { Text = "0", Width = 40, Height = 30, Top = 420, Left = 395, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
-                TextBox textBoxCoordZ = new TextBox() { Text = "0", Width = 40, Height = 30, Top = 420, Left = 455, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
-                Label lblDiffs = new Label() { Text = typeObject == TypeObjectRender.LightSourceObject? "Интенсивность освещения" : "Коэффициенты рассеивание:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 120, Height = 30, Top = 380, Left = 190 };
-                Label lblDiffR = new Label() { Text = "R:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 382, Left = 315 };
-                Label lblDiffG = new Label() { Text = "G:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 382, Left = 375 };
-                Label lblDiffB = new Label() { Text = "B:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 382, Left = 435 };
-                TextBox textBoxDiffR = new TextBox() { Text = diff.X.ToString(), Width = 40, Height = 30, Top = 380, Left = 335, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
-                TextBox textBoxDiffG = new TextBox() { Text = diff.Y.ToString(), Width = 40, Height = 30, Top = 380, Left = 395, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
-                TextBox textBoxDiffB = new TextBox() { Text = diff.Z.ToString(), Width = 40, Height = 30, Top = 380, Left = 455, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
-                Color4 colorSurface = new Color4();
-                colorSurface.R = _renderObjects[_SelectID].ColorObj.X;
-                colorSurface.G = _renderObjects[_SelectID].ColorObj.Y;
-                colorSurface.B = _renderObjects[_SelectID].ColorObj.Z;
-                colorSurface.A = _renderObjects[_SelectID].ColorObj.W;
-                ColorDialog colorDialog = new ColorDialog();
-                Label lblButtonColor = new Label() { Text = "Цвет объекта:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 170, Height = 30, Top = 423, Left = 20 };
-                Button buttonColor = new Button() { Text = "", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 70, Height = 30, Top = 415, Left = 100, BackColor = (System.Drawing.Color)colorSurface };
-                buttonColor.Click += (sender1, e1) => { if (colorDialog.ShowDialog() == DialogResult.OK) { colorSurface = buttonColor.BackColor = colorDialog.Color; } };
-                Label lblTrackBar = new Label() { Text = "Прозрачность объекта:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 170, Height = 30, Top = 470, Left = 20 };
-                TrackBar trackBar = new TrackBar() { Value = (int)(_renderObjects[_SelectID].ColorObj.W * 10f), Minimum = 0, Maximum = 10, Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 170, Height = 10, Top = 470, Left = 150 };
-                CheckBox checkBox = new CheckBox() { Checked = false, Text = "Изменить структуру фигуры", Width = 170, Height = 30, Top = 375, Left = 20, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
-                TextBox textBoxChangeCoord = new TextBox() { Enabled = false, Multiline = true, Width = 250, Height = 350, Top = 10, Left = 10, Anchor = AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom, ScrollBars = ScrollBars.Vertical };
-                TextBox textBoxChangeFinit = new TextBox() { Enabled = false, Multiline = true, Width = 250, Height = 350, Top = 10, Left = 10, Anchor = AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom, ScrollBars = ScrollBars.Vertical };
-                SplitContainer splitterText = new SplitContainer() { Width = 540, Height = 360, Left = 10, Top = 10, Anchor = AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom, SplitterDistance = 260 };
-                Button buttonSave = new Button() { Text = "Save", Top = 20, Left = 550, Width = 100, Height = 25, Anchor = AnchorStyles.Top | AnchorStyles.Right };
-                SaveFileDialog saveFileCoord = new SaveFileDialog();
-                SaveFileDialog saveFileFinit = new SaveFileDialog();
-                checkBox.CheckedChanged += (sender1, e1) => { textBoxChangeCoord.Enabled = textBoxChangeFinit.Enabled = checkBox.Checked; };
-                buttonSave.Click += (sender1, e1) => { saveFileCoord.ShowDialog(); saveFileFinit.ShowDialog(); };
-                saveFileFinit.Filter = saveFileCoord.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
-                saveFileCoord.FileName = "coord_default.txt";
-                saveFileFinit.FileName = "finit_default.txt";
-                Button button_ok = new Button() { Text = "Ok", Top = 50, Left = 550, Width = 100, Height = 25, Anchor = AnchorStyles.Top | AnchorStyles.Right, DialogResult = DialogResult.OK };
-                int i = vertexObject.Length;
-                int colFinElement = i / 3;
-                Triangls[] trianglsSelect = new Triangls[colFinElement];
-                PointUnik[] pointUnik = new PointUnik[i];
-                int colUnik = 0;
-                for (int iter = 0; iter < vertexObject.Length; iter++)
-                {
-                    bool flag = true;
-                    for (int jter = 0; jter < colUnik; jter++)
+                    Form dlgChangeFigure = new Form()
                     {
-                        if (vertexObject[iter]._Position == pointUnik[jter].point)
-                        {
-                            flag = false;
-                        }
-                    }
-                    if (flag)
-                    {
-                        pointUnik[colUnik].point = vertexObject[iter]._Position;
-                        colUnik++;
-                    }
-                }
-                for (int iter = 0; iter < vertexObject.Length; iter += 3)
-                {
-                    for (int k = 0; k < 3; k++)
+                        Text = "Изменение объекта",
+                        Width = 680,
+                        Height = 550,
+                        FormBorderStyle = FormBorderStyle.Sizable,
+                        StartPosition = FormStartPosition.CenterScreen,
+                    };
+                    Label lblCoords = new Label() { Text = "Смещение по осям:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 120, Height = 30, Top = 423, Left = 190 };
+                    Label lblCoordX = new Label() { Text = "X:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 423, Left = 315 };
+                    Label lblCoordY = new Label() { Text = "Y:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 423, Left = 375 };
+                    Label lblCoordZ = new Label() { Text = "Z:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 423, Left = 435 };
+                    TextBox textBoxCoordX = new TextBox() { Text = "0", Width = 40, Height = 30, Top = 420, Left = 335, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
+                    TextBox textBoxCoordY = new TextBox() { Text = "0", Width = 40, Height = 30, Top = 420, Left = 395, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
+                    TextBox textBoxCoordZ = new TextBox() { Text = "0", Width = 40, Height = 30, Top = 420, Left = 455, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
+                    Label lblDiffs = new Label() { Text = typeObject == TypeObjectRenderLight.LightSourceObject ? "Интенсивность освещения" : "Коэффициенты рассеивание:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 120, Height = 30, Top = 380, Left = 190 };
+                    Label lblDiffR = new Label() { Text = "R:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 382, Left = 315 };
+                    Label lblDiffG = new Label() { Text = "G:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 382, Left = 375 };
+                    Label lblDiffB = new Label() { Text = "B:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 382, Left = 435 };
+                    TextBox textBoxDiffR = new TextBox() { Text = diff.X.ToString(), Width = 40, Height = 30, Top = 380, Left = 335, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
+                    TextBox textBoxDiffG = new TextBox() { Text = diff.Y.ToString(), Width = 40, Height = 30, Top = 380, Left = 395, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
+                    TextBox textBoxDiffB = new TextBox() { Text = diff.Z.ToString(), Width = 40, Height = 30, Top = 380, Left = 455, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
+                    Color4 colorSurface = new Color4();
+                    colorSurface.R = _renderObjects[_SelectID].ColorObj.X;
+                    colorSurface.G = _renderObjects[_SelectID].ColorObj.Y;
+                    colorSurface.B = _renderObjects[_SelectID].ColorObj.Z;
+                    colorSurface.A = _renderObjects[_SelectID].ColorObj.W;
+                    ColorDialog colorDialog = new ColorDialog();
+                    Label lblButtonColor = new Label() { Text = "Цвет объекта:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 170, Height = 30, Top = 423, Left = 20 };
+                    Button buttonColor = new Button() { Text = "", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 70, Height = 30, Top = 415, Left = 100, BackColor = (System.Drawing.Color)colorSurface };
+                    buttonColor.Click += (sender1, e1) => { if (colorDialog.ShowDialog() == DialogResult.OK) { colorSurface = buttonColor.BackColor = colorDialog.Color; } };
+                    Label lblTrackBar = new Label() { Text = "Прозрачность объекта:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 170, Height = 30, Top = 470, Left = 20 };
+                    TrackBar trackBar = new TrackBar() { Value = (int)(_renderObjects[_SelectID].ColorObj.W * 10f), Minimum = 0, Maximum = 10, Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 170, Height = 10, Top = 470, Left = 150 };
+                    CheckBox checkBox = new CheckBox() { Checked = false, Text = "Изменить структуру фигуры", Width = 170, Height = 30, Top = 375, Left = 20, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
+                    TextBox textBoxChangeCoord = new TextBox() { Enabled = false, Multiline = true, Width = 250, Height = 350, Top = 10, Left = 10, Anchor = AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom, ScrollBars = ScrollBars.Vertical };
+                    TextBox textBoxChangeFinit = new TextBox() { Enabled = false, Multiline = true, Width = 250, Height = 350, Top = 10, Left = 10, Anchor = AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom, ScrollBars = ScrollBars.Vertical };
+                    SplitContainer splitterText = new SplitContainer() { Width = 540, Height = 360, Left = 10, Top = 10, Anchor = AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom, SplitterDistance = 260 };
+                    Button buttonSave = new Button() { Text = "Save", Top = 20, Left = 550, Width = 100, Height = 25, Anchor = AnchorStyles.Top | AnchorStyles.Right };
+                    SaveFileDialog saveFileCoord = new SaveFileDialog();
+                    SaveFileDialog saveFileFinit = new SaveFileDialog();
+                    checkBox.CheckedChanged += (sender1, e1) => { textBoxChangeCoord.Enabled = textBoxChangeFinit.Enabled = checkBox.Checked; };
+                    buttonSave.Click += (sender1, e1) => { saveFileCoord.ShowDialog(); saveFileFinit.ShowDialog(); };
+                    saveFileFinit.Filter = saveFileCoord.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+                    saveFileCoord.FileName = "coord_default.txt";
+                    saveFileFinit.FileName = "finit_default.txt";
+                    Button button_ok = new Button() { Text = "Ok", Top = 50, Left = 550, Width = 100, Height = 25, Anchor = AnchorStyles.Top | AnchorStyles.Right, DialogResult = DialogResult.OK };
+                    int i = vertexObject.Length;
+                    int colFinElement = i / 3;
+                    Triangls[] trianglsSelect = new Triangls[colFinElement];
+                    PointUnik[] pointUnik = new PointUnik[i];
+                    int colUnik = 0;
+                    for (int iter = 0; iter < vertexObject.Length; iter++)
                     {
                         bool flag = true;
-                        for (int jter = 0; jter < colUnik && flag; jter++)
+                        for (int jter = 0; jter < colUnik; jter++)
                         {
-                            if (pointUnik[jter].point == vertexObject[iter + k]._Position)
+                            if (vertexObject[iter]._Position == pointUnik[jter].point)
                             {
                                 flag = false;
-                                if (k == 2)
+                            }
+                        }
+                        if (flag)
+                        {
+                            pointUnik[colUnik].point = vertexObject[iter]._Position;
+                            colUnik++;
+                        }
+                    }
+                    for (int iter = 0; iter < vertexObject.Length; iter += 3)
+                    {
+                        for (int k = 0; k < 3; k++)
+                        {
+                            bool flag = true;
+                            for (int jter = 0; jter < colUnik && flag; jter++)
+                            {
+                                if (pointUnik[jter].point == vertexObject[iter + k]._Position)
                                 {
-                                    textBoxChangeFinit.Text += jter.ToString();
+                                    flag = false;
+                                    if (k == 2)
+                                    {
+                                        textBoxChangeFinit.Text += jter.ToString();
+                                    }
+                                    else
+                                    {
+                                        textBoxChangeFinit.Text += jter.ToString() + " ";
+                                    }
+                                }
+                            }
+                        }
+                        textBoxChangeFinit.Text += "\r\n";
+                    }
+                    for (int jter = 0; jter < colUnik; jter++)
+                    {
+                        textBoxChangeCoord.Text += pointUnik[jter].point.Xyz.ToString().Replace("(", "").Replace(")", "").Replace(";", "") + "\r\n";
+                    }
+                    splitterText.Panel1.Controls.Add(textBoxChangeCoord);
+                    splitterText.Panel2.Controls.Add(textBoxChangeFinit);
+                    dlgChangeFigure.Controls.Add(checkBox);
+                    dlgChangeFigure.Controls.Add(lblDiffs);
+                    dlgChangeFigure.Controls.Add(lblDiffR);
+                    dlgChangeFigure.Controls.Add(lblDiffG);
+                    dlgChangeFigure.Controls.Add(lblDiffB);
+                    dlgChangeFigure.Controls.Add(textBoxDiffR);
+                    dlgChangeFigure.Controls.Add(textBoxDiffG);
+                    dlgChangeFigure.Controls.Add(textBoxDiffB);
+                    dlgChangeFigure.Controls.Add(splitterText);
+                    dlgChangeFigure.Controls.Add(button_ok);
+                    dlgChangeFigure.Controls.Add(buttonSave);
+                    dlgChangeFigure.Controls.Add(trackBar);
+                    dlgChangeFigure.Controls.Add(lblTrackBar);
+                    dlgChangeFigure.Controls.Add(buttonColor);
+                    dlgChangeFigure.Controls.Add(lblButtonColor);
+                    dlgChangeFigure.Controls.Add(lblCoords);
+                    dlgChangeFigure.Controls.Add(lblCoordX);
+                    dlgChangeFigure.Controls.Add(lblCoordY);
+                    dlgChangeFigure.Controls.Add(lblCoordZ);
+                    dlgChangeFigure.Controls.Add(textBoxCoordX);
+                    dlgChangeFigure.Controls.Add(textBoxCoordY);
+                    dlgChangeFigure.Controls.Add(textBoxCoordZ);
+
+                    saveFileCoord.FileOk += (senderCoord, eCoord) =>
+                    {
+                        if (saveFileCoord.FileName.Length != 0)
+                        {
+                            StreamWriter write_coord = new StreamWriter(saveFileCoord.FileName);
+                            write_coord.Write(textBoxChangeCoord.Text);
+                            write_coord.Close();
+                        }
+                    };
+                    saveFileFinit.FileOk += (senderFinit, eFinit) =>
+                    {
+                        if (saveFileFinit.FileName.Length != 0)
+                        {
+                            StreamWriter writeFinit = new StreamWriter(saveFileFinit.FileName);
+                            writeFinit.Write(textBoxChangeFinit.Text);
+                            writeFinit.Close();
+                        }
+                    };
+                    if (dlgChangeFigure.ShowDialog() == DialogResult.OK)
+                    {
+                        if (checkBox.Checked)
+                        {
+                            List<DataCoordElem> listCoord = new List<DataCoordElem>();
+                            List<DataFinitElem> listFinitElem = new List<DataFinitElem>();
+                            string[] stringLine = textBoxChangeCoord.Text.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+                            bool errorFlag = false;
+                            for (int iter = 0; iter < stringLine.Length && !errorFlag; iter++)
+                            {
+                                string[] strXYZCoord = stringLine[iter].Split(' ');
+                                if (strXYZCoord.Length == 3)
+                                {
+                                    DataCoordElem dataCoord = new DataCoordElem();
+                                    dataCoord.X = double.Parse(strXYZCoord[0]);
+                                    dataCoord.Y = double.Parse(strXYZCoord[1]);
+                                    dataCoord.Z = double.Parse(strXYZCoord[2]);
+                                    listCoord.Add(dataCoord);
                                 }
                                 else
                                 {
-                                    textBoxChangeFinit.Text += jter.ToString() + " ";
+                                    errorFlag = true;
                                 }
                             }
-                        }
-                    }
-                    textBoxChangeFinit.Text += "\r\n";
-                }
-                for (int jter = 0; jter < colUnik; jter++)
-                {
-                    textBoxChangeCoord.Text += pointUnik[jter].point.Xyz.ToString().Replace("(", "").Replace(")", "").Replace(";", "") + "\r\n";
-                }
-                splitterText.Panel1.Controls.Add(textBoxChangeCoord);
-                splitterText.Panel2.Controls.Add(textBoxChangeFinit);
-                dlgChangeFigure.Controls.Add(checkBox);
-                dlgChangeFigure.Controls.Add(lblDiffs);
-                dlgChangeFigure.Controls.Add(lblDiffR);
-                dlgChangeFigure.Controls.Add(lblDiffG);
-                dlgChangeFigure.Controls.Add(lblDiffB);
-                dlgChangeFigure.Controls.Add(textBoxDiffR);
-                dlgChangeFigure.Controls.Add(textBoxDiffG);
-                dlgChangeFigure.Controls.Add(textBoxDiffB);
-                dlgChangeFigure.Controls.Add(splitterText);
-                dlgChangeFigure.Controls.Add(button_ok);
-                dlgChangeFigure.Controls.Add(buttonSave); 
-                dlgChangeFigure.Controls.Add(trackBar);
-                dlgChangeFigure.Controls.Add(lblTrackBar);
-                dlgChangeFigure.Controls.Add(buttonColor);
-                dlgChangeFigure.Controls.Add(lblButtonColor);
-                dlgChangeFigure.Controls.Add(lblCoords);
-                dlgChangeFigure.Controls.Add(lblCoordX);
-                dlgChangeFigure.Controls.Add(lblCoordY);
-                dlgChangeFigure.Controls.Add(lblCoordZ);
-                dlgChangeFigure.Controls.Add(textBoxCoordX);
-                dlgChangeFigure.Controls.Add(textBoxCoordY);
-                dlgChangeFigure.Controls.Add(textBoxCoordZ);
-
-                saveFileCoord.FileOk += (senderCoord, eCoord) =>
-                {
-                    if (saveFileCoord.FileName.Length != 0)
-                    {
-                        StreamWriter write_coord = new StreamWriter(saveFileCoord.FileName);
-                        write_coord.Write(textBoxChangeCoord.Text);
-                        write_coord.Close();
-                    }
-                };
-                saveFileFinit.FileOk += (senderFinit, eFinit) =>
-                {
-                    if (saveFileFinit.FileName.Length != 0)
-                    {
-                        StreamWriter writeFinit = new StreamWriter(saveFileFinit.FileName);
-                        writeFinit.Write(textBoxChangeFinit.Text);
-                        writeFinit.Close();
-                    }
-                };
-                if (dlgChangeFigure.ShowDialog() == DialogResult.OK)
-                {
-                    if (checkBox.Checked)
-                    {
-                        List<DataCoordElem> listCoord = new List<DataCoordElem>();
-                        List<DataFinitElem> listFinitElem = new List<DataFinitElem>();
-                        string[] stringLine = textBoxChangeCoord.Text.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
-                        bool errorFlag = false;
-                        for (int iter = 0; iter < stringLine.Length && !errorFlag; iter++)
-                        {
-                            string[] strXYZCoord = stringLine[iter].Split(' ');
-                            if (strXYZCoord.Length == 3)
+                            stringLine = textBoxChangeFinit.Text.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+                            for (int iter = 0; iter < stringLine.Length && !errorFlag; iter++)
                             {
-                                DataCoordElem dataCoord = new DataCoordElem();
-                                dataCoord.X = double.Parse(strXYZCoord[0]);
-                                dataCoord.Y = double.Parse(strXYZCoord[1]);
-                                dataCoord.Z = double.Parse(strXYZCoord[2]);
-                                listCoord.Add(dataCoord);
+                                string[] finit_elem = stringLine[iter].Split(' ');
+                                if (finit_elem.Length == 3)
+                                {
+                                    DataFinitElem data_temp = new DataFinitElem();
+                                    data_temp.first = int.Parse(finit_elem[0]);
+                                    data_temp.second = int.Parse(finit_elem[1]);
+                                    data_temp.third = int.Parse(finit_elem[2]);
+                                    listFinitElem.Add(data_temp);
+                                }
+                                else
+                                {
+                                    errorFlag = true;
+                                }
+                            }
+                            if (!errorFlag)
+                            {
+                                Vertex[] figureVertex = new Vertex[listFinitElem.Count * 3];
+                                int col = 0;
+                                foreach (DataFinitElem fin in listFinitElem)
+                                {
+                                    Vector4 normVec = new Vector4();
+                                    normVec.X = (float)(listCoord[fin.first].Y * listCoord[fin.third].Z - listCoord[fin.second].Y * listCoord[fin.third].Z - listCoord[fin.first].Y * listCoord[fin.second].Z - listCoord[fin.first].Z * listCoord[fin.third].Y + listCoord[fin.second].Z * listCoord[fin.third].Y + listCoord[fin.first].Z * listCoord[fin.second].Y);
+                                    normVec.Y = (float)(listCoord[fin.first].Z * listCoord[fin.third].X - listCoord[fin.second].Z * listCoord[fin.third].X - listCoord[fin.first].Z * listCoord[fin.second].X - listCoord[fin.first].X * listCoord[fin.third].Z + listCoord[fin.second].X * listCoord[fin.third].Z + listCoord[fin.first].X * listCoord[fin.second].Z);
+                                    normVec.Z = (float)(listCoord[fin.first].X * listCoord[fin.third].Y - listCoord[fin.second].X * listCoord[fin.third].Y - listCoord[fin.first].X * listCoord[fin.second].Y - listCoord[fin.first].Y * listCoord[fin.third].X + listCoord[fin.second].Y * listCoord[fin.third].X + listCoord[fin.first].Y * listCoord[fin.second].X);
+                                    normVec.W = 0.0f;
+                                    float len = Math.Abs(normVec.X) + Math.Abs(normVec.Y) + Math.Abs(normVec.Z);
+                                    normVec.X = normVec.X / len;
+                                    normVec.Y = normVec.Y / len;
+                                    normVec.Z = normVec.Z / len;
+                                    figureVertex[col] = new Vertex(new Vector4((float)listCoord[fin.first].X, (float)listCoord[fin.first].Y, (float)listCoord[fin.first].Z, 1.0f), new Vector4(normVec.X, normVec.Y, normVec.Z, 0.0f), new Vector2(0, 0));
+                                    figureVertex[col + 1] = new Vertex(new Vector4((float)listCoord[fin.second].X, (float)listCoord[fin.second].Y, (float)listCoord[fin.second].Z, 1.0f), new Vector4(normVec.X, normVec.Y, normVec.Z, 0.0f), new Vector2(0, 0));
+                                    figureVertex[col + 2] = new Vertex(new Vector4((float)listCoord[fin.third].X, (float)listCoord[fin.third].Y, (float)listCoord[fin.third].Z, 1.0f), new Vector4(normVec.X, normVec.Y, normVec.Z, 0.0f), new Vector2(0, 0));
+                                    col += 3;
+                                }
+                                _renderObjects[_SelectID].WriteBuffer(figureVertex);
                             }
                             else
                             {
-                                errorFlag = true;
+                                MessageBox.Show("Ошибка во формате входных данных", "Ошибка");
                             }
                         }
-                        stringLine = textBoxChangeFinit.Text.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
-                        for (int iter = 0; iter < stringLine.Length && !errorFlag; iter++)
+                        _renderObjects[_SelectID].ColorObj = new Vector4(colorSurface.R, colorSurface.G, colorSurface.B, trackBar.Value / 10f);
+                        _renderObjects[_SelectID].changeModelMstrix(new Vector3(float.Parse(textBoxCoordX.Text), float.Parse(textBoxCoordY.Text), float.Parse(textBoxCoordZ.Text)));
+                        if (typeObject == TypeObjectRenderLight.LightSourceObject)
                         {
-                            string[] finit_elem = stringLine[iter].Split(' ');
-                            if (finit_elem.Length == 3)
+                            var lightObject = _lightObjects.Where(x => x.ColorСhoice == _renderObjects[_SelectID].ColorСhoice).FirstOrDefault();
+                            lightObject.DiffusionIntensity = new Vector3(float.Parse(textBoxDiffR.Text), float.Parse(textBoxDiffG.Text), float.Parse(textBoxDiffB.Text));
+                            if (lightObject != null)
                             {
-                                DataFinitElem data_temp = new DataFinitElem();
-                                data_temp.first = int.Parse(finit_elem[0]);
-                                data_temp.second = int.Parse(finit_elem[1]);
-                                data_temp.third = int.Parse(finit_elem[2]);
-                                listFinitElem.Add(data_temp);
-                            }
-                            else
-                            {
-                                errorFlag = true;
+                                lightObject.SetPositionLight(_renderObjects[_SelectID].ModelMatrix);
+                                if (_program_Fong_directed != -1 && lightObject.uboLightInfo != -1) lightObject.UpdatePositionForBlock(_program_Fong_directed);
                             }
                         }
-                        if (!errorFlag)
-                        {
-                            Vertex[] figureVertex = new Vertex[listFinitElem.Count * 3];
-                            int col = 0;
-                            foreach (DataFinitElem fin in listFinitElem)
-                            {
-                                Vector4 normVec = new Vector4();
-                                normVec.X = (float)(listCoord[fin.first].Y * listCoord[fin.third].Z - listCoord[fin.second].Y * listCoord[fin.third].Z - listCoord[fin.first].Y * listCoord[fin.second].Z - listCoord[fin.first].Z * listCoord[fin.third].Y + listCoord[fin.second].Z * listCoord[fin.third].Y + listCoord[fin.first].Z * listCoord[fin.second].Y);
-                                normVec.Y = (float)(listCoord[fin.first].Z * listCoord[fin.third].X - listCoord[fin.second].Z * listCoord[fin.third].X - listCoord[fin.first].Z * listCoord[fin.second].X - listCoord[fin.first].X * listCoord[fin.third].Z + listCoord[fin.second].X * listCoord[fin.third].Z + listCoord[fin.first].X * listCoord[fin.second].Z);
-                                normVec.Z = (float)(listCoord[fin.first].X * listCoord[fin.third].Y - listCoord[fin.second].X * listCoord[fin.third].Y - listCoord[fin.first].X * listCoord[fin.second].Y - listCoord[fin.first].Y * listCoord[fin.third].X + listCoord[fin.second].Y * listCoord[fin.third].X + listCoord[fin.first].Y * listCoord[fin.second].X);
-                                normVec.W = 0.0f;
-                                float len = Math.Abs(normVec.X) + Math.Abs(normVec.Y) + Math.Abs(normVec.Z);
-                                normVec.X = normVec.X / len;
-                                normVec.Y = normVec.Y / len;
-                                normVec.Z = normVec.Z / len;
-                                figureVertex[col] = new Vertex(new Vector4((float)listCoord[fin.first].X, (float)listCoord[fin.first].Y, (float)listCoord[fin.first].Z, 1.0f), new Vector4(normVec.X, normVec.Y, normVec.Z, 0.0f), new Vector2(0, 0));
-                                figureVertex[col + 1] = new Vertex(new Vector4((float)listCoord[fin.second].X, (float)listCoord[fin.second].Y, (float)listCoord[fin.second].Z, 1.0f), new Vector4(normVec.X, normVec.Y, normVec.Z, 0.0f), new Vector2(0, 0));
-                                figureVertex[col + 2] = new Vertex(new Vector4((float)listCoord[fin.third].X, (float)listCoord[fin.third].Y, (float)listCoord[fin.third].Z, 1.0f), new Vector4(normVec.X, normVec.Y, normVec.Z, 0.0f), new Vector2(0, 0));
-                                col += 3;
-                            }
-                            _renderObjects[_SelectID].WriteBuffer(figureVertex);
-                        }
-                        else
-                        {
-                            MessageBox.Show("Ошибка во формате входных данных", "Ошибка");
-                        }
+                        else _renderObjects[_SelectID].setDiffusion(new Vector3(float.Parse(textBoxDiffR.Text), float.Parse(textBoxDiffG.Text), float.Parse(textBoxDiffB.Text)));
+                        _renderObjects[_SelectID].typeObjectCreate = TypeObjectCreate.NonTypeObject;
                     }
-                    _renderObjects[_SelectID].ColorObj = new Vector4(colorSurface.R, colorSurface.G, colorSurface.B, trackBar.Value / 10f);
-                    _renderObjects[_SelectID].changeModelMstrix(new Vector3(float.Parse(textBoxCoordX.Text), float.Parse(textBoxCoordY.Text), float.Parse(textBoxCoordZ.Text)));
-                    if (typeObject == TypeObjectRender.LightSourceObject)
+                }
+                else
+                {
+                    Vector3 position = _renderObjects[_SelectID].getStartPosition();
+                    DlgAddEditAnFigure dlgNewAn = new DlgAddEditAnFigure(_renderObjects[_SelectID].typeObjectCreate, _renderObjects[_SelectID].ColorObj.W, _renderObjects[_SelectID].side, position.X, position.Y, position.Z, locColBreakX: _renderObjects[_SelectID].colBreakX, locColBreakY: _renderObjects[_SelectID].colBreakY, locCoeffSX: _renderObjects[_SelectID].coeffSX, locCoeffSY: _renderObjects[_SelectID].coeffSY, locAngleX: _renderObjects[_SelectID].angleX, locAngleY: _renderObjects[_SelectID].angleY, locAngleZ: _renderObjects[_SelectID].angleZ);
+                    dlgNewAn.SetColor(new Color4(_renderObjects[_SelectID].ColorObj.X, _renderObjects[_SelectID].ColorObj.Y, _renderObjects[_SelectID].ColorObj.Z, _renderObjects[_SelectID].ColorObj.W));
+                    if (dlgNewAn.ShowDialog() == DialogResult.OK)
                     {
-                        var lightObject = _lightObjects.Where(x => x.ColorСhoice == _renderObjects[_SelectID].ColorСhoice).FirstOrDefault();
-                        lightObject.DiffusionIntensity = new Vector3(float.Parse(textBoxDiffR.Text), float.Parse(textBoxDiffG.Text), float.Parse(textBoxDiffB.Text));
-                        if (lightObject != null)
-                        {
-                            lightObject.SetPositionLight(_renderObjects[_SelectID].ModelMatrix);
-                            if (_program_Fong_directed != -1 && lightObject.uboLightInfo != -1) lightObject.UpdatePositionForBlock(_program_Fong_directed);
-                        }
+                        Color4 colorcube = dlgNewAn.colorObject;
+                        position = dlgNewAn.position;
+                        Vertex[] figure_vertex = dlgNewAn.figureVertex;
+                        _renderObjects[_SelectID].WriteBuffer(figure_vertex);
+                        _renderObjects[_SelectID].ColorObj.X = colorcube.R;
+                        _renderObjects[_SelectID].ColorObj.Y = colorcube.G;
+                        _renderObjects[_SelectID].ColorObj.Z = colorcube.B;
+                        _renderObjects[_SelectID].ColorObj.W = colorcube.A;
+                        _renderObjects[_SelectID].side = dlgNewAn.side;
+                        _renderObjects[_SelectID].angleX = dlgNewAn.angleX;
+                        _renderObjects[_SelectID].angleY = dlgNewAn.angleY;
+                        _renderObjects[_SelectID].angleZ = dlgNewAn.angleZ;
+                        _renderObjects[_SelectID].colBreakX = dlgNewAn.colBreakX;
+                        _renderObjects[_SelectID].colBreakY = dlgNewAn.colBreakY;
+                        _renderObjects[_SelectID].coeffSX = dlgNewAn.coeffSX;
+                        _renderObjects[_SelectID].coeffSY = dlgNewAn.coeffSY;
                     }
-                    else _renderObjects[_SelectID].setDiffusion(new Vector3(float.Parse(textBoxDiffR.Text), float.Parse(textBoxDiffG.Text), float.Parse(textBoxDiffB.Text)));
                 }
             }
             else

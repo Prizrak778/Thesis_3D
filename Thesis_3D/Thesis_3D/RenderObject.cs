@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
@@ -15,7 +11,7 @@ namespace Thesis_3D
         Point,
         Object
     };
-    public enum TypeObjectRender
+    public enum TypeObjectRenderLight
     {
         SimpleObject,
         LightSourceObject,
@@ -96,27 +92,51 @@ namespace Thesis_3D
 
     public class RenderObject : IDisposable
     {
+        //Геоментрическая информация 
+        public float side; //Его расстояние от центра до границы
+        private Vector3 _StartPosition = Vector3.Zero; //Его стартовое смещение
+        public int colBreakX;
+        public int colBreakY;
+        public int coeffSX;
+        public int coeffSY;
+        public int angleX;
+        public int angleY;
+        public int angleZ;
+        public TypeObjectCreate typeObjectCreate; //Тип созданного объекта
+        public Vector4 ColorObj; //Цвет объекта
+
+        //Состояние объекта
         private bool _Initialized;
-        private int _VertexArray;
+        //Информация по буферам
+        private int _VertexArray; //vaobj "имя" вершинного объекта
         private int _Buffer; //Буффер в котором хранится объект
         private int ssbo; //Буффер для плоских теней
-        private int _VerticeCount;
+        private int _VerticeCount; //Количество вершин
+
+        //Информация для отрисовки
         private PolygonMode _Polygon;
-        private Vector3 _StartPosition = Vector3.Zero;
         private Vector3 Diffusion = Vector3.One;
         private Vector3 Ambient = Vector3.One;
-        public TypeObjectRender TypeObject = TypeObjectRender.SimpleObject;
-        public TrajctoryRenderObject trajctoryRenderObject;
-        public Matrix4 ModelMatrix = Matrix4.CreateTranslation(0, 0, 0);
-        public Vector4 ColorObj; //Цвет объекта
+        public TypeObjectRenderLight TypeObject = TypeObjectRenderLight.SimpleObject;
+        public TrajctoryRenderObject trajctoryRenderObject; //траектория движения объекта
+        public Matrix4 ModelMatrix = Matrix4.CreateTranslation(0, 0, 0); //Матрица смещения от стартовой позиции
         public Vector4 ColorСhoice; //Цвет объекта для буффера выбора
-        public RenderObject(Vertex[] vertices, Vector3 startPosition, Color4 color, Color4 locСolorСhoice, TypeObjectRender typeObject = TypeObjectRender.SimpleObject, bool plane = false)
+        public RenderObject(Vertex[] vertices,  Vector3 startPosition, Color4 color, Color4 locСolorСhoice, TypeObjectRenderLight typeObject = TypeObjectRenderLight.SimpleObject, bool plane = false, float locSide = 1, TypeObjectCreate locTypeObjectCreate = TypeObjectCreate.SolidCube, int locColBreakX = 1, int locColBreakY = 1, int locCoeffSX = 1, int locCoeffSY = 1, int locAngleX = 0, int locAngleY = 0, int locAngleZ = 0)
         {
+            colBreakX = locColBreakX;
+            colBreakY = locColBreakY;
+            coeffSX = locCoeffSX;
+            coeffSY = locCoeffSY;
+            angleX = locAngleX;
+            angleY = locAngleY;
+            angleZ = locAngleZ;
             trajctoryRenderObject = new TrajctoryRenderObject();
             _VerticeCount = vertices.Length;
             _VertexArray = GL.GenVertexArray();
             _StartPosition = startPosition;
             TypeObject = typeObject;
+            side = locSide;
+            typeObjectCreate = locTypeObjectCreate;
             GL.GenBuffers(1, out _Buffer);
             //PolygonMode.Line
             GL.BindVertexArray(_VertexArray);
