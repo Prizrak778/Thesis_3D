@@ -93,17 +93,7 @@ namespace Thesis_3D
     public class RenderObject : IDisposable
     {
         //Геоментрическая информация 
-        public float side; //Его расстояние от центра до границы
-        private Vector3 _StartPosition = Vector3.Zero; //Его стартовое смещение
-        public int colBreakX;
-        public int colBreakY;
-        public int coeffSX;
-        public int coeffSY;
-        public int angleX;
-        public int angleY;
-        public int angleZ;
-        public TypeObjectCreate typeObjectCreate; //Тип созданного объекта
-        public Vector4 ColorObj; //Цвет объекта
+        public GeometricInfo geometricInfo;
 
         //Состояние объекта
         private bool _Initialized;
@@ -123,20 +113,14 @@ namespace Thesis_3D
         public Vector4 ColorСhoice; //Цвет объекта для буффера выбора
         public RenderObject(Vertex[] vertices,  Vector3 startPosition, Color4 color, Color4 locСolorСhoice, TypeObjectRenderLight typeObject = TypeObjectRenderLight.SimpleObject, bool plane = false, float locSide = 1, TypeObjectCreate locTypeObjectCreate = TypeObjectCreate.SolidCube, int locColBreakX = 1, int locColBreakY = 1, int locCoeffSX = 1, int locCoeffSY = 1, int locAngleX = 0, int locAngleY = 0, int locAngleZ = 0)
         {
-            colBreakX = locColBreakX;
-            colBreakY = locColBreakY;
-            coeffSX = locCoeffSX;
-            coeffSY = locCoeffSY;
-            angleX = locAngleX;
-            angleY = locAngleY;
-            angleZ = locAngleZ;
+            geometricInfo = new GeometricInfo(startPosition, new Vector4(color.R, color.G, color.B, color.A), locSide, locColBreakX, locColBreakY, locCoeffSX, locCoeffSY, locAngleX, locAngleY, locAngleZ, locTypeObjectCreate);
+
             trajctoryRenderObject = new TrajctoryRenderObject();
             _VerticeCount = vertices.Length;
             _VertexArray = GL.GenVertexArray();
-            _StartPosition = startPosition;
             TypeObject = typeObject;
-            side = locSide;
-            typeObjectCreate = locTypeObjectCreate;
+            geometricInfo.side = locSide;
+            geometricInfo.typeObjectCreate = locTypeObjectCreate;
             GL.GenBuffers(1, out _Buffer);
             //PolygonMode.Line
             GL.BindVertexArray(_VertexArray);
@@ -177,10 +161,6 @@ namespace Thesis_3D
 
             _Initialized = true;
             GL.VertexArrayVertexBuffer(_VertexArray, 0, _Buffer, IntPtr.Zero, Vertex.Size);
-            ColorObj.X = color.R;
-            ColorObj.Y = color.G;
-            ColorObj.Z = color.B;
-            ColorObj.W = color.A;
             ColorСhoice.X = locСolorСhoice.R;
             ColorСhoice.Y = locСolorСhoice.G;
             ColorСhoice.Z = locСolorСhoice.B;
@@ -342,12 +322,12 @@ namespace Thesis_3D
         public Vector4 getPositionRenderObject()
         {
             Vector3 translation = ModelMatrix.ExtractTranslation();
-            translation += _StartPosition;
+            translation += geometricInfo.StartPosition;
             return new Vector4(translation, 1.0f);
         }
         public Vector3 getStartPosition()
         {
-            return _StartPosition;
+            return geometricInfo.StartPosition;
         }
     }
 }

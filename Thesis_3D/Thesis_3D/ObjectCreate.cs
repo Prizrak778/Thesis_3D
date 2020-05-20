@@ -36,9 +36,9 @@ namespace Thesis_3D
     {
         public static readonly GeometricInfo DefaultGeometricInfo = new GeometricInfo();
         //Его расстояние от центра до границы
-        public float side; 
+        public float side;
         //Его стартовое смещение
-        public Vector3 StartPosition;
+        public Vector3 StartPosition { get; private set; }
         public int colBreakX;
         public int colBreakY;
         public int coeffSX;
@@ -141,6 +141,16 @@ namespace Thesis_3D
             geometricInfo = locGeometricInfo;
             vertices = locVertices;
         }
+        ObjectCreate(GeometricInfo locGeometricInfo)
+        {
+            geometricInfo = locGeometricInfo;
+            if(locGeometricInfo.typeObjectCreate == TypeObjectCreate.SolidCube)
+                vertices = CreateSolidCube(locGeometricInfo);
+            if (locGeometricInfo.typeObjectCreate == TypeObjectCreate.Sphere)
+                vertices = CreateSphere(locGeometricInfo);
+            if (locGeometricInfo.typeObjectCreate == TypeObjectCreate.Plane)
+                vertices = CreatePlane(locGeometricInfo);
+        }
         public static Vertex[] CreateSolidCube(GeometricInfo geometricInfo)//размер куба, смещение y/-y, смещение x/-x, смещение z/-z цвет
         {
             return CreateSolidCube(geometricInfo.side, geometricInfo.StartPosition.X, geometricInfo.StartPosition.Y, geometricInfo.StartPosition.Z, geometricInfo.angleX, geometricInfo.angleY, geometricInfo.angleZ);
@@ -169,7 +179,7 @@ namespace Thesis_3D
 
             //Чуть позже допишу задание с поворотом
             Vector3 tnormXYZ;
-
+            CalcNormals(new Vector3((transform * new Vector4(0, 0, 0, 1.0f)).Xyz), new Vector3((transform * new Vector4(side + 0, 0, -side + 0, 1.0f)).Xyz), new Vector3((transform * new Vector4(-side + 0, 0, -side + 0, 1.0f)).Xyz), out tnormXYZ);
 
             Vertex[] vertices =
             {
@@ -231,6 +241,10 @@ namespace Thesis_3D
             };
             return vertices;
         }
+        public static Vertex[] CreatePlane(GeometricInfo geometricInfo)//размер куба, смещение y/-y, смещение x/-x, смещение z/-z цвет
+        {
+            return CreatePlane(geometricInfo.side, geometricInfo.StartPosition.X, geometricInfo.StartPosition.Y, geometricInfo.StartPosition.Z, geometricInfo.angleX, geometricInfo.angleY, geometricInfo.angleZ);
+        }
         public static Vertex[] CreatePlane(float side, Vector3 shift, int alpha_x = 90, int alpha_y = 90, int alpha_z = 90)
         {
             return CreatePlane(side, shift.X, shift.Y, shift.Z, alpha_x, alpha_y, alpha_z);
@@ -274,6 +288,10 @@ namespace Thesis_3D
                 new Vertex(new Vector4((transform * new Vector4( 0, 0, 0, 1.0f)).Xyz + translation, 1.0f),  tnorm, new Vector2(0.5f, 0.5f)),
             };
             return vertices.ToArray();
+        }
+        public static Vertex[] CreateSphere(GeometricInfo geometricInfo)//размер куба, смещение y/-y, смещение x/-x, смещение z/-z цвет
+        {
+            return CreateSphere(geometricInfo.side, geometricInfo.StartPosition.X, geometricInfo.StartPosition.Y, geometricInfo.StartPosition.Z, geometricInfo.coeffSX, geometricInfo.coeffSY, geometricInfo.colBreakX, geometricInfo.colBreakY);
         }
         public static Vertex[] CreateSphere(float side, Vector3 shift, int nx, int ny, float k1, float k2)
         {

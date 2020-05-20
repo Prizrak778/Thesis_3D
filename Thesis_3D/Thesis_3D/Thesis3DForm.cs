@@ -626,7 +626,7 @@ namespace Thesis_3D
                     GL.UseProgram(_program_Fong);
                 }
                 RenderFigure(renderObject, PolygonMode.Fill);
-                Vector4 color = renderObject.ColorObj;
+                Vector4 color = renderObject.geometricInfo.ColorObj;
                 GL.Uniform4(19, ref color);
                 if (_program == _program_some_light)
                 {
@@ -711,7 +711,7 @@ namespace Thesis_3D
             if (true)//Временно
             {
                 RenderFigure(primarySphereAt, PolygonMode.Fill);
-                Vector4 color = primarySphereAt.ColorObj;
+                Vector4 color = primarySphereAt.geometricInfo.ColorObj;
                 GL.Uniform4(19, ref color);
                 if (countLightObj > 0)
                 {
@@ -1008,7 +1008,7 @@ namespace Thesis_3D
                 _renderObjects[_SelectID].ReadBuffer(vertexObject);
                 var typeObject = _renderObjects[_SelectID].TypeObject;
                 Vector3 diff = _renderObjects[_SelectID].getDiffusion();
-                if (_renderObjects[_SelectID].typeObjectCreate == TypeObjectCreate.NonTypeObject)
+                if (_renderObjects[_SelectID].geometricInfo.typeObjectCreate == TypeObjectCreate.NonTypeObject)
                 {
                     Form dlgChangeFigure = new Form()
                     {
@@ -1033,16 +1033,16 @@ namespace Thesis_3D
                     TextBox textBoxDiffG = new TextBox() { Text = diff.Y.ToString(), Width = 40, Height = 30, Top = 380, Left = 395, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
                     TextBox textBoxDiffB = new TextBox() { Text = diff.Z.ToString(), Width = 40, Height = 30, Top = 380, Left = 455, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
                     Color4 colorSurface = new Color4();
-                    colorSurface.R = _renderObjects[_SelectID].ColorObj.X;
-                    colorSurface.G = _renderObjects[_SelectID].ColorObj.Y;
-                    colorSurface.B = _renderObjects[_SelectID].ColorObj.Z;
-                    colorSurface.A = _renderObjects[_SelectID].ColorObj.W;
+                    colorSurface.R = _renderObjects[_SelectID].geometricInfo.ColorObj.X;
+                    colorSurface.G = _renderObjects[_SelectID].geometricInfo.ColorObj.Y;
+                    colorSurface.B = _renderObjects[_SelectID].geometricInfo.ColorObj.Z;
+                    colorSurface.A = _renderObjects[_SelectID].geometricInfo.ColorObj.W;
                     ColorDialog colorDialog = new ColorDialog();
                     Label lblButtonColor = new Label() { Text = "Цвет объекта:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 170, Height = 30, Top = 423, Left = 20 };
                     Button buttonColor = new Button() { Text = "", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 70, Height = 30, Top = 415, Left = 100, BackColor = (System.Drawing.Color)colorSurface };
                     buttonColor.Click += (sender1, e1) => { if (colorDialog.ShowDialog() == DialogResult.OK) { colorSurface = buttonColor.BackColor = colorDialog.Color; } };
                     Label lblTrackBar = new Label() { Text = "Прозрачность объекта:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 170, Height = 30, Top = 470, Left = 20 };
-                    TrackBar trackBar = new TrackBar() { Value = (int)(_renderObjects[_SelectID].ColorObj.W * 10f), Minimum = 0, Maximum = 10, Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 170, Height = 10, Top = 470, Left = 150 };
+                    TrackBar trackBar = new TrackBar() { Value = (int)(_renderObjects[_SelectID].geometricInfo.ColorObj.W * 10f), Minimum = 0, Maximum = 10, Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 170, Height = 10, Top = 470, Left = 150 };
                     CheckBox checkBox = new CheckBox() { Checked = false, Text = "Изменить структуру фигуры", Width = 170, Height = 30, Top = 375, Left = 20, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
                     TextBox textBoxChangeCoord = new TextBox() { Enabled = false, Multiline = true, Width = 250, Height = 350, Top = 10, Left = 10, Anchor = AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom, ScrollBars = ScrollBars.Vertical };
                     TextBox textBoxChangeFinit = new TextBox() { Enabled = false, Multiline = true, Width = 250, Height = 350, Top = 10, Left = 10, Anchor = AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom, ScrollBars = ScrollBars.Vertical };
@@ -1215,7 +1215,7 @@ namespace Thesis_3D
                                 MessageBox.Show("Ошибка во формате входных данных", "Ошибка");
                             }
                         }
-                        _renderObjects[_SelectID].ColorObj = new Vector4(colorSurface.R, colorSurface.G, colorSurface.B, trackBar.Value / 10f);
+                        _renderObjects[_SelectID].geometricInfo.ColorObj = new Vector4(colorSurface.R, colorSurface.G, colorSurface.B, trackBar.Value / 10f);
                         _renderObjects[_SelectID].changeModelMstrix(new Vector3(float.Parse(textBoxCoordX.Text), float.Parse(textBoxCoordY.Text), float.Parse(textBoxCoordZ.Text)));
                         if (typeObject == TypeObjectRenderLight.LightSourceObject)
                         {
@@ -1228,32 +1228,32 @@ namespace Thesis_3D
                             }
                         }
                         else _renderObjects[_SelectID].setDiffusion(new Vector3(float.Parse(textBoxDiffR.Text), float.Parse(textBoxDiffG.Text), float.Parse(textBoxDiffB.Text)));
-                        _renderObjects[_SelectID].typeObjectCreate = TypeObjectCreate.NonTypeObject;
+                        _renderObjects[_SelectID].geometricInfo.typeObjectCreate = TypeObjectCreate.NonTypeObject;
                     }
                 }
                 else
                 {
                     Vector3 position = _renderObjects[_SelectID].getStartPosition();
-                    DlgAddEditAnFigure dlgNewAn = new DlgAddEditAnFigure(_renderObjects[_SelectID].typeObjectCreate, _renderObjects[_SelectID].ColorObj.W, _renderObjects[_SelectID].side, position.X, position.Y, position.Z, locColBreakX: _renderObjects[_SelectID].colBreakX, locColBreakY: _renderObjects[_SelectID].colBreakY, locCoeffSX: _renderObjects[_SelectID].coeffSX, locCoeffSY: _renderObjects[_SelectID].coeffSY, locAngleX: _renderObjects[_SelectID].angleX, locAngleY: _renderObjects[_SelectID].angleY, locAngleZ: _renderObjects[_SelectID].angleZ);
-                    dlgNewAn.SetColor(new Color4(_renderObjects[_SelectID].ColorObj.X, _renderObjects[_SelectID].ColorObj.Y, _renderObjects[_SelectID].ColorObj.Z, _renderObjects[_SelectID].ColorObj.W));
+                    DlgAddEditAnFigure dlgNewAn = new DlgAddEditAnFigure(_renderObjects[_SelectID].geometricInfo.typeObjectCreate, _renderObjects[_SelectID].geometricInfo.ColorObj.W, _renderObjects[_SelectID].geometricInfo.side, position.X, position.Y, position.Z, locColBreakX: _renderObjects[_SelectID].geometricInfo.colBreakX, locColBreakY: _renderObjects[_SelectID].geometricInfo.colBreakY, locCoeffSX: _renderObjects[_SelectID].geometricInfo.coeffSX, locCoeffSY: _renderObjects[_SelectID].geometricInfo.coeffSY, locAngleX: _renderObjects[_SelectID].geometricInfo.angleX, locAngleY: _renderObjects[_SelectID].geometricInfo.angleY, locAngleZ: _renderObjects[_SelectID].geometricInfo.angleZ);
+                    dlgNewAn.SetColor(new Color4(_renderObjects[_SelectID].geometricInfo.ColorObj.X, _renderObjects[_SelectID].geometricInfo.ColorObj.Y, _renderObjects[_SelectID].geometricInfo.ColorObj.Z, _renderObjects[_SelectID].geometricInfo.ColorObj.W));
                     if (dlgNewAn.ShowDialog() == DialogResult.OK)
                     {
                         Color4 colorcube = dlgNewAn.colorObject;
                         position = dlgNewAn.position;
                         Vertex[] figure_vertex = dlgNewAn.figureVertex;
                         _renderObjects[_SelectID].WriteBuffer(figure_vertex);
-                        _renderObjects[_SelectID].ColorObj.X = colorcube.R;
-                        _renderObjects[_SelectID].ColorObj.Y = colorcube.G;
-                        _renderObjects[_SelectID].ColorObj.Z = colorcube.B;
-                        _renderObjects[_SelectID].ColorObj.W = colorcube.A;
-                        _renderObjects[_SelectID].side = dlgNewAn.side;
-                        _renderObjects[_SelectID].angleX = dlgNewAn.angleX;
-                        _renderObjects[_SelectID].angleY = dlgNewAn.angleY;
-                        _renderObjects[_SelectID].angleZ = dlgNewAn.angleZ;
-                        _renderObjects[_SelectID].colBreakX = dlgNewAn.colBreakX;
-                        _renderObjects[_SelectID].colBreakY = dlgNewAn.colBreakY;
-                        _renderObjects[_SelectID].coeffSX = dlgNewAn.coeffSX;
-                        _renderObjects[_SelectID].coeffSY = dlgNewAn.coeffSY;
+                        _renderObjects[_SelectID].geometricInfo.ColorObj.X = colorcube.R;
+                        _renderObjects[_SelectID].geometricInfo.ColorObj.Y = colorcube.G;
+                        _renderObjects[_SelectID].geometricInfo.ColorObj.Z = colorcube.B;
+                        _renderObjects[_SelectID].geometricInfo.ColorObj.W = colorcube.A;
+                        _renderObjects[_SelectID].geometricInfo.side = dlgNewAn.side;
+                        _renderObjects[_SelectID].geometricInfo.angleX = dlgNewAn.angleX;
+                        _renderObjects[_SelectID].geometricInfo.angleY = dlgNewAn.angleY;
+                        _renderObjects[_SelectID].geometricInfo.angleZ = dlgNewAn.angleZ;
+                        _renderObjects[_SelectID].geometricInfo.colBreakX = dlgNewAn.colBreakX;
+                        _renderObjects[_SelectID].geometricInfo.colBreakY = dlgNewAn.colBreakY;
+                        _renderObjects[_SelectID].geometricInfo.coeffSX = dlgNewAn.coeffSX;
+                        _renderObjects[_SelectID].geometricInfo.coeffSY = dlgNewAn.coeffSY;
                     }
                 }
             }
