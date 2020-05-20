@@ -111,16 +111,66 @@ namespace Thesis_3D
         public TrajctoryRenderObject trajctoryRenderObject; //траектория движения объекта
         public Matrix4 ModelMatrix = Matrix4.CreateTranslation(0, 0, 0); //Матрица смещения от стартовой позиции
         public Vector4 ColorСhoice; //Цвет объекта для буффера выбора
-        public RenderObject(Vertex[] vertices,  Vector3 startPosition, Color4 color, Color4 locСolorСhoice, TypeObjectRenderLight typeObject = TypeObjectRenderLight.SimpleObject, bool plane = false, float locSide = 1, TypeObjectCreate locTypeObjectCreate = TypeObjectCreate.SolidCube, int locColBreakX = 1, int locColBreakY = 1, int locCoeffSX = 1, int locCoeffSY = 1, int locAngleX = 0, int locAngleY = 0, int locAngleZ = 0)
+        public RenderObject(Vertex[] vertices, GeometricInfo locGeometricInfo, Color4 locСolorСhoice, TypeObjectRenderLight typeObject = TypeObjectRenderLight.SimpleObject, bool plane = false)
         {
-            geometricInfo = new GeometricInfo(startPosition, new Vector4(color.R, color.G, color.B, color.A), locSide, locColBreakX, locColBreakY, locCoeffSX, locCoeffSY, locAngleX, locAngleY, locAngleZ, locTypeObjectCreate);
-
+            geometricInfo = locGeometricInfo;
             trajctoryRenderObject = new TrajctoryRenderObject();
             _VerticeCount = vertices.Length;
             _VertexArray = GL.GenVertexArray();
             TypeObject = typeObject;
-            geometricInfo.side = locSide;
-            geometricInfo.typeObjectCreate = locTypeObjectCreate;
+            GL.GenBuffers(1, out _Buffer);
+            //PolygonMode.Line
+            GL.BindVertexArray(_VertexArray);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, _Buffer);
+            GL.NamedBufferStorage(_Buffer, Vertex.Size * _VerticeCount,          // the size needed by this buffer
+                vertices,                                                        // data to initialize with
+                BufferStorageFlags.MapWriteBit);                                 // at this point we will only write to the buffer
+                                                                                 // create vertex array and buffer here
+
+            GL.VertexArrayAttribBinding(_VertexArray, 1, 0);
+            GL.EnableVertexArrayAttrib(_VertexArray, 1);
+            GL.VertexArrayAttribFormat(
+                _VertexArray,
+                1,                                                               // attribute index, from the shader location = 0
+                4,                                                               // size of attribute, vec4
+                VertexAttribType.Float,                                          // contains floats
+                false,                                                           // does not need to be normalized as it is already, floats ignore this flag anyway
+                0);                                                              // relative offset, first item
+
+            GL.VertexArrayAttribBinding(_VertexArray, 2, 0);
+            GL.EnableVertexArrayAttrib(_VertexArray, 2);
+            GL.VertexArrayAttribFormat(
+                _VertexArray,
+                2,                                                               // attribute index, from the shader location = 1
+                4,                                                               // size of attribute, vec4
+                VertexAttribType.Float,                                          // contains floats
+                false,                                                           // does not need to be normalized as it is already, floats ignore this flag anyway
+                16);                                                             // relative offset after a vec4
+            GL.VertexArrayAttribBinding(_VertexArray, 3, 0);
+            GL.EnableVertexArrayAttrib(_VertexArray, 3);
+            GL.VertexArrayAttribFormat(
+                _VertexArray,
+                3,                                                               // attribute index, from the shader location = 2
+                4,                                                               // size of attribute, vec4
+                VertexAttribType.Float,                                          // contains floats
+                false,                                                           // does not need to be normalized as it is already, floats ignore this flag anyway
+                32);                                                             // relative offset after a vec4 + vec4
+
+            _Initialized = true;
+            GL.VertexArrayVertexBuffer(_VertexArray, 0, _Buffer, IntPtr.Zero, Vertex.Size);
+            ColorСhoice.X = locСolorСhoice.R;
+            ColorСhoice.Y = locСolorСhoice.G;
+            ColorСhoice.Z = locСolorСhoice.B;
+            ColorСhoice.W = locСolorСhoice.A;
+            if (plane) bufferProjectionShadow(vertices);
+        }
+        public RenderObject(Vertex[] vertices,  Vector3 startPosition, Color4 color, Color4 locСolorСhoice, TypeObjectRenderLight typeObject = TypeObjectRenderLight.SimpleObject, bool plane = false, float locSide = 1, TypeObjectCreate locTypeObjectCreate = TypeObjectCreate.SolidCube, int locColBreakX = 1, int locColBreakY = 1, int locCoeffSX = 1, int locCoeffSY = 1, int locAngleX = 0, int locAngleY = 0, int locAngleZ = 0)
+        {
+            geometricInfo = new GeometricInfo(startPosition, new Vector4(color.R, color.G, color.B, color.A), locSide, locColBreakX, locColBreakY, locCoeffSX, locCoeffSY, locAngleX, locAngleY, locAngleZ, locTypeObjectCreate);
+            trajctoryRenderObject = new TrajctoryRenderObject();
+            _VerticeCount = vertices.Length;
+            _VertexArray = GL.GenVertexArray();
+            TypeObject = typeObject;
             GL.GenBuffers(1, out _Buffer);
             //PolygonMode.Line
             GL.BindVertexArray(_VertexArray);
@@ -219,7 +269,6 @@ namespace Thesis_3D
         }
         private void bufferProjectionShadow(Vertex[] vertices)
         {
-            
             float[] temp = new float[vertices.Length * 4 + 4];
             temp[0] = vertices[0]._NormalCoord.X;
             temp[1] = vertices[0]._NormalCoord.Y;

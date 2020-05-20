@@ -858,10 +858,8 @@ namespace Thesis_3D
                 DlgAddEditAnFigure dlgNewAn = new DlgAddEditAnFigure(typeObjectCreate);
                 if (dlgNewAn.ShowDialog() == DialogResult.OK)
                 {
-                    Color4 colorcube = dlgNewAn.colorObject;
-                    Vector3 position = dlgNewAn.position;
                     Vertex[] figure_vertex = dlgNewAn.figureVertex;
-                    _renderObjects.Add(new RenderObject(figure_vertex, position, colorcube, RandomColor(), locTypeObjectCreate: typeObjectCreate, locSide: dlgNewAn.side, locColBreakX: dlgNewAn.colBreakX, locColBreakY: dlgNewAn.colBreakY, locCoeffSX: dlgNewAn.coeffSX, locCoeffSY: dlgNewAn.coeffSY, locAngleX: dlgNewAn.angleX, locAngleY: dlgNewAn.angleY, locAngleZ: dlgNewAn.angleZ));
+                    _renderObjects.Add(new RenderObject(figure_vertex, dlgNewAn.geometricInfo, RandomColor()));
                 }
             }
         }
@@ -1234,26 +1232,13 @@ namespace Thesis_3D
                 else
                 {
                     Vector3 position = _renderObjects[_SelectID].getStartPosition();
-                    DlgAddEditAnFigure dlgNewAn = new DlgAddEditAnFigure(_renderObjects[_SelectID].geometricInfo.typeObjectCreate, _renderObjects[_SelectID].geometricInfo.ColorObj.W, _renderObjects[_SelectID].geometricInfo.side, position.X, position.Y, position.Z, locColBreakX: _renderObjects[_SelectID].geometricInfo.colBreakX, locColBreakY: _renderObjects[_SelectID].geometricInfo.colBreakY, locCoeffSX: _renderObjects[_SelectID].geometricInfo.coeffSX, locCoeffSY: _renderObjects[_SelectID].geometricInfo.coeffSY, locAngleX: _renderObjects[_SelectID].geometricInfo.angleX, locAngleY: _renderObjects[_SelectID].geometricInfo.angleY, locAngleZ: _renderObjects[_SelectID].geometricInfo.angleZ);
+                    DlgAddEditAnFigure dlgNewAn = new DlgAddEditAnFigure(_renderObjects[_SelectID].geometricInfo);
                     dlgNewAn.SetColor(new Color4(_renderObjects[_SelectID].geometricInfo.ColorObj.X, _renderObjects[_SelectID].geometricInfo.ColorObj.Y, _renderObjects[_SelectID].geometricInfo.ColorObj.Z, _renderObjects[_SelectID].geometricInfo.ColorObj.W));
                     if (dlgNewAn.ShowDialog() == DialogResult.OK)
                     {
-                        Color4 colorcube = dlgNewAn.colorObject;
-                        position = dlgNewAn.position;
                         Vertex[] figure_vertex = dlgNewAn.figureVertex;
                         _renderObjects[_SelectID].WriteBuffer(figure_vertex);
-                        _renderObjects[_SelectID].geometricInfo.ColorObj.X = colorcube.R;
-                        _renderObjects[_SelectID].geometricInfo.ColorObj.Y = colorcube.G;
-                        _renderObjects[_SelectID].geometricInfo.ColorObj.Z = colorcube.B;
-                        _renderObjects[_SelectID].geometricInfo.ColorObj.W = colorcube.A;
-                        _renderObjects[_SelectID].geometricInfo.side = dlgNewAn.side;
-                        _renderObjects[_SelectID].geometricInfo.angleX = dlgNewAn.angleX;
-                        _renderObjects[_SelectID].geometricInfo.angleY = dlgNewAn.angleY;
-                        _renderObjects[_SelectID].geometricInfo.angleZ = dlgNewAn.angleZ;
-                        _renderObjects[_SelectID].geometricInfo.colBreakX = dlgNewAn.colBreakX;
-                        _renderObjects[_SelectID].geometricInfo.colBreakY = dlgNewAn.colBreakY;
-                        _renderObjects[_SelectID].geometricInfo.coeffSX = dlgNewAn.coeffSX;
-                        _renderObjects[_SelectID].geometricInfo.coeffSY = dlgNewAn.coeffSY;
+                        _renderObjects[_SelectID].geometricInfo = dlgNewAn.geometricInfo;
                     }
                 }
             }
