@@ -291,7 +291,7 @@ namespace Thesis_3D
         }
         public static Vertex[] CreateSphere(GeometricInfo geometricInfo)//размер куба, смещение y/-y, смещение x/-x, смещение z/-z цвет
         {
-            return CreateSphere(geometricInfo.side, geometricInfo.StartPosition.X, geometricInfo.StartPosition.Y, geometricInfo.StartPosition.Z, geometricInfo.coeffSX, geometricInfo.coeffSY, geometricInfo.colBreakX, geometricInfo.colBreakY);
+            return CreateSphere(geometricInfo.side, geometricInfo.StartPosition.X, geometricInfo.StartPosition.Y, geometricInfo.StartPosition.Z, geometricInfo.colBreakX, geometricInfo.colBreakY, geometricInfo.coeffSX, geometricInfo.coeffSY);
         }
         public static Vertex[] CreateSphere(float side, Vector3 shift, int nx, int ny, float k1, float k2)
         {
