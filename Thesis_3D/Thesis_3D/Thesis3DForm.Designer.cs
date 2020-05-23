@@ -76,7 +76,7 @@
             this.glControlThesis3D.BackColor = System.Drawing.Color.Black;
             this.glControlThesis3D.Location = new System.Drawing.Point(9, 12);
             this.glControlThesis3D.Name = "glControlThesis3D";
-            this.glControlThesis3D.Size = new System.Drawing.Size(733, 635);
+            this.glControlThesis3D.Size = new System.Drawing.Size(735, 638);
             this.glControlThesis3D.TabIndex = 0;
             this.glControlThesis3D.VSync = false;
             // 
@@ -84,7 +84,7 @@
             // 
             this.checkBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(751, 322);
+            this.checkBox1.Location = new System.Drawing.Point(753, 322);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.checkBox1.Size = new System.Drawing.Size(112, 17);
@@ -99,7 +99,7 @@
             this.checkBox2.AutoSize = true;
             this.checkBox2.Checked = true;
             this.checkBox2.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox2.Location = new System.Drawing.Point(751, 345);
+            this.checkBox2.Location = new System.Drawing.Point(753, 345);
             this.checkBox2.Name = "checkBox2";
             this.checkBox2.Size = new System.Drawing.Size(189, 17);
             this.checkBox2.TabIndex = 2;
@@ -111,7 +111,7 @@
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(748, 365);
+            this.label1.Location = new System.Drawing.Point(750, 365);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(110, 13);
             this.label1.TabIndex = 3;
@@ -123,7 +123,7 @@
             this.comboBoxShaders.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxShaders.FormattingEnabled = true;
             this.comboBoxShaders.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.comboBoxShaders.Location = new System.Drawing.Point(751, 381);
+            this.comboBoxShaders.Location = new System.Drawing.Point(753, 381);
             this.comboBoxShaders.Name = "comboBoxShaders";
             this.comboBoxShaders.Size = new System.Drawing.Size(189, 21);
             this.comboBoxShaders.TabIndex = 4;
@@ -138,7 +138,7 @@
             this.groupBox1.Controls.Add(this.button3);
             this.groupBox1.Controls.Add(this.button2);
             this.groupBox1.Controls.Add(this.button1);
-            this.groupBox1.Location = new System.Drawing.Point(752, 12);
+            this.groupBox1.Location = new System.Drawing.Point(754, 12);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(200, 82);
             this.groupBox1.TabIndex = 5;
@@ -212,7 +212,7 @@
             this.groupBox2.Controls.Add(this.button9);
             this.groupBox2.Controls.Add(this.button10);
             this.groupBox2.Controls.Add(this.button7);
-            this.groupBox2.Location = new System.Drawing.Point(752, 101);
+            this.groupBox2.Location = new System.Drawing.Point(754, 101);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(200, 79);
             this.groupBox2.TabIndex = 6;
@@ -269,7 +269,7 @@
             this.groupBox3.Controls.Add(this.textBox2);
             this.groupBox3.Controls.Add(this.label2);
             this.groupBox3.Controls.Add(this.textBox1);
-            this.groupBox3.Location = new System.Drawing.Point(751, 187);
+            this.groupBox3.Location = new System.Drawing.Point(753, 187);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(200, 129);
             this.groupBox3.TabIndex = 7;
@@ -344,7 +344,7 @@
             // 
             this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(751, 586);
+            this.label5.Location = new System.Drawing.Point(753, 589);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(30, 13);
             this.label5.TabIndex = 8;
@@ -354,7 +354,7 @@
             // 
             this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(751, 608);
+            this.label6.Location = new System.Drawing.Point(753, 611);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(47, 13);
             this.label6.TabIndex = 9;
@@ -363,7 +363,7 @@
             // buttonNewAnFigure
             // 
             this.buttonNewAnFigure.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonNewAnFigure.Location = new System.Drawing.Point(751, 409);
+            this.buttonNewAnFigure.Location = new System.Drawing.Point(753, 409);
             this.buttonNewAnFigure.Name = "buttonNewAnFigure";
             this.buttonNewAnFigure.Size = new System.Drawing.Size(189, 23);
             this.buttonNewAnFigure.TabIndex = 10;
@@ -374,7 +374,7 @@
             // buttonNewFigureFile
             // 
             this.buttonNewFigureFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonNewFigureFile.Location = new System.Drawing.Point(751, 439);
+            this.buttonNewFigureFile.Location = new System.Drawing.Point(753, 439);
             this.buttonNewFigureFile.Name = "buttonNewFigureFile";
             this.buttonNewFigureFile.Size = new System.Drawing.Size(189, 23);
             this.buttonNewFigureFile.TabIndex = 11;
@@ -385,7 +385,7 @@
             // buttonChangeFigure
             // 
             this.buttonChangeFigure.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonChangeFigure.Location = new System.Drawing.Point(751, 469);
+            this.buttonChangeFigure.Location = new System.Drawing.Point(753, 469);
             this.buttonChangeFigure.Name = "buttonChangeFigure";
             this.buttonChangeFigure.Size = new System.Drawing.Size(189, 23);
             this.buttonChangeFigure.TabIndex = 12;
@@ -396,7 +396,7 @@
             // buttonRemoveFigure
             // 
             this.buttonRemoveFigure.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonRemoveFigure.Location = new System.Drawing.Point(751, 498);
+            this.buttonRemoveFigure.Location = new System.Drawing.Point(753, 498);
             this.buttonRemoveFigure.Name = "buttonRemoveFigure";
             this.buttonRemoveFigure.Size = new System.Drawing.Size(189, 23);
             this.buttonRemoveFigure.TabIndex = 13;
@@ -408,7 +408,7 @@
             // 
             this.buttonTrajectory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonTrajectory.Enabled = false;
-            this.buttonTrajectory.Location = new System.Drawing.Point(752, 527);
+            this.buttonTrajectory.Location = new System.Drawing.Point(754, 527);
             this.buttonTrajectory.Name = "buttonTrajectory";
             this.buttonTrajectory.Size = new System.Drawing.Size(188, 23);
             this.buttonTrajectory.TabIndex = 14;
@@ -420,7 +420,7 @@
             // 
             this.labelId.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.labelId.AutoSize = true;
-            this.labelId.Location = new System.Drawing.Point(751, 634);
+            this.labelId.Location = new System.Drawing.Point(753, 633);
             this.labelId.Name = "labelId";
             this.labelId.Size = new System.Drawing.Size(19, 13);
             this.labelId.TabIndex = 15;
@@ -431,7 +431,7 @@
             // 
             this.labelIdText.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.labelIdText.AutoSize = true;
-            this.labelIdText.Location = new System.Drawing.Point(776, 634);
+            this.labelIdText.Location = new System.Drawing.Point(778, 633);
             this.labelIdText.Name = "labelIdText";
             this.labelIdText.Size = new System.Drawing.Size(10, 13);
             this.labelIdText.TabIndex = 16;
@@ -442,7 +442,7 @@
             // 
             this.checkBoxFps.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBoxFps.AutoSize = true;
-            this.checkBoxFps.Location = new System.Drawing.Point(754, 556);
+            this.checkBoxFps.Location = new System.Drawing.Point(756, 556);
             this.checkBoxFps.Name = "checkBoxFps";
             this.checkBoxFps.Size = new System.Drawing.Size(124, 17);
             this.checkBoxFps.TabIndex = 17;
@@ -453,7 +453,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(952, 659);
+            this.ClientSize = new System.Drawing.Size(954, 662);
             this.Controls.Add(this.checkBoxFps);
             this.Controls.Add(this.labelIdText);
             this.Controls.Add(this.labelId);
@@ -472,6 +472,7 @@
             this.Controls.Add(this.checkBox2);
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.glControlThesis3D);
+            this.MinimumSize = new System.Drawing.Size(970, 700);
             this.Name = "Thesis3DForm";
             this.Text = "Form1";
             this.groupBox1.ResumeLayout(false);

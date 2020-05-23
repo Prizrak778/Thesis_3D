@@ -964,7 +964,28 @@ namespace Thesis_3D
                 _renderObjects[_SelectID].ReadBuffer(vertexObject);
                 var typeObject = _renderObjects[_SelectID].TypeObject;
                 Vector3 diff = _renderObjects[_SelectID].getDiffusion();
-                if (_renderObjects[_SelectID].geometricInfo.typeObjectCreate == TypeObjectCreate.NonTypeObject)
+                int changeNonAnalitik = -1;
+                if (_renderObjects[_SelectID].geometricInfo.typeObjectCreate != TypeObjectCreate.NonTypeObject)
+                {
+                    Form dlgChangeTypeFigure = new Form()
+                    {
+                        Text = "Изменение объекта",
+                        Width = 420,
+                        Height = 130,
+                        MinimumSize = new Size(420, 130),
+                        FormBorderStyle = FormBorderStyle.Sizable,
+                        StartPosition = FormStartPosition.CenterScreen,
+                    };
+                    Label labelText = new Label() { Text = "Изменить данную фигуру как аналитическу? Если изменить как не аналитическую фигуру, потом невозможно изменить как аналитическую.", Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 420, Height = 30, Top = 20, Left = 20 };
+                    Button buttonYes = new Button() { Text = "Да" , Top = 60, Left = 190, Width = 100, Height = 25, Anchor = AnchorStyles.Bottom | AnchorStyles.Right, DialogResult = DialogResult.Yes };
+                    Button buttonNo  = new Button() { Text = "Нет", Top = 60, Left = 290, Width = 100, Height = 25, Anchor = AnchorStyles.Bottom | AnchorStyles.Right, DialogResult = DialogResult.No  };
+                    dlgChangeTypeFigure.Controls.Add(labelText);
+                    dlgChangeTypeFigure.Controls.Add(buttonYes);
+                    dlgChangeTypeFigure.Controls.Add(buttonNo);
+                    DialogResult dialogResult = dlgChangeTypeFigure.ShowDialog();
+                    changeNonAnalitik = dialogResult == DialogResult.Cancel ? -1 : dialogResult == DialogResult.Yes ? 1 : 0;
+                }
+                if (changeNonAnalitik == 1)
                 {
                     Form dlgChangeFigure = new Form()
                     {
@@ -1187,7 +1208,7 @@ namespace Thesis_3D
                         _renderObjects[_SelectID].geometricInfo.typeObjectCreate = TypeObjectCreate.NonTypeObject;
                     }
                 }
-                else
+                else if(changeNonAnalitik == 0)
                 {
                     Vector3 position = _renderObjects[_SelectID].getStartPosition();
                     DlgAddEditAnFigure dlgNewAn = new DlgAddEditAnFigure(_renderObjects[_SelectID].geometricInfo);
