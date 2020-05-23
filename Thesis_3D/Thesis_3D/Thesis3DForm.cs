@@ -814,53 +814,11 @@ namespace Thesis_3D
 
         private void buttonNewAnFigure_Click(object sender, EventArgs e)
         {
-            TypeObjectCreate typeObjectCreate = TypeObjectCreate.SolidCube;
-            //По хорошему форму стоит вынести отдельно
-            Form dlgNewAnFigure = new Form()
+            DlgAddEditAnFigure dlgNewAn = new DlgAddEditAnFigure();
+            if (dlgNewAn.ShowDialog() == DialogResult.OK)
             {
-                Text = "Выбор фигуры",
-                Width = 300,
-                Height = 140,
-                FormBorderStyle = FormBorderStyle.FixedDialog,
-                StartPosition = FormStartPosition.CenterScreen
-            };
-            Label lblTypeFigure = new Label() { Text = "Тип фигуры:", Visible = true, Left = 30, Width = 100, Top = 30 };
-            Button buttonOk = new Button() { Text = "Ok", Left = 100, Width = 80, Top = 60, DialogResult = DialogResult.OK };
-            Button buttonClose = new Button() { Text = "Закрыть", Left = 192, Width = 80, Top = 60, DialogResult = DialogResult.Cancel };
-            ComboBox comboBoxTypeFigure = new ComboBox() { DropDownStyle = ComboBoxStyle.DropDownList, Text = "Куб", Left = 110, Width = 160, Top = 27 };
-            dlgNewAnFigure.Controls.Add(comboBoxTypeFigure);
-            comboBoxTypeFigure.Items.AddRange(new object[] {
-            "Плоскость",
-            "Куб",
-            "Сфера"});
-            comboBoxTypeFigure.SelectedIndex = 0;
-            buttonOk.Click += (senderOk, eOk) => { dlgNewAnFigure.Close(); };
-            buttonClose.Click += (senderClose, eClose) => { dlgNewAnFigure.Close(); };
-            dlgNewAnFigure.Controls.Add(lblTypeFigure);
-            dlgNewAnFigure.Controls.Add(buttonOk);
-            dlgNewAnFigure.Controls.Add(buttonClose);
-            dlgNewAnFigure.AcceptButton = buttonOk;
-            dlgNewAnFigure.CancelButton = buttonClose;
-            if (dlgNewAnFigure.ShowDialog() == DialogResult.OK)
-            {
-                if (comboBoxTypeFigure.Text == "Куб")
-                {
-                    typeObjectCreate = TypeObjectCreate.SolidCube;
-                }
-                else if (comboBoxTypeFigure.Text == "Сфера")
-                {
-                    typeObjectCreate = TypeObjectCreate.Sphere;
-                }
-                else if (comboBoxTypeFigure.Text == "Плоскость")
-                {
-                    typeObjectCreate = TypeObjectCreate.Plane;
-                }
-                DlgAddEditAnFigure dlgNewAn = new DlgAddEditAnFigure(typeObjectCreate);
-                if (dlgNewAn.ShowDialog() == DialogResult.OK)
-                {
-                    Vertex[] figure_vertex = dlgNewAn.figureVertex;
-                    _renderObjects.Add(new RenderObject(figure_vertex, dlgNewAn.geometricInfo, RandomColor()));
-                }
+                Vertex[] figure_vertex = dlgNewAn.figureVertex;
+                _renderObjects.Add(new RenderObject(figure_vertex, dlgNewAn.geometricInfo, RandomColor()));
             }
         }
         //Это всё нужно вынести в отельный модуль

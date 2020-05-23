@@ -56,6 +56,8 @@
             this.textBoxColBreakX = new System.Windows.Forms.TextBox();
             this.trackBarAlpha = new System.Windows.Forms.TrackBar();
             this.labelAlpha = new System.Windows.Forms.Label();
+            this.labelTypeFigure = new System.Windows.Forms.Label();
+            this.comboBoxTypeFigure = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAngelX)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAngelY)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAngelZ)).BeginInit();
@@ -65,7 +67,7 @@
             // labelSide
             // 
             this.labelSide.AutoSize = true;
-            this.labelSide.Location = new System.Drawing.Point(12, 12);
+            this.labelSide.Location = new System.Drawing.Point(15, 39);
             this.labelSide.Name = "labelSide";
             this.labelSide.Size = new System.Drawing.Size(180, 13);
             this.labelSide.TabIndex = 0;
@@ -73,7 +75,7 @@
             // 
             // textBoxSide
             // 
-            this.textBoxSide.Location = new System.Drawing.Point(198, 5);
+            this.textBoxSide.Location = new System.Drawing.Point(201, 36);
             this.textBoxSide.Name = "textBoxSide";
             this.textBoxSide.Size = new System.Drawing.Size(101, 20);
             this.textBoxSide.TabIndex = 1;
@@ -83,7 +85,7 @@
             // labelShiftX
             // 
             this.labelShiftX.AutoSize = true;
-            this.labelShiftX.Location = new System.Drawing.Point(12, 34);
+            this.labelShiftX.Location = new System.Drawing.Point(15, 64);
             this.labelShiftX.Name = "labelShiftX";
             this.labelShiftX.Size = new System.Drawing.Size(107, 13);
             this.labelShiftX.TabIndex = 2;
@@ -92,7 +94,7 @@
             // labelShiftY
             // 
             this.labelShiftY.AutoSize = true;
-            this.labelShiftY.Location = new System.Drawing.Point(12, 60);
+            this.labelShiftY.Location = new System.Drawing.Point(15, 90);
             this.labelShiftY.Name = "labelShiftY";
             this.labelShiftY.Size = new System.Drawing.Size(107, 13);
             this.labelShiftY.TabIndex = 3;
@@ -101,7 +103,7 @@
             // labelShiftZ
             // 
             this.labelShiftZ.AutoSize = true;
-            this.labelShiftZ.Location = new System.Drawing.Point(12, 86);
+            this.labelShiftZ.Location = new System.Drawing.Point(15, 116);
             this.labelShiftZ.Name = "labelShiftZ";
             this.labelShiftZ.Size = new System.Drawing.Size(107, 13);
             this.labelShiftZ.TabIndex = 4;
@@ -109,7 +111,7 @@
             // 
             // textBoxShiftX
             // 
-            this.textBoxShiftX.Location = new System.Drawing.Point(198, 30);
+            this.textBoxShiftX.Location = new System.Drawing.Point(201, 61);
             this.textBoxShiftX.Name = "textBoxShiftX";
             this.textBoxShiftX.Size = new System.Drawing.Size(101, 20);
             this.textBoxShiftX.TabIndex = 5;
@@ -118,7 +120,7 @@
             // 
             // textBoxShiftY
             // 
-            this.textBoxShiftY.Location = new System.Drawing.Point(198, 56);
+            this.textBoxShiftY.Location = new System.Drawing.Point(201, 87);
             this.textBoxShiftY.Name = "textBoxShiftY";
             this.textBoxShiftY.Size = new System.Drawing.Size(101, 20);
             this.textBoxShiftY.TabIndex = 6;
@@ -127,7 +129,7 @@
             // 
             // textBoxShiftZ
             // 
-            this.textBoxShiftZ.Location = new System.Drawing.Point(198, 82);
+            this.textBoxShiftZ.Location = new System.Drawing.Point(201, 113);
             this.textBoxShiftZ.Name = "textBoxShiftZ";
             this.textBoxShiftZ.Size = new System.Drawing.Size(101, 20);
             this.textBoxShiftZ.TabIndex = 7;
@@ -137,7 +139,7 @@
             // buttonColor
             // 
             this.buttonColor.BackColor = System.Drawing.SystemColors.GrayText;
-            this.buttonColor.Location = new System.Drawing.Point(198, 112);
+            this.buttonColor.Location = new System.Drawing.Point(201, 143);
             this.buttonColor.Name = "buttonColor";
             this.buttonColor.Size = new System.Drawing.Size(104, 23);
             this.buttonColor.TabIndex = 8;
@@ -147,7 +149,7 @@
             // labelColor
             // 
             this.labelColor.AutoSize = true;
-            this.labelColor.Location = new System.Drawing.Point(12, 118);
+            this.labelColor.Location = new System.Drawing.Point(15, 149);
             this.labelColor.Name = "labelColor";
             this.labelColor.Size = new System.Drawing.Size(32, 13);
             this.labelColor.TabIndex = 9;
@@ -157,7 +159,7 @@
             // 
             this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonOk.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonOk.Location = new System.Drawing.Point(583, 233);
+            this.buttonOk.Location = new System.Drawing.Point(583, 263);
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(100, 23);
             this.buttonOk.TabIndex = 10;
@@ -168,7 +170,7 @@
             // labelAngelX
             // 
             this.labelAngelX.AutoSize = true;
-            this.labelAngelX.Location = new System.Drawing.Point(446, 145);
+            this.labelAngelX.Location = new System.Drawing.Point(449, 176);
             this.labelAngelX.Name = "labelAngelX";
             this.labelAngelX.Size = new System.Drawing.Size(128, 13);
             this.labelAngelX.TabIndex = 11;
@@ -176,7 +178,7 @@
             // 
             // numericUpDownAngelX
             // 
-            this.numericUpDownAngelX.Location = new System.Drawing.Point(580, 143);
+            this.numericUpDownAngelX.Location = new System.Drawing.Point(583, 174);
             this.numericUpDownAngelX.Maximum = new decimal(new int[] {
             360,
             0,
@@ -194,7 +196,7 @@
             // labelAngelY
             // 
             this.labelAngelY.AutoSize = true;
-            this.labelAngelY.Location = new System.Drawing.Point(446, 171);
+            this.labelAngelY.Location = new System.Drawing.Point(449, 202);
             this.labelAngelY.Name = "labelAngelY";
             this.labelAngelY.Size = new System.Drawing.Size(128, 13);
             this.labelAngelY.TabIndex = 13;
@@ -202,7 +204,7 @@
             // 
             // numericUpDownAngelY
             // 
-            this.numericUpDownAngelY.Location = new System.Drawing.Point(580, 169);
+            this.numericUpDownAngelY.Location = new System.Drawing.Point(583, 200);
             this.numericUpDownAngelY.Maximum = new decimal(new int[] {
             360,
             0,
@@ -219,7 +221,7 @@
             // 
             // numericUpDownAngelZ
             // 
-            this.numericUpDownAngelZ.Location = new System.Drawing.Point(580, 198);
+            this.numericUpDownAngelZ.Location = new System.Drawing.Point(583, 229);
             this.numericUpDownAngelZ.Maximum = new decimal(new int[] {
             360,
             0,
@@ -237,7 +239,7 @@
             // labelAngelZ
             // 
             this.labelAngelZ.AutoSize = true;
-            this.labelAngelZ.Location = new System.Drawing.Point(446, 200);
+            this.labelAngelZ.Location = new System.Drawing.Point(449, 231);
             this.labelAngelZ.Name = "labelAngelZ";
             this.labelAngelZ.Size = new System.Drawing.Size(128, 13);
             this.labelAngelZ.TabIndex = 16;
@@ -246,7 +248,7 @@
             // labelColBreakX
             // 
             this.labelColBreakX.AutoSize = true;
-            this.labelColBreakX.Location = new System.Drawing.Point(12, 145);
+            this.labelColBreakX.Location = new System.Drawing.Point(15, 176);
             this.labelColBreakX.Name = "labelColBreakX";
             this.labelColBreakX.Size = new System.Drawing.Size(148, 13);
             this.labelColBreakX.TabIndex = 17;
@@ -255,7 +257,7 @@
             // labelColBreakY
             // 
             this.labelColBreakY.AutoSize = true;
-            this.labelColBreakY.Location = new System.Drawing.Point(12, 171);
+            this.labelColBreakY.Location = new System.Drawing.Point(15, 202);
             this.labelColBreakY.Name = "labelColBreakY";
             this.labelColBreakY.Size = new System.Drawing.Size(148, 13);
             this.labelColBreakY.TabIndex = 18;
@@ -264,7 +266,7 @@
             // labelCoeffSX
             // 
             this.labelCoeffSX.AutoSize = true;
-            this.labelCoeffSX.Location = new System.Drawing.Point(12, 196);
+            this.labelCoeffSX.Location = new System.Drawing.Point(15, 227);
             this.labelCoeffSX.Name = "labelCoeffSX";
             this.labelCoeffSX.Size = new System.Drawing.Size(142, 13);
             this.labelCoeffSX.TabIndex = 19;
@@ -273,7 +275,7 @@
             // labelCoeffSY
             // 
             this.labelCoeffSY.AutoSize = true;
-            this.labelCoeffSY.Location = new System.Drawing.Point(12, 222);
+            this.labelCoeffSY.Location = new System.Drawing.Point(15, 253);
             this.labelCoeffSY.Name = "labelCoeffSY";
             this.labelCoeffSY.Size = new System.Drawing.Size(142, 13);
             this.labelCoeffSY.TabIndex = 20;
@@ -281,7 +283,7 @@
             // 
             // textBoxCoeffSY
             // 
-            this.textBoxCoeffSY.Location = new System.Drawing.Point(198, 219);
+            this.textBoxCoeffSY.Location = new System.Drawing.Point(201, 250);
             this.textBoxCoeffSY.Name = "textBoxCoeffSY";
             this.textBoxCoeffSY.Size = new System.Drawing.Size(100, 20);
             this.textBoxCoeffSY.TabIndex = 21;
@@ -290,7 +292,7 @@
             // 
             // textBoxCoeffSX
             // 
-            this.textBoxCoeffSX.Location = new System.Drawing.Point(198, 193);
+            this.textBoxCoeffSX.Location = new System.Drawing.Point(201, 224);
             this.textBoxCoeffSX.Name = "textBoxCoeffSX";
             this.textBoxCoeffSX.Size = new System.Drawing.Size(100, 20);
             this.textBoxCoeffSX.TabIndex = 22;
@@ -299,7 +301,7 @@
             // 
             // textBoxColBreakY
             // 
-            this.textBoxColBreakY.Location = new System.Drawing.Point(198, 167);
+            this.textBoxColBreakY.Location = new System.Drawing.Point(201, 198);
             this.textBoxColBreakY.Name = "textBoxColBreakY";
             this.textBoxColBreakY.Size = new System.Drawing.Size(100, 20);
             this.textBoxColBreakY.TabIndex = 23;
@@ -308,7 +310,7 @@
             // 
             // textBoxColBreakX
             // 
-            this.textBoxColBreakX.Location = new System.Drawing.Point(199, 142);
+            this.textBoxColBreakX.Location = new System.Drawing.Point(202, 173);
             this.textBoxColBreakX.Name = "textBoxColBreakX";
             this.textBoxColBreakX.Size = new System.Drawing.Size(100, 20);
             this.textBoxColBreakX.TabIndex = 24;
@@ -318,7 +320,7 @@
             // trackBarAlpha
             // 
             this.trackBarAlpha.LargeChange = 3;
-            this.trackBarAlpha.Location = new System.Drawing.Point(580, 12);
+            this.trackBarAlpha.Location = new System.Drawing.Point(583, 43);
             this.trackBarAlpha.Name = "trackBarAlpha";
             this.trackBarAlpha.Size = new System.Drawing.Size(101, 45);
             this.trackBarAlpha.TabIndex = 25;
@@ -327,17 +329,38 @@
             // labelAlpha
             // 
             this.labelAlpha.AutoSize = true;
-            this.labelAlpha.Location = new System.Drawing.Point(446, 21);
+            this.labelAlpha.Location = new System.Drawing.Point(449, 52);
             this.labelAlpha.Name = "labelAlpha";
             this.labelAlpha.Size = new System.Drawing.Size(124, 13);
             this.labelAlpha.TabIndex = 26;
             this.labelAlpha.Text = "Прозрачность объекта";
             // 
+            // labelTypeFigure
+            // 
+            this.labelTypeFigure.AutoSize = true;
+            this.labelTypeFigure.Location = new System.Drawing.Point(15, 12);
+            this.labelTypeFigure.Name = "labelTypeFigure";
+            this.labelTypeFigure.Size = new System.Drawing.Size(67, 13);
+            this.labelTypeFigure.TabIndex = 27;
+            this.labelTypeFigure.Text = "Тип фигуры";
+            // 
+            // comboBoxTypeFigure
+            // 
+            this.comboBoxTypeFigure.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxTypeFigure.FormattingEnabled = true;
+            this.comboBoxTypeFigure.Location = new System.Drawing.Point(201, 9);
+            this.comboBoxTypeFigure.Name = "comboBoxTypeFigure";
+            this.comboBoxTypeFigure.Size = new System.Drawing.Size(103, 21);
+            this.comboBoxTypeFigure.TabIndex = 28;
+            this.comboBoxTypeFigure.SelectedIndexChanged += new System.EventHandler(this.comboBoxTypeFigure_SelectedIndexChanged);
+            // 
             // DlgAddEditAnFigure
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(717, 268);
+            this.ClientSize = new System.Drawing.Size(717, 298);
+            this.Controls.Add(this.comboBoxTypeFigure);
+            this.Controls.Add(this.labelTypeFigure);
             this.Controls.Add(this.labelAlpha);
             this.Controls.Add(this.trackBarAlpha);
             this.Controls.Add(this.textBoxColBreakX);
@@ -406,5 +429,7 @@
         private System.Windows.Forms.TextBox textBoxColBreakX;
         private System.Windows.Forms.TrackBar trackBarAlpha;
         private System.Windows.Forms.Label labelAlpha;
+        private System.Windows.Forms.Label labelTypeFigure;
+        private System.Windows.Forms.ComboBox comboBoxTypeFigure;
     }
 }
