@@ -107,6 +107,7 @@ namespace Thesis_3D
         private PolygonMode _Polygon;
         private Vector3 Diffusion = Vector3.One;
         private Vector3 Ambient = Vector3.One;
+        private Vector3 Mirror = Vector3.One;
         public TypeObjectRenderLight TypeObject = TypeObjectRenderLight.SimpleObject;
         public TrajctoryRenderObject trajctoryRenderObject; //траектория движения объекта
         public Matrix4 ModelMatrix = Matrix4.CreateTranslation(0, 0, 0); //Матрица смещения от стартовой позиции
@@ -364,9 +365,21 @@ namespace Thesis_3D
         {
             Ambient = new Vector3(Math.Abs(value.X * 10) / 10, Math.Abs(value.Y * 10) / 10, Math.Abs(value.Z * 10) / 10);
         }
+        public Vector3 getMirror()
+        {
+            return Mirror;
+        }
+        public void setMirror(Vector3 value)
+        {
+            Mirror = new Vector3(Math.Abs(value.X * 10) / 10, Math.Abs(value.Y * 10) / 10, Math.Abs(value.Z * 10) / 10);
+        }
+        public void mirrorUnifrom(int location)
+        {
+            GL.Uniform3(location, Mirror);
+        }
         public void ambientUnifrom(int location)
         {
-            GL.Uniform3(location, Diffusion);
+            GL.Uniform3(location, Ambient);
         }
         public Vector4 getPositionRenderObject()
         {

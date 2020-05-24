@@ -12,6 +12,8 @@ layout(location = 24) uniform vec3 Ld;
 layout(location = 25) uniform vec3 Kd;
 layout(location = 26) uniform vec3 La;
 layout(location = 27) uniform vec3 Ka;
+layout(location = 28) uniform vec3 Ls;
+layout(location = 29) uniform vec3 Ks;
 
 out vec4 vs_color;
 
@@ -24,8 +26,6 @@ void getEyeSpace(out vec3 norm, out vec4 position)
 
 void main(void)
 {
-	vec3 Ks = vec3(0.5, 0.5, 0.5);
-	vec3 Ls = vec3(1.0, 1.0, 1.0);
 	float Shininess = 16.0;
 	
 	vec3 tnorm;

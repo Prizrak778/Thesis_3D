@@ -644,7 +644,7 @@ namespace Thesis_3D
                 else if(_program == _program_Fong_fog && countLightObj > 0)
                 {
                     primaryLightObject.PositionLightUniform(18);
-                    primaryLightObject.SetAttrFog(25, 1f, 24, 9f, 26, new Vector3(0.3f, 0.3f, 0.3f));
+                    primaryLightObject.SetAttrFog(31, 1f, 30, 9f, 32, new Vector3(0.3f, 0.3f, 0.3f));
                 }
                 else if(_program == _program_Fong_directed && countLightObj > 0)
                 {
@@ -657,6 +657,8 @@ namespace Thesis_3D
                         primaryLightObject.PositionLightUniform(18);
                         primaryLightObject.IntensityLightVectorUniform(24);
                         primaryLightObject.IntensityAmbient(26);
+                        primaryLightObject.IntensityMirror(28);
+                        renderObject.mirrorUnifrom(29);
                         renderObject.ambientUnifrom(27);
                         renderObject.diffusionUnifrom(25);
                     }
@@ -970,6 +972,8 @@ namespace Thesis_3D
                 Vector4 CurrentPosition = _renderObjects[_SelectID].getPositionRenderObject();
                 var typeObject = _renderObjects[_SelectID].TypeObject;
                 Vector3 diff = _renderObjects[_SelectID].getDiffusion();
+                Vector3 ambient = _renderObjects[_SelectID].getAmbient();
+                Vector3 mirror = _renderObjects[_SelectID].getMirror();
                 int changeNonAnalitik = -1;
                 var typeFigureChange = _renderObjects[_SelectID].geometricInfo.typeObjectCreate;
                 if (typeFigureChange != TypeObjectCreate.NonTypeObject)
@@ -1002,20 +1006,27 @@ namespace Thesis_3D
                         FormBorderStyle = FormBorderStyle.Sizable,
                         StartPosition = FormStartPosition.CenterScreen,
                     };
-                    Label lblCoords = new Label() { Text = "Смещение по осям:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 120, Height = 30, Top = 423, Left = 190 };
-                    Label lblCoordX = new Label() { Text = "X:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 423, Left = 315 };
-                    Label lblCoordY = new Label() { Text = "Y:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 423, Left = 375 };
-                    Label lblCoordZ = new Label() { Text = "Z:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 423, Left = 435 };
-                    TextBox textBoxCoordX = new TextBox() { Text = "0", Width = 40, Height = 30, Top = 420, Left = 335, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
-                    TextBox textBoxCoordY = new TextBox() { Text = "0", Width = 40, Height = 30, Top = 420, Left = 395, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
-                    TextBox textBoxCoordZ = new TextBox() { Text = "0", Width = 40, Height = 30, Top = 420, Left = 455, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
-                    Label lblDiffs = new Label() { Text = typeObject == TypeObjectRenderLight.LightSourceObject ? "Интенсивность освещения" : "Коэффициенты рассеивание:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 120, Height = 30, Top = 380, Left = 190 };
-                    Label lblDiffR = new Label() { Text = "R:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 382, Left = 315 };
-                    Label lblDiffG = new Label() { Text = "G:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 382, Left = 375 };
-                    Label lblDiffB = new Label() { Text = "B:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 382, Left = 435 };
-                    TextBox textBoxDiffR = new TextBox() { Text = diff.X.ToString(), Width = 40, Height = 30, Top = 380, Left = 335, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
-                    TextBox textBoxDiffG = new TextBox() { Text = diff.Y.ToString(), Width = 40, Height = 30, Top = 380, Left = 395, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
-                    TextBox textBoxDiffB = new TextBox() { Text = diff.Z.ToString(), Width = 40, Height = 30, Top = 380, Left = 455, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
+                    Label lblDiffs = new Label() { Text = typeObject == TypeObjectRenderLight.LightSourceObject ? "Интенсивность освещения:" : "Коэффициенты рассеивание:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 120, Height = 30, Top = 380, Left = 190 };
+                    Label lblDiffR = new Label() { Text = "R:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 385, Left = 315 };
+                    Label lblDiffG = new Label() { Text = "G:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 385, Left = 375 };
+                    Label lblDiffB = new Label() { Text = "B:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 385, Left = 435 };
+                    TextBox textBoxDiffR = new TextBox() { Text = diff.X.ToString(), Width = 40, Height = 30, Top = 383, Left = 335, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
+                    TextBox textBoxDiffG = new TextBox() { Text = diff.Y.ToString(), Width = 40, Height = 30, Top = 383, Left = 395, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
+                    TextBox textBoxDiffB = new TextBox() { Text = diff.Z.ToString(), Width = 40, Height = 30, Top = 383, Left = 455, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
+                    Label lblAmbients = new Label() { Text = typeObject == TypeObjectRenderLight.LightSourceObject ? "Интенсивность фонового света:" : "Коэффициенты отражения фоного света:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 125, Height = 30, Top = 417, Left = 190 };
+                    Label lblAmbientR = new Label() { Text = "R:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 423, Left = 315 };
+                    Label lblAmbientG = new Label() { Text = "G:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 423, Left = 375 };
+                    Label lblAmbientB = new Label() { Text = "B:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 423, Left = 435 };
+                    TextBox textBoxAmbientR = new TextBox() { Text = ambient.X.ToString(), Width = 40, Height = 30, Top = 421, Left = 335, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
+                    TextBox textBoxAmbientG = new TextBox() { Text = ambient.Y.ToString(), Width = 40, Height = 30, Top = 421, Left = 395, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
+                    TextBox textBoxAmbientB = new TextBox() { Text = ambient.Z.ToString(), Width = 40, Height = 30, Top = 421, Left = 455, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
+                    Label lblMirrors = new Label() { Text = typeObject == TypeObjectRenderLight.LightSourceObject ? "Интенсивность отраженного света:" : "Коэффициент зеркального отражения:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 125, Height = 30, Top = 452, Left = 190 };
+                    Label lblMirrorR = new Label() { Text = "R:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 458, Left = 315 };
+                    Label lblMirrorG = new Label() { Text = "G:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 458, Left = 375 };
+                    Label lblMirrorB = new Label() { Text = "B:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 458, Left = 435 };
+                    TextBox textBoxMirrorR = new TextBox() { Text = mirror.X.ToString(), Width = 40, Height = 30, Top = 456, Left = 335, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
+                    TextBox textBoxMirrorG = new TextBox() { Text = mirror.Y.ToString(), Width = 40, Height = 30, Top = 456, Left = 395, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
+                    TextBox textBoxMirrorB = new TextBox() { Text = mirror.Z.ToString(), Width = 40, Height = 30, Top = 456, Left = 455, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
                     Color4 colorSurface = new Color4();
                     colorSurface.R = _renderObjects[_SelectID].geometricInfo.ColorObj.X;
                     colorSurface.G = _renderObjects[_SelectID].geometricInfo.ColorObj.Y;
@@ -1025,15 +1036,22 @@ namespace Thesis_3D
                     Label lblButtonColor = new Label() { Text = "Цвет объекта:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 170, Height = 30, Top = 423, Left = 20 };
                     Button buttonColor = new Button() { Text = "", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 70, Height = 30, Top = 415, Left = 100, BackColor = (System.Drawing.Color)colorSurface };
                     buttonColor.Click += (sender1, e1) => { if (colorDialog.ShowDialog() == DialogResult.OK) { colorSurface = buttonColor.BackColor = colorDialog.Color; } };
-                    Label lblCurrentPosition = new Label() { Text = "Текущая позиция:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 110, Height = 30, Top = 470, Left = 20  };
-                    Label lblCurrentPositionX = new Label() { Text = "X:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 473, Left = 150 };
-                    Label lblCurrentPositionY = new Label() { Text = "Y:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 473, Left = 210 };
-                    Label lblCurrentPositionZ = new Label() { Text = "Z:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 473, Left = 270 };
-                    TextBox textBoxCurrentPositionX = new TextBox() { Enabled = false, Text = CurrentPosition.X.ToString(), Width = 40, Height = 30, Top = 470, Left = 170, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
-                    TextBox textBoxCurrentPositionY = new TextBox() { Enabled = false, Text = CurrentPosition.Y.ToString(), Width = 40, Height = 30, Top = 470, Left = 230, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
-                    TextBox textBoxCurrentPositionZ = new TextBox() { Enabled = false, Text = CurrentPosition.Z.ToString(), Width = 40, Height = 30, Top = 470, Left = 290, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
-                    Label lblTrackBar = new Label() { Text = "Прозрачность объекта:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 170, Height = 30, Top = 500, Left = 20 };
-                    TrackBar trackBar = new TrackBar() { Value = (int)(_renderObjects[_SelectID].geometricInfo.ColorObj.W * 10f), Minimum = 0, Maximum = 10, Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 170, Height = 10, Top = 500, Left = 150 };
+                    Label lblCoords = new Label() { Text = "Смещение по осям:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 120, Height = 30, Top = 528, Left = 20 };
+                    Label lblCoordX = new Label() { Text = "X:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 528, Left = 150 };
+                    Label lblCoordY = new Label() { Text = "Y:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 528, Left = 210 };
+                    Label lblCoordZ = new Label() { Text = "Z:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 528, Left = 270 };
+                    TextBox textBoxCoordX = new TextBox() { Text = "0", Width = 40, Height = 30, Top = 525, Left = 170, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
+                    TextBox textBoxCoordY = new TextBox() { Text = "0", Width = 40, Height = 30, Top = 525, Left = 230, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
+                    TextBox textBoxCoordZ = new TextBox() { Text = "0", Width = 40, Height = 30, Top = 525, Left = 290, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
+                    Label lblCurrentPosition = new Label() { Text = "Текущая позиция:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 110, Height = 30, Top = 498, Left = 20  };
+                    Label lblCurrentPositionX = new Label() { Text = "X:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 498, Left = 150 };
+                    Label lblCurrentPositionY = new Label() { Text = "Y:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 498, Left = 210 };
+                    Label lblCurrentPositionZ = new Label() { Text = "Z:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 498, Left = 270 };
+                    TextBox textBoxCurrentPositionX = new TextBox() { Enabled = false, Text = CurrentPosition.X.ToString(), Width = 40, Height = 30, Top = 498, Left = 170, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
+                    TextBox textBoxCurrentPositionY = new TextBox() { Enabled = false, Text = CurrentPosition.Y.ToString(), Width = 40, Height = 30, Top = 498, Left = 230, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
+                    TextBox textBoxCurrentPositionZ = new TextBox() { Enabled = false, Text = CurrentPosition.Z.ToString(), Width = 40, Height = 30, Top = 498, Left = 290, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
+                    Label lblTrackBar = new Label() { Text = "Прозрачность объекта:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 170, Height = 30, Top = 555, Left = 20 };
+                    TrackBar trackBar = new TrackBar() { Value = (int)(_renderObjects[_SelectID].geometricInfo.ColorObj.W * 10f), Minimum = 0, Maximum = 10, Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 170, Height = 10, Top = 555, Left = 150 };
                     CheckBox checkBoxChangeStruct = new CheckBox() { Checked = false, Text = "Изменить структуру фигуры", Width = 170, Height = 30, Top = 375, Left = 20, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
                     TextBox textBoxChangeCoord = new TextBox() { Enabled = false, Multiline = true, Width = 250, Height = 350, Top = 10, Left = 10, Anchor = AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom, ScrollBars = ScrollBars.Vertical };
                     TextBox textBoxChangeFinit = new TextBox() { Enabled = false, Multiline = true, Width = 250, Height = 350, Top = 10, Left = 10, Anchor = AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom, ScrollBars = ScrollBars.Vertical };
@@ -1133,6 +1151,20 @@ namespace Thesis_3D
                     dlgChangeFigure.Controls.Add(lblCurrentPositionX);
                     dlgChangeFigure.Controls.Add(lblCurrentPositionY);
                     dlgChangeFigure.Controls.Add(lblCurrentPositionZ);
+                    dlgChangeFigure.Controls.Add(lblAmbients);
+                    dlgChangeFigure.Controls.Add(lblAmbientR);
+                    dlgChangeFigure.Controls.Add(lblAmbientG);
+                    dlgChangeFigure.Controls.Add(lblAmbientB);
+                    dlgChangeFigure.Controls.Add(textBoxAmbientR);
+                    dlgChangeFigure.Controls.Add(textBoxAmbientG);
+                    dlgChangeFigure.Controls.Add(textBoxAmbientB);
+                    dlgChangeFigure.Controls.Add(lblMirrors);
+                    dlgChangeFigure.Controls.Add(lblMirrorR);
+                    dlgChangeFigure.Controls.Add(lblMirrorG);
+                    dlgChangeFigure.Controls.Add(lblMirrorB);
+                    dlgChangeFigure.Controls.Add(textBoxMirrorR);
+                    dlgChangeFigure.Controls.Add(textBoxMirrorG);
+                    dlgChangeFigure.Controls.Add(textBoxMirrorB);
 
                     saveFileCoord.FileOk += (senderCoord, eCoord) =>
                     {
@@ -1227,13 +1259,20 @@ namespace Thesis_3D
                         {
                             var lightObject = _lightObjects.Where(x => x.ColorСhoice == _renderObjects[_SelectID].ColorСhoice).FirstOrDefault();
                             lightObject.DiffusionIntensity = new Vector3(float.Parse(textBoxDiffR.Text), float.Parse(textBoxDiffG.Text), float.Parse(textBoxDiffB.Text));
+                            lightObject.Ambient = new Vector3(float.Parse(textBoxAmbientR.Text), float.Parse(textBoxAmbientG.Text), float.Parse(textBoxAmbientB.Text));
+                            lightObject.Mirror = new Vector3(float.Parse(textBoxMirrorR.Text), float.Parse(textBoxMirrorG.Text), float.Parse(textBoxMirrorB.Text));
                             if (lightObject != null)
                             {
                                 lightObject.SetPositionLight(_renderObjects[_SelectID].ModelMatrix);
                                 if (_program_Fong_directed != -1 && lightObject.uboLightInfo != -1) lightObject.UpdatePositionForBlock(_program_Fong_directed);
                             }
                         }
-                        else _renderObjects[_SelectID].setDiffusion(new Vector3(float.Parse(textBoxDiffR.Text), float.Parse(textBoxDiffG.Text), float.Parse(textBoxDiffB.Text)));
+                        else
+                        {
+                            _renderObjects[_SelectID].setDiffusion(new Vector3(float.Parse(textBoxDiffR.Text), float.Parse(textBoxDiffG.Text), float.Parse(textBoxDiffB.Text)));
+                            _renderObjects[_SelectID].setAmbient(new Vector3(float.Parse(textBoxAmbientR.Text), float.Parse(textBoxAmbientG.Text), float.Parse(textBoxAmbientB.Text)));
+                            _renderObjects[_SelectID].setMirror(new Vector3(float.Parse(textBoxMirrorR.Text), float.Parse(textBoxMirrorG.Text), float.Parse(textBoxMirrorB.Text)));
+                        }
                     }
                 }
                 else if(changeNonAnalitik == 1)

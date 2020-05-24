@@ -5,9 +5,9 @@ in vec3 tnorm;
 in vec4 frag_LightPosition;
 in vec4 obj_position;
 layout(location = 23) uniform vec4 CamerPosition;
-layout(location = 24) uniform float maxDist;
-layout(location = 25) uniform float minDist;
-layout(location = 26) uniform vec3 fogcolor;
+layout(location = 30) uniform float maxDist;
+layout(location = 31) uniform float minDist;
+layout(location = 32) uniform vec3 fogcolor;
 
 out vec4 color;
 

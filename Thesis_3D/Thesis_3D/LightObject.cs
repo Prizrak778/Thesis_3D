@@ -17,6 +17,7 @@ namespace Thesis_3D
         public Vector3 LightVecNormalized;
         public Vector3 DiffusionIntensity;
         public Vector3 Ambient = Vector3.One;
+        public Vector3 Mirror = Vector3.One;
         public Vector4 ColorRadiation;
         private Vector3 StartPosition;
         public LightObject(Vertex[] vertices, Color4 color, Color4 color_choice, Vector3 position, Vector4 attribute, Vector3 lighVecNormalized, Vector3 diffusionIntensity, Vector3 angle_speed, int programBlock = -1, string nameBlock = null, float side = 1, TypeObjectCreate locTypeObjectCreate = TypeObjectCreate.SolidCube, int locColBreakX = 1, int locColBreakY = 1, int locCoeffSX = 1, int locCoeffSY = 1, int locAngleX = 0, int locAngleY = 0, int locAngleZ = 0) : base(vertices, position, color, color_choice, TypeObjectRenderLight.LightSourceObject, locSide: side, locTypeObjectCreate: locTypeObjectCreate, locColBreakX: locColBreakX, locColBreakY: locColBreakY, locCoeffSX: locCoeffSX, locCoeffSY: locCoeffSY, locAngleX: locAngleX, locAngleY: locAngleY, locAngleZ: locAngleZ)
@@ -75,6 +76,10 @@ namespace Thesis_3D
         public void IntensityAmbient(int location)
         {
             GL.Uniform3(location, Ambient);
+        }
+        public void IntensityMirror(int location)
+        {
+            GL.Uniform3(location, Mirror);
         }
         public void lighVecNormalizedUniform(int location)
         {
