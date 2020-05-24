@@ -44,6 +44,8 @@ namespace Thesis_3D
         private List<int> listProgram = new List<int>();
         private Vector2 lastMousePos = new Vector2(30f, 140f);
 
+        private string defaultTitle = string.Empty;
+
         private Random rnd = new Random();
 
         #region RandomColor
@@ -371,11 +373,11 @@ namespace Thesis_3D
             GL.Enable(EnableCap.TextureCubeMap);
             GL.DepthFunc(DepthFunction.Less);
             GL.ClearColor(new Color4(0.3f, 0.3f, 0.3f, 0.0f));
-            Text =
+            defaultTitle =
                 GL.GetString(StringName.Vendor) + " " +
                 GL.GetString(StringName.Renderer) + " " +
                 GL.GetString(StringName.Version);
-            Text += $" (Vsync: {glControlThesis3D.VSync})";
+            Text = defaultTitle + $" (Vsync: {glControlThesis3D.VSync})";
         }
         void glControl_Resize(object sender, EventArgs e)
         {
@@ -520,6 +522,9 @@ namespace Thesis_3D
                 case Keys.O:
                     _contour = _contour ? false : true;
                     checkBox1.Checked = _contour;
+                    break;
+                case Keys.V:
+                    glControlThesis3D.VSync = glControlThesis3D.VSync ? false : true;
                     break;
             }
             if (_SelectID > -1)
@@ -728,7 +733,7 @@ namespace Thesis_3D
             if(checkBoxFps.Checked) File.AppendAllText("FPSData.txt", $"FPS:\t{_framecount:0}" + Environment.NewLine);
             label5.Text = $"Position:{cameraFirstFace.Position:0}";
             label6.Text = $"FPS: {_framecount:0}";
-
+            Text = defaultTitle + $" (Vsync: {glControlThesis3D.VSync})";
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
@@ -965,7 +970,8 @@ namespace Thesis_3D
                 var typeObject = _renderObjects[_SelectID].TypeObject;
                 Vector3 diff = _renderObjects[_SelectID].getDiffusion();
                 int changeNonAnalitik = -1;
-                if (_renderObjects[_SelectID].geometricInfo.typeObjectCreate != TypeObjectCreate.NonTypeObject)
+                var typeFigureChange = _renderObjects[_SelectID].geometricInfo.typeObjectCreate;
+                if (typeFigureChange != TypeObjectCreate.NonTypeObject)
                 {
                     Form dlgChangeTypeFigure = new Form()
                     {
@@ -976,7 +982,7 @@ namespace Thesis_3D
                         FormBorderStyle = FormBorderStyle.Sizable,
                         StartPosition = FormStartPosition.CenterScreen,
                     };
-                    Label labelText = new Label() { Text = "Изменить данную фигуру как аналитическу? Если изменить как не аналитическую фигуру, потом невозможно изменить как аналитическую.", Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 420, Height = 30, Top = 20, Left = 20 };
+                    Label labelText = new Label() { Text = "Данная фигура аналитическая. Изменить её структуру фигуры как аналитическу?", Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 420, Height = 30, Top = 20, Left = 20 };
                     Button buttonYes = new Button() { Text = "Да" , Top = 60, Left = 190, Width = 100, Height = 25, Anchor = AnchorStyles.Bottom | AnchorStyles.Right, DialogResult = DialogResult.Yes };
                     Button buttonNo  = new Button() { Text = "Нет", Top = 60, Left = 290, Width = 100, Height = 25, Anchor = AnchorStyles.Bottom | AnchorStyles.Right, DialogResult = DialogResult.No  };
                     dlgChangeTypeFigure.Controls.Add(labelText);
@@ -985,7 +991,7 @@ namespace Thesis_3D
                     DialogResult dialogResult = dlgChangeTypeFigure.ShowDialog();
                     changeNonAnalitik = dialogResult == DialogResult.Cancel ? -1 : dialogResult == DialogResult.Yes ? 1 : 0;
                 }
-                if (changeNonAnalitik == 1)
+                if (changeNonAnalitik == 0)
                 {
                     Form dlgChangeFigure = new Form()
                     {
@@ -1020,15 +1026,22 @@ namespace Thesis_3D
                     buttonColor.Click += (sender1, e1) => { if (colorDialog.ShowDialog() == DialogResult.OK) { colorSurface = buttonColor.BackColor = colorDialog.Color; } };
                     Label lblTrackBar = new Label() { Text = "Прозрачность объекта:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 170, Height = 30, Top = 470, Left = 20 };
                     TrackBar trackBar = new TrackBar() { Value = (int)(_renderObjects[_SelectID].geometricInfo.ColorObj.W * 10f), Minimum = 0, Maximum = 10, Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 170, Height = 10, Top = 470, Left = 150 };
-                    CheckBox checkBox = new CheckBox() { Checked = false, Text = "Изменить структуру фигуры", Width = 170, Height = 30, Top = 375, Left = 20, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
+                    CheckBox checkBoxChangeStruct = new CheckBox() { Checked = false, Text = "Изменить структуру фигуры", Width = 170, Height = 30, Top = 375, Left = 20, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
                     TextBox textBoxChangeCoord = new TextBox() { Enabled = false, Multiline = true, Width = 250, Height = 350, Top = 10, Left = 10, Anchor = AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom, ScrollBars = ScrollBars.Vertical };
                     TextBox textBoxChangeFinit = new TextBox() { Enabled = false, Multiline = true, Width = 250, Height = 350, Top = 10, Left = 10, Anchor = AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom, ScrollBars = ScrollBars.Vertical };
                     SplitContainer splitterText = new SplitContainer() { Width = 540, Height = 360, Left = 10, Top = 10, Anchor = AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom, SplitterDistance = 260 };
                     Button buttonSave = new Button() { Text = "Save", Top = 20, Left = 550, Width = 100, Height = 25, Anchor = AnchorStyles.Top | AnchorStyles.Right };
                     SaveFileDialog saveFileCoord = new SaveFileDialog();
                     SaveFileDialog saveFileFinit = new SaveFileDialog();
-                    checkBox.CheckedChanged += (sender1, e1) => { textBoxChangeCoord.Enabled = textBoxChangeFinit.Enabled = checkBox.Checked; };
+                    checkBoxChangeStruct.CheckedChanged += (sender1, e1) => { textBoxChangeCoord.Enabled = textBoxChangeFinit.Enabled = checkBoxChangeStruct.Checked; };
                     buttonSave.Click += (sender1, e1) => { saveFileCoord.ShowDialog(); saveFileFinit.ShowDialog(); };
+                    checkBoxChangeStruct.CheckedChanged += (sender1, e1) =>
+                        {
+                        if(checkBoxChangeStruct.Checked && typeFigureChange != TypeObjectCreate.NonTypeObject)
+                        {
+                            MessageBox.Show("Данная фигура аналитическая, при изменении её структуры она перестанет быть аналитической фигуры");
+                        }
+                    };
                     saveFileFinit.Filter = saveFileCoord.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
                     saveFileCoord.FileName = "coord_default.txt";
                     saveFileFinit.FileName = "finit_default.txt";
@@ -1083,7 +1096,7 @@ namespace Thesis_3D
                     }
                     splitterText.Panel1.Controls.Add(textBoxChangeCoord);
                     splitterText.Panel2.Controls.Add(textBoxChangeFinit);
-                    dlgChangeFigure.Controls.Add(checkBox);
+                    dlgChangeFigure.Controls.Add(checkBoxChangeStruct);
                     dlgChangeFigure.Controls.Add(lblDiffs);
                     dlgChangeFigure.Controls.Add(lblDiffR);
                     dlgChangeFigure.Controls.Add(lblDiffG);
@@ -1126,7 +1139,7 @@ namespace Thesis_3D
                     };
                     if (dlgChangeFigure.ShowDialog() == DialogResult.OK)
                     {
-                        if (checkBox.Checked)
+                        if (checkBoxChangeStruct.Checked)
                         {
                             List<DataCoordElem> listCoord = new List<DataCoordElem>();
                             List<DataFinitElem> listFinitElem = new List<DataFinitElem>();
@@ -1186,6 +1199,7 @@ namespace Thesis_3D
                                     col += 3;
                                 }
                                 _renderObjects[_SelectID].WriteBuffer(figureVertex);
+                                _renderObjects[_SelectID].geometricInfo.typeObjectCreate = TypeObjectCreate.NonTypeObject;
                             }
                             else
                             {
@@ -1205,10 +1219,9 @@ namespace Thesis_3D
                             }
                         }
                         else _renderObjects[_SelectID].setDiffusion(new Vector3(float.Parse(textBoxDiffR.Text), float.Parse(textBoxDiffG.Text), float.Parse(textBoxDiffB.Text)));
-                        _renderObjects[_SelectID].geometricInfo.typeObjectCreate = TypeObjectCreate.NonTypeObject;
                     }
                 }
-                else if(changeNonAnalitik == 0)
+                else if(changeNonAnalitik == 1)
                 {
                     Vector3 position = _renderObjects[_SelectID].getStartPosition();
                     DlgAddEditAnFigure dlgNewAn = new DlgAddEditAnFigure(_renderObjects[_SelectID].geometricInfo);
