@@ -967,6 +967,7 @@ namespace Thesis_3D
             {
                 Vertex[] vertexObject = new Vertex[_renderObjects[_SelectID].BufferSize()];
                 _renderObjects[_SelectID].ReadBuffer(vertexObject);
+                Vector4 CurrentPosition = _renderObjects[_SelectID].getPositionRenderObject();
                 var typeObject = _renderObjects[_SelectID].TypeObject;
                 Vector3 diff = _renderObjects[_SelectID].getDiffusion();
                 int changeNonAnalitik = -1;
@@ -997,7 +998,7 @@ namespace Thesis_3D
                     {
                         Text = "Изменение объекта",
                         Width = 680,
-                        Height = 550,
+                        Height = 650,
                         FormBorderStyle = FormBorderStyle.Sizable,
                         StartPosition = FormStartPosition.CenterScreen,
                     };
@@ -1024,8 +1025,15 @@ namespace Thesis_3D
                     Label lblButtonColor = new Label() { Text = "Цвет объекта:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 170, Height = 30, Top = 423, Left = 20 };
                     Button buttonColor = new Button() { Text = "", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 70, Height = 30, Top = 415, Left = 100, BackColor = (System.Drawing.Color)colorSurface };
                     buttonColor.Click += (sender1, e1) => { if (colorDialog.ShowDialog() == DialogResult.OK) { colorSurface = buttonColor.BackColor = colorDialog.Color; } };
-                    Label lblTrackBar = new Label() { Text = "Прозрачность объекта:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 170, Height = 30, Top = 470, Left = 20 };
-                    TrackBar trackBar = new TrackBar() { Value = (int)(_renderObjects[_SelectID].geometricInfo.ColorObj.W * 10f), Minimum = 0, Maximum = 10, Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 170, Height = 10, Top = 470, Left = 150 };
+                    Label lblCurrentPosition = new Label() { Text = "Текущая позиция:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 110, Height = 30, Top = 470, Left = 20  };
+                    Label lblCurrentPositionX = new Label() { Text = "X:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 473, Left = 150 };
+                    Label lblCurrentPositionY = new Label() { Text = "Y:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 473, Left = 210 };
+                    Label lblCurrentPositionZ = new Label() { Text = "Z:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 473, Left = 270 };
+                    TextBox textBoxCurrentPositionX = new TextBox() { Enabled = false, Text = CurrentPosition.X.ToString(), Width = 40, Height = 30, Top = 470, Left = 170, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
+                    TextBox textBoxCurrentPositionY = new TextBox() { Enabled = false, Text = CurrentPosition.Y.ToString(), Width = 40, Height = 30, Top = 470, Left = 230, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
+                    TextBox textBoxCurrentPositionZ = new TextBox() { Enabled = false, Text = CurrentPosition.Z.ToString(), Width = 40, Height = 30, Top = 470, Left = 290, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
+                    Label lblTrackBar = new Label() { Text = "Прозрачность объекта:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 170, Height = 30, Top = 500, Left = 20 };
+                    TrackBar trackBar = new TrackBar() { Value = (int)(_renderObjects[_SelectID].geometricInfo.ColorObj.W * 10f), Minimum = 0, Maximum = 10, Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 170, Height = 10, Top = 500, Left = 150 };
                     CheckBox checkBoxChangeStruct = new CheckBox() { Checked = false, Text = "Изменить структуру фигуры", Width = 170, Height = 30, Top = 375, Left = 20, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
                     TextBox textBoxChangeCoord = new TextBox() { Enabled = false, Multiline = true, Width = 250, Height = 350, Top = 10, Left = 10, Anchor = AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom, ScrollBars = ScrollBars.Vertical };
                     TextBox textBoxChangeFinit = new TextBox() { Enabled = false, Multiline = true, Width = 250, Height = 350, Top = 10, Left = 10, Anchor = AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom, ScrollBars = ScrollBars.Vertical };
@@ -1118,6 +1126,13 @@ namespace Thesis_3D
                     dlgChangeFigure.Controls.Add(textBoxCoordX);
                     dlgChangeFigure.Controls.Add(textBoxCoordY);
                     dlgChangeFigure.Controls.Add(textBoxCoordZ);
+                    dlgChangeFigure.Controls.Add(lblCurrentPosition);
+                    dlgChangeFigure.Controls.Add(textBoxCurrentPositionX);
+                    dlgChangeFigure.Controls.Add(textBoxCurrentPositionY);
+                    dlgChangeFigure.Controls.Add(textBoxCurrentPositionZ);
+                    dlgChangeFigure.Controls.Add(lblCurrentPositionX);
+                    dlgChangeFigure.Controls.Add(lblCurrentPositionY);
+                    dlgChangeFigure.Controls.Add(lblCurrentPositionZ);
 
                     saveFileCoord.FileOk += (senderCoord, eCoord) =>
                     {
