@@ -8,7 +8,10 @@ layout(location = 22) uniform mat4 modelView;
 layout(location = 23) uniform vec4 CamPosition;
 
 layout(location = 175) uniform vec4 LightPositiont[3];
-layout(location = 24) uniform vec3 LightIntensityt[3]; 
+layout(location = 27) uniform vec3 LightIntensityt[3];
+layout(location = 24) uniform vec3 Kd;
+layout(location = 25) uniform vec3 Ka;
+layout(location = 26) uniform vec3 Ks;
 
 
 out vec4 vs_color;
@@ -21,10 +24,6 @@ void getEyeSpace(out vec3 norm, out vec4 position)
 } 
 vec4 phongModel(int indexLight, vec4 position, vec3 norm)
 {
-
-	vec3 Kd = vec3(1.0, 1.0, 1.0);
-	vec3 Ka = vec3(1.0, 1.0, 1.0);
-	vec3 Ks = vec3(0.5, 0.6, 0.7);
 	float Shininess = 16.0;
 	vec3 s = normalize(vec3(LightPositiont[indexLight] - position));
 	vec3 v = normalize(-position.xyz);

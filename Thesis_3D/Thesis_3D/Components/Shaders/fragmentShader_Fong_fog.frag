@@ -5,6 +5,10 @@ in vec3 tnorm;
 in vec4 frag_LightPosition;
 in vec4 obj_position;
 layout(location = 23) uniform vec4 CamerPosition;
+layout(location = 24) uniform vec3 LightIntensity;
+layout(location = 25) uniform vec3 Kd;
+layout(location = 27) uniform vec3 Ka;
+layout(location = 29) uniform vec3 Ks;
 layout(location = 30) uniform float maxDist;
 layout(location = 31) uniform float minDist;
 layout(location = 32) uniform vec3 fogcolor;
@@ -13,10 +17,6 @@ out vec4 color;
 
 void main(void)
 {
-	vec3 Kd = vec3(0.5, 0.5, 0.5);
-	vec3 Ka = vec3(0.0, 0.3, 0.0);
-	vec3 Ks = vec3(0.5, 0.5, 0.5);
-	vec3 LightIntensity = vec3(1.0, 1.0, 1.0);
 	float Shininess = 32.0;
 	
 	vec3 n = normalize(tnorm);

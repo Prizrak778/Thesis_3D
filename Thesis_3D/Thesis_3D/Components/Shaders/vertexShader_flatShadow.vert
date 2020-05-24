@@ -6,6 +6,12 @@ layout(location = 20) uniform mat4 view; //modelView * projection
 layout(location = 21) uniform mat4 projection;
 layout(location = 22) uniform mat4 modelView;
 layout(location = 23) uniform vec4 CamPosition;
+layout(location = 24) uniform vec3 Ld;
+layout(location = 25) uniform vec3 Kd;
+layout(location = 26) uniform vec3 La;
+layout(location = 27) uniform vec3 Ka;
+layout(location = 28) uniform vec3 Ls;
+layout(location = 29) uniform vec3 Ks;
 flat out vec4 vs_color;
 void getEyeSpace(out vec3 norm, out vec4 position)
 {
@@ -15,12 +21,6 @@ void getEyeSpace(out vec3 norm, out vec4 position)
 } 
 void main(void)
 {
-	vec3 Kd = vec3(0.5, 0.5, 0.5);
-	vec3 Ka = vec3(1.0, 1.0, 1.0);
-	vec3 Ks = vec3(0.5, 0.5, 0.5);
-	vec3 Ld = vec3(1.0, 1.0, 1.0);
-	vec3 La = vec3(0.0, 0.15, 0.0);	
-	vec3 Ls = vec3(1.0, 1.0, 1.0);	
 	float Shininess = 16.0;
 	vec3 tnorm;
 	vec4 eyeCoords;

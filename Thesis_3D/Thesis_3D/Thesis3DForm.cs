@@ -638,17 +638,27 @@ namespace Thesis_3D
                     foreach (var light in _lightObjects.Cast<LightObject>().Select((r, i) => new { Row = r, Index = i }))
                     {
                         light.Row.PositionLightUniform(175 + light.Index);
-                        light.Row.IntensityLightVectorUniform(24 + light.Index);
+                        light.Row.IntensityLightVectorUniform(27 + light.Index);
+                        renderObject.mirrorUnifrom(24);
+                        renderObject.ambientUnifrom(25);
+                        renderObject.diffusionUnifrom(26);
                     }
                 }
                 else if(_program == _program_Fong_fog && countLightObj > 0)
                 {
                     primaryLightObject.PositionLightUniform(18);
                     primaryLightObject.SetAttrFog(31, 1f, 30, 9f, 32, new Vector3(0.3f, 0.3f, 0.3f));
+                    primaryLightObject.IntensityLightVectorUniform(24);
+                    renderObject.mirrorUnifrom(29);
+                    renderObject.ambientUnifrom(27);
+                    renderObject.diffusionUnifrom(25);
                 }
                 else if(_program == _program_Fong_directed && countLightObj > 0)
                 {
                     if(primaryLightObject.uboLightInfo != -1) GL.BindBufferRange(BufferRangeTarget.UniformBuffer, 24, primaryLightObject.uboLightInfo, (IntPtr)0, primaryLightObject.blockSizeLightInfo);
+                    renderObject.mirrorUnifrom(29);
+                    renderObject.ambientUnifrom(27);
+                    renderObject.diffusionUnifrom(25);
                 }
                 else
                 {
@@ -974,6 +984,13 @@ namespace Thesis_3D
                 Vector3 diff = _renderObjects[_SelectID].getDiffusion();
                 Vector3 ambient = _renderObjects[_SelectID].getAmbient();
                 Vector3 mirror = _renderObjects[_SelectID].getMirror();
+                if (typeObject == TypeObjectRenderLight.LightSourceObject)
+                {
+                    var lightObject = _lightObjects.Where(x => x.ColorСhoice == _renderObjects[_SelectID].ColorСhoice).FirstOrDefault();
+                    diff = lightObject.DiffusionIntensity;
+                    ambient = lightObject.Ambient;
+                    mirror = lightObject.Mirror;
+                }
                 int changeNonAnalitik = -1;
                 var typeFigureChange = _renderObjects[_SelectID].geometricInfo.typeObjectCreate;
                 if (typeFigureChange != TypeObjectCreate.NonTypeObject)
@@ -1006,21 +1023,21 @@ namespace Thesis_3D
                         FormBorderStyle = FormBorderStyle.Sizable,
                         StartPosition = FormStartPosition.CenterScreen,
                     };
-                    Label lblDiffs = new Label() { Text = typeObject == TypeObjectRenderLight.LightSourceObject ? "Интенсивность освещения:" : "Коэффициенты рассеивание:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 120, Height = 30, Top = 380, Left = 190 };
+                    Label lblDiffs = new Label() { Text = typeObject == TypeObjectRenderLight.LightSourceObject ? "Интенсивность освещения:" : "Коэффициенты рассеивание:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 145, Height = 30, Top = 380, Left = 190 };
                     Label lblDiffR = new Label() { Text = "R:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 385, Left = 315 };
                     Label lblDiffG = new Label() { Text = "G:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 385, Left = 375 };
                     Label lblDiffB = new Label() { Text = "B:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 385, Left = 435 };
                     TextBox textBoxDiffR = new TextBox() { Text = diff.X.ToString(), Width = 40, Height = 30, Top = 383, Left = 335, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
                     TextBox textBoxDiffG = new TextBox() { Text = diff.Y.ToString(), Width = 40, Height = 30, Top = 383, Left = 395, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
                     TextBox textBoxDiffB = new TextBox() { Text = diff.Z.ToString(), Width = 40, Height = 30, Top = 383, Left = 455, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
-                    Label lblAmbients = new Label() { Text = typeObject == TypeObjectRenderLight.LightSourceObject ? "Интенсивность фонового света:" : "Коэффициенты отражения фоного света:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 125, Height = 30, Top = 417, Left = 190 };
+                    Label lblAmbients = new Label() { Text = typeObject == TypeObjectRenderLight.LightSourceObject ? "Интенсивность фонового света:" : "Коэффициенты отражения фоного света:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 145, Height = 30, Top = 417, Left = 190 };
                     Label lblAmbientR = new Label() { Text = "R:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 423, Left = 315 };
                     Label lblAmbientG = new Label() { Text = "G:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 423, Left = 375 };
                     Label lblAmbientB = new Label() { Text = "B:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 423, Left = 435 };
                     TextBox textBoxAmbientR = new TextBox() { Text = ambient.X.ToString(), Width = 40, Height = 30, Top = 421, Left = 335, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
                     TextBox textBoxAmbientG = new TextBox() { Text = ambient.Y.ToString(), Width = 40, Height = 30, Top = 421, Left = 395, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
                     TextBox textBoxAmbientB = new TextBox() { Text = ambient.Z.ToString(), Width = 40, Height = 30, Top = 421, Left = 455, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
-                    Label lblMirrors = new Label() { Text = typeObject == TypeObjectRenderLight.LightSourceObject ? "Интенсивность отраженного света:" : "Коэффициент зеркального отражения:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 125, Height = 30, Top = 452, Left = 190 };
+                    Label lblMirrors = new Label() { Text = typeObject == TypeObjectRenderLight.LightSourceObject ? "Интенсивность отраженного света:" : "Коэффициент зеркального отражения:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 145, Height = 30, Top = 452, Left = 190 };
                     Label lblMirrorR = new Label() { Text = "R:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 458, Left = 315 };
                     Label lblMirrorG = new Label() { Text = "G:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 458, Left = 375 };
                     Label lblMirrorB = new Label() { Text = "B:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 458, Left = 435 };

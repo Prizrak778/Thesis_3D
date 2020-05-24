@@ -12,17 +12,16 @@ layout(binding = 24) uniform SpotLightInfo{
 	float exponent_lgh;
 	float cutoff_lgh;
 } SLI;
+layout(location = 25) uniform vec3 Kd;
+layout(location = 27) uniform vec3 Ka;
+layout(location = 29) uniform vec3 Ks;
 
 out vec4 color;
 
 void main(void)
 {
-	
-	vec3 Kd = vec3(0.5, 0.5, 0.5);
-	vec3 Ka = vec3(0.0, 0.15, 0.0);
-	vec3 Ks = vec3(0.5, 0.5, 0.5);
 	float Shininess = 16;
-	vec3 color_temp = vec3(0.0, 0.15, 0.0);
+	vec3 color_temp = vec3(0.0, 0.0, 0.0);
 	vec3 n = normalize(tnorm);
 	vec3 s = normalize(vec3(SLI.position_lgh - eyePosition));
 	float angle = acos(dot(-s, SLI.direction_lgh));
