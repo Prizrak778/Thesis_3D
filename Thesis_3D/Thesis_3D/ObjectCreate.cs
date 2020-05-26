@@ -271,20 +271,20 @@ namespace Thesis_3D
             Vector4 tnorm = new Vector4(tnormXYZ, 1.0f);
             List<Vertex> vertices = new List<Vertex>
             {
+                new Vertex(new Vector4((transform * new Vector4(-side + 0, 0, -side + 0, 1.0f)).Xyz + translation, 1.0f), tnorm, new Vector2(0, 0)),
                 new Vertex(new Vector4((transform * new Vector4( 0, 0, 0, 1.0f)).Xyz + translation, 1.0f), tnorm, new Vector2(0.5f, 0.5f)),
                 new Vertex(new Vector4((transform * new Vector4( side + 0, 0, -side + 0, 1.0f)).Xyz + translation, 1.0f), tnorm, new Vector2(1f, 0f)),
-                new Vertex(new Vector4((transform * new Vector4(-side + 0, 0, -side + 0, 1.0f)).Xyz + translation, 1.0f), tnorm, new Vector2(0, 0)),
 
-                new Vertex(new Vector4((transform * new Vector4(-side + 0, 0,  side + 0, 1.0f)).Xyz + translation, 1.0f), tnorm, new Vector2(0f, 1f)),
+                new Vertex(new Vector4((transform * new Vector4(-side + 0, 0,  side + 0, 1.0f)).Xyz + translation, 1.0f), tnorm, new Vector2(1f, 0f)),
                 new Vertex(new Vector4((transform * new Vector4( 0, 0, 0, 1.0f)).Xyz + translation, 1.0f),  tnorm, new Vector2(0.5f, 0.5f)),
-                new Vertex(new Vector4((transform * new Vector4(-side + 0, 0, -side + 0, 0.0f)).Xyz + translation, 1.0f),  tnorm, new Vector2(0, 0)),
+                new Vertex(new Vector4((transform * new Vector4(-side + 0, 0, -side + 0, 0.0f)).Xyz + translation, 1.0f),  tnorm, new Vector2(1, 1)),
 
                 new Vertex(new Vector4((transform * new Vector4( side + 0, 0, -side + 0, 1.0f)).Xyz + translation, 1.0f),  tnorm, new Vector2(0f, 1f)),
                 new Vertex(new Vector4((transform * new Vector4( 0, 0, 0, 1.0f)).Xyz + translation, 1.0f),  tnorm, new Vector2(0.5f, 0.5f)),
                 new Vertex(new Vector4((transform * new Vector4( side + 0, 0,  side + 0, 1.0f)).Xyz + translation, 1.0f), tnorm, new Vector2(0, 0)),
 
                 new Vertex(new Vector4((transform * new Vector4(-side + 0, 0,  side + 0, 0.0f)).Xyz + translation, 1.0f), tnorm, new Vector2(0f, 1f)),
-                new Vertex(new Vector4((transform * new Vector4( side + 0, 0,  side + 0, 1.0f)).Xyz + translation, 1.0f),  tnorm, new Vector2(0, 0)),
+                new Vertex(new Vector4((transform * new Vector4( side + 0, 0,  side + 0, 1.0f)).Xyz + translation, 1.0f),  tnorm, new Vector2(1, 1)),
                 new Vertex(new Vector4((transform * new Vector4( 0, 0, 0, 1.0f)).Xyz + translation, 1.0f),  tnorm, new Vector2(0.5f, 0.5f)),
             };
             return vertices.ToArray();

@@ -20,6 +20,9 @@ namespace Thesis_3D
         private Matrix4 _ViewMatrix;
         private Matrix4 _MVP; //Modal * View * Matrix
 
+        private int shadowFBO;
+        private int depthTex;
+        private float far_plane = 1024;
         private int _program = -1;
         private int _program_contour = -1;
         private int _program_some_light = -1;
@@ -28,6 +31,10 @@ namespace Thesis_3D
         private int _program_Fong_fog = -1;
         private int _program_shadow_project = -1;
         private int _program_Fong = -1;
+        private int _program_shadow_map = -1;
+        private int _program_shadow_map_L = -1;
+        private int _program_shadow_map_test = -1;
+        private int _program_shadow_map_test_old = -1;
 
         private bool _contour = false;
         private int _SelectID = -1;
@@ -157,7 +164,8 @@ namespace Thesis_3D
             error = string.Empty;
             string VertexShader = @"Components\Shaders\vertexShader_c.vert";
             string FragentShader = @"Components\Shaders\fragmentShader.frag";
-            if((_program_contour = _program = CompileShaders(VertexShader, FragentShader)) == -1)
+            string GeometryShader = string.Empty;
+            if ((_program_contour = _program = CompileShaders(VertexShader, FragentShader)) == -1)
             {
                 error = "Ошибка при компиляции обычного шейдера";
                 return false;
@@ -165,12 +173,14 @@ namespace Thesis_3D
             VertexShader = @"Components\Shaders\vertexShader.vert";
             FragentShader = @"Components\Shaders\fragmentShader.frag";
             listProgram.Add(_program);
+
             if ((_program = CompileShaders(VertexShader, FragentShader)) == -1)
             {
                 error = "Ошибка при компиляции шейдера т.и. без отражения";
                 return false;
             }
             listProgram.Add(_program);
+
             VertexShader = @"Components\Shaders\vertexShader_mirror.vert";
             FragentShader = @"Components\Shaders\fragmentShader.frag";
             if ((_program = CompileShaders(VertexShader, FragentShader)) == -1)
@@ -179,6 +189,7 @@ namespace Thesis_3D
                 return false;
             }
             listProgram.Add(_program);
+
             VertexShader = @"Components\Shaders\vertexShader_double_mirror.vert";
             FragentShader = @"Components\Shaders\fragmentShader_double_mirror.frag";
             if ((_program = CompileShaders(VertexShader, FragentShader)) == -1)
@@ -187,6 +198,7 @@ namespace Thesis_3D
                 return false;
             }
             listProgram.Add(_program);
+
             VertexShader = @"Components\Shaders\vertexShader_flatshadow.vert";
             FragentShader = @"Components\Shaders\fragmentShader.frag";
             if ((_program = CompileShaders(VertexShader, FragentShader)) == -1)
@@ -195,6 +207,7 @@ namespace Thesis_3D
                 return false;
             }
             listProgram.Add(_program);
+
             VertexShader = @"Components\Shaders\vertexShader_some_light.vert";
             FragentShader = @"Components\Shaders\fragmentShader.frag";
             if ((_program = CompileShaders(VertexShader, FragentShader)) == -1)
@@ -204,6 +217,7 @@ namespace Thesis_3D
             }
             _program_some_light = _program;
             listProgram.Add(_program);
+
             VertexShader = @"Components\Shaders\vertexShader_Lgh_directed.vert";
             FragentShader = @"Components\Shaders\fragmentShader.frag";
             if ((_program = CompileShaders(VertexShader, FragentShader)) == -1)
@@ -212,6 +226,7 @@ namespace Thesis_3D
                 return false;
             }
             listProgram.Add(_program);
+
             VertexShader = @"Components\Shaders\vertexShader_Fong.vert";
             FragentShader = @"Components\Shaders\fragmentShader_Fong.frag";
             if ((_program = CompileShaders(VertexShader, FragentShader)) == -1)
@@ -219,8 +234,9 @@ namespace Thesis_3D
                 error = "Ошибка при компиляции шейдера затенение по Фонгу";
                 return false;
             }
-            listProgram.Add(_program);
             _program_Fong = _program;
+            listProgram.Add(_program);
+
             VertexShader = @"Components\Shaders\vertexShader_Fong.vert";
             FragentShader = @"Components\Shaders\fragmentShader_Fong_half.frag";
             if ((_program = CompileShaders(VertexShader, FragentShader)) == -1)
@@ -229,6 +245,7 @@ namespace Thesis_3D
                 return false;
             }
             listProgram.Add(_program);
+
             VertexShader = @"Components\Shaders\vertexShader_Fong.vert";
             FragentShader = @"Components\Shaders\fragmentShader_Fong_directed.frag";
             if ((_program = CompileShaders(VertexShader, FragentShader)) == -1)
@@ -238,6 +255,7 @@ namespace Thesis_3D
             }
             _program_Fong_directed = _program;
             listProgram.Add(_program);
+
             VertexShader = @"Components\Shaders\vertexShader_Fong.vert";
             FragentShader = @"Components\Shaders\fragmentShader_Fong_fog.frag";
             if ((_program = CompileShaders(VertexShader, FragentShader)) == -1)
@@ -247,6 +265,7 @@ namespace Thesis_3D
             }
             _program_Fong_fog = _program;
             listProgram.Add(_program);
+
             VertexShader = @"Components\Shaders\vertexShader_shadow.vert";
             FragentShader = @"Components\Shaders\fragmentShader_shadow.frag";
             if ((_program = CompileShaders(VertexShader, FragentShader)) == -1)
@@ -256,6 +275,7 @@ namespace Thesis_3D
             }
             _program_shadow_project = _program;
             listProgram.Add(_program);
+
             VertexShader = @"Components\Shaders\vertexShader_Lgh_directed_solar_effect.vert";
             FragentShader = @"Components\Shaders\fragmentShader_Lgh_directed_solar_effect.frag";
             if ((_program = CompileShaders(VertexShader, FragentShader)) == -1)
@@ -264,8 +284,86 @@ namespace Thesis_3D
                 return false;
             }
             _program_Lgh_directed_solar_effect = _program;
+
+            VertexShader = @"Components\Shaders\vertexShader_shadow_map_test.vert";
+            FragentShader = @"Components\Shaders\fragmentShader_shadow_map_test.frag";
+            if ((_program = CompileShaders(VertexShader, FragentShader)) == -1)
+            {
+                error = "Ошибка при компиляции шейдера глубины карты теней ";
+                return false;
+            }
+            _program_shadow_map_test = _program;
+            listProgram.Add(_program);
+
+            VertexShader = @"Components\Shaders\vertexShader_shadow_map.vert";
+            FragentShader = @"Components\Shaders\fragmentShader_shadow_map.frag";
+            if ((_program = CompileShaders(VertexShader, FragentShader)) == -1)
+            {
+                error = "Ошибка при компиляции шейдера карты теней";
+                return false;
+            }
+            _program_shadow_map = _program;
+            listProgram.Add(_program);
+
+            VertexShader = @"Components\Shaders\vertexShader_shadow_map.vert";
+            FragentShader = @"Components\Shaders\fragmentShader_shadow_map_old.frag";
+            if ((_program = CompileShaders(VertexShader, FragentShader)) == -1)
+            {
+                error = "Ошибка при компиляции шейдера старой карты теней ";
+                return false;
+            }
+            _program_shadow_map_test_old = _program;
+            listProgram.Add(_program);
+
+            VertexShader = @"Components\Shaders\vertexShader_shadow_map_L.vert";
+            GeometryShader = @"Components\Shaders\geometryShader_shadow_map_L.geom";
+            FragentShader = @"Components\Shaders\fragmentShader_shadow_map_L.frag";
+            if ((_program = CompileShaders(VertexShader, FragentShader, GeometryShader)) == -1)
+            {
+                error = "Ошибка при компиляции шейдера текстурный карты теней ";
+                return false;
+            }
+            _program_shadow_map_L = _program;
             return true;
         }
+
+        #region shadow_map_tex
+        private void init_tex_shadow()
+        {
+            float[] border = { 1.0f, 0.0f, 0.0f, 0.0f };
+
+            //Текстура с картой теней
+
+            GL.GenTextures(1, out depthTex);
+            GL.BindTexture(TextureTarget.TextureCubeMap, depthTex);
+            for (int i = 0; i < 6; i++)
+            {
+                //GL.TexImage2D(TextureTarget.TextureCubeMapPositiveX + i, 0, PixelInternalFormat.Depth32fStencil8, glControl.Height, glControl.Width, 0, PixelFormat.DepthComponent, PixelType.Float, IntPtr.Zero);
+                GL.TexImage2D(TextureTarget.TextureCubeMapPositiveX + i, 0, PixelInternalFormat.DepthComponent32f, 1024, 1024, 0, PixelFormat.DepthComponent, PixelType.Float, IntPtr.Zero);
+            }
+            GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
+            GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
+            GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge);
+            GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
+            GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapR, (int)TextureWrapMode.ClampToEdge);
+            //GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureBorderColor, border);
+            //GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureCompareMode, (int)TextureCompareMode.CompareRefToTexture);
+            //GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureCompareFunc, (int)DepthFunction.Less);
+
+            //GL.ActiveTexture(TextureUnit.Texture0);
+            //GL.BindTexture(TextureTarget.TextureCubeMap, depthTex);
+
+            GL.GenFramebuffers(1, out shadowFBO);
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, shadowFBO);
+            GL.FramebufferTexture(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthAttachment, depthTex, 0);
+            var check = GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer);
+            //GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthAttachment, TextureTarget.Texture2D, depthTex, 0);
+            GL.DrawBuffer(DrawBufferMode.None);
+            GL.ReadBuffer(ReadBufferMode.None);
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+        }
+
+        #endregion
 
         protected override void OnLoad(EventArgs e)
         {
@@ -279,7 +377,23 @@ namespace Thesis_3D
             {
                 throw new Exception(ErrorText);
             }
-            comboBoxShaders.Items.AddRange(new object[] { "Обычные цвета", "Т.И. без отражения", "Т.И. с отражением", "Т.И. с двойным отражением", "Т.И. с плоским затенением", "Несколько Т.И.", "Направленный источник", "Затенение по Фонгу", "Затенение по Фонгу с использованием вектора полпути", "Узконаправленный источник", "Туман", "Плоское затенение для одного элемента" });
+            init_tex_shadow();
+            comboBoxShaders.Items.AddRange(new object[] 
+              { "Обычные цвета",
+                  "Т.И. без отражения",
+                  "Т.И. с отражением",
+                  "Т.И. с двойным отражением",
+                  "Т.И. с плоским затенением",
+                  "Несколько Т.И.",
+                  "Направленный источник",
+                  "Затенение по Фонгу",
+                  "Затенение по Фонгу с использованием вектора полпути",
+                  "Узконаправленный источник",
+                  "Туман",
+                  "Плоское затенение для одного элемента",
+                  "Карта теней тест",
+                  "Карта теней",
+                  "Карта теней улучшенный" });
             comboBoxShaders.SelectedIndex = 0;
             Vector3 positionObject = new Vector3(-1.0f, 1.0f, 0.0f);
             primarySphereAt = new RenderObject(ObjectCreate.CreateSphere(40f, positionObject, 60, 60, 1, 1), positionObject, Color4.DeepSkyBlue, RandomColor(), locSide: 40f, locTypeObjectCreate: TypeObjectCreate.Sphere, locColBreakX: 60, locColBreakY: 60, locCoeffSX: 1, locCoeffSY: 1);
@@ -299,23 +413,23 @@ namespace Thesis_3D
                 positionObject = new Vector3(1, -(float)i + 2.0f, 0.0f);
                 _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f, positionObject), positionObject, Color4.LightCoral, RandomColor(), locSide: 0.5f, locTypeObjectCreate: TypeObjectCreate.SolidCube));
             }
-            positionObject = new Vector3(1, 4.0f, 0.0f);
-            _renderObjects.Add(new RenderObject(ObjectCreate.CreateSphere(1.5f, positionObject, 60, 60, 1, 1), positionObject, Color4.Brown, RandomColor(), locSide: 1.5f, locTypeObjectCreate: TypeObjectCreate.Sphere, locColBreakX: 60, locColBreakY: 60, locCoeffSX: 1, locCoeffSY: 1));
-            Vector3 positionLight = new Vector3(1.0f, 3.0f, 1.0f);
-            _lightObjects.Add(new LightObject(ObjectCreate.CreateSphere(5.0f, positionObject, 10, 10, 1, 1), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.3f, 0.3f, 0.0f), new Vector3(1.0f, 0.0f, 5f), _program_Fong_directed, side: 0.5f, locTypeObjectCreate: TypeObjectCreate.SolidCube, locColBreakX: 10, locColBreakY: 10, locCoeffSX: 1, locCoeffSY: 1));
+            //positionObject = new Vector3(1.0f);
+            //_renderObjects.Add(new RenderObject(ObjectCreate.CreateSphere(1.5f, positionObject, 60, 60, 1, 1), positionObject, Color4.Brown, RandomColor(), locSide: 1.5f, locTypeObjectCreate: TypeObjectCreate.Sphere, locColBreakX: 60, locColBreakY: 60, locCoeffSX: 1, locCoeffSY: 1));
+            Vector3 positionLight = new Vector3(-3, 1.0f, 0.0f);
+            _lightObjects.Add(new LightObject(ObjectCreate.CreateSphere(1.0f, positionLight, 10, 10, 1, 1), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.3f, 0.3f, 0.0f), new Vector3(1.0f, 0.0f, 5f), _program_Fong_directed, side: 1f, locTypeObjectCreate: TypeObjectCreate.SolidCube, locColBreakX: 10, locColBreakY: 10, locCoeffSX: 1, locCoeffSY: 1));
             primaryLightObject = _lightObjects[0];
-            primaryLightObject.trajctoryRenderObject = new TrajctoryRenderObject(
+            /*primaryLightObject.trajctoryRenderObject = new TrajctoryRenderObject(
                 new TrajectoryFunctions(300, (double x) => (Math.Cos(x)), 0.03f, -180, 180, 0, "cos(x)", true),
                 new TrajectoryFunctions(300, (double x) => (Math.Sin(x)), 0.03f, -180, 180, 0, "sin(y)", true),
                 new TrajectoryFunctions(100, (double x) => (x), 0.001f, -1, 1, 0, "z", false),
                 TargetTrajectory.Point,
                 new Vector4(0, 0, 0, 1f)
-                );
+                );*/
             primaryLightObject.Ambient = new Vector3(0.0f, 0.15f, 0.0f);
-            positionLight = new Vector3(4.0f, 3.0f, 1.0f);                                                                                                                                                                                     
+            /*positionLight = new Vector3(4.0f, 3.0f, 1.0f);                                                                                                                                                                                     
             _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f, positionLight), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.0f, 0.3f, 0.3f), new Vector3(1.0f, 0.0f, 5f), side: 0.1f, locTypeObjectCreate: TypeObjectCreate.SolidCube));
             positionLight = new Vector3(7.0f, 3.0f, 1.0f);                                                                                                                                                                                     
-            _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f, positionLight), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.3f, 0.0f, 0.3f), new Vector3(1.0f, 0.0f, 5f), side: 0.1f, locTypeObjectCreate: TypeObjectCreate.SolidCube));
+            _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f, positionLight), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.3f, 0.0f, 0.3f), new Vector3(1.0f, 0.0f, 5f), side: 0.1f, locTypeObjectCreate: TypeObjectCreate.SolidCube));*/
             /*for (int i = 0; i < 147; i++)
             {
                 positionLight = new Vector3(10.0f + 3*i, 3.0f, 1.0f);
@@ -608,7 +722,38 @@ namespace Thesis_3D
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             CreateProjection();
 
+            if ((_program == _program_shadow_map || _program == _program_shadow_map_test || _program == _program_shadow_map_test_old) && primaryLightObject != null)
+            {
+                var programSave = _program;
+                Matrix4 lightProjection = Matrix4.CreatePerspectiveFieldOfView(90f * (float)Math.PI / 180f, 1f, 0.01f, far_plane);
+                Matrix4[] shadowTransforms = new Matrix4[6];
+                Vector3 positionLight = primaryLightObject.getPositionRenderObject().Xyz * new Vector3(1.0f, 1.0f, 1.0f);
+                shadowTransforms[0] = Matrix4.LookAt(positionLight, positionLight + new Vector3( 1.0f,  0.0f,  0.0f), new Vector3(0, -1,  0)) * lightProjection;
+                shadowTransforms[1] = Matrix4.LookAt(positionLight, positionLight + new Vector3(-1.0f,  0.0f,  0.0f), new Vector3(0, -1,  0)) * lightProjection;
+                shadowTransforms[2] = Matrix4.LookAt(positionLight, positionLight + new Vector3( 0.0f,  1.0f,  0.0f), new Vector3(0,  0,  1)) * lightProjection;
+                shadowTransforms[3] = Matrix4.LookAt(positionLight, positionLight + new Vector3( 0.0f, -1.0f,  0.0f), new Vector3(0,  0, -1)) * lightProjection;
+                shadowTransforms[4] = Matrix4.LookAt(positionLight, positionLight + new Vector3( 0.0f,  0.0f,  1.0f), new Vector3(0, -1,  0)) * lightProjection;
+                shadowTransforms[5] = Matrix4.LookAt(positionLight, positionLight + new Vector3( 0.0f,  0.0f, -1.0f), new Vector3(0, -1,  0)) * lightProjection;
 
+                GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, shadowFBO);
+                GL.Clear(ClearBufferMask.DepthBufferBit);
+                GL.UseProgram(_program_shadow_map_L);
+                GL.Uniform1(7, far_plane);
+                for (int i = 0; i < 6; i++)
+                {
+                    var index_shadow_mat = GL.GetUniformLocation(_program_shadow_map_L, "shadowMatrices");
+                    GL.UniformMatrix4(index_shadow_mat + i, false, ref shadowTransforms[i]);
+                }
+                primaryLightObject.PositionLightUniform(18);
+                foreach (var renderObject in _renderObjects.Where(x=>x.TypeObject != TypeObjectRenderLight.LightSourceObject))
+                {
+                    RenderFigure(renderObject, PolygonMode.Fill);
+                    renderObject.Render();
+                }
+                _program = programSave;
+            }
+            GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, 0);
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             GL.UseProgram(_program);
             cameraFirstFace.SetPositionCamerShader(23);
             var countLightObj = _lightObjects.Count;
@@ -633,7 +778,33 @@ namespace Thesis_3D
                 RenderFigure(renderObject, PolygonMode.Fill);
                 Vector4 color = renderObject.geometricInfo.ColorObj;
                 GL.Uniform4(19, ref color);
-                if (_program == _program_some_light)
+                if ((_program == _program_shadow_map || _program == _program_shadow_map_test_old) && renderObject.TypeObject != TypeObjectRenderLight.LightSourceObject)
+                {
+                    GL.ActiveTexture(TextureUnit.Texture0);
+                    GL.BindTexture(TextureTarget.TextureCubeMap, depthTex);
+                    GL.Uniform1(7, far_plane);
+                    primaryLightObject.PositionLightUniform(18);
+                    primaryLightObject.IntensityLightVectorUniform(24);
+                    primaryLightObject.IntensityAmbient(26);
+                    primaryLightObject.IntensityMirror(28);
+                    renderObject.mirrorUnifrom(29);
+                    renderObject.ambientUnifrom(27);
+                    renderObject.diffusionUnifrom(25);
+                }
+                else if(_program == _program_shadow_map_test)
+                {
+                    GL.ActiveTexture(TextureUnit.Texture0);
+                    GL.BindTexture(TextureTarget.TextureCubeMap, depthTex);
+                    GL.Uniform1(7, far_plane);
+                    primaryLightObject.PositionLightUniform(18);
+                    primaryLightObject.IntensityLightVectorUniform(24);
+                    primaryLightObject.IntensityAmbient(26);
+                    primaryLightObject.IntensityMirror(28);
+                    renderObject.mirrorUnifrom(29);
+                    renderObject.ambientUnifrom(27);
+                    renderObject.diffusionUnifrom(25);
+                }
+                else if (_program == _program_some_light)
                 {
                     foreach (var light in _lightObjects.Cast<LightObject>().Select((r, i) => new { Row = r, Index = i }))
                     {
@@ -660,7 +831,7 @@ namespace Thesis_3D
                     renderObject.ambientUnifrom(27);
                     renderObject.diffusionUnifrom(25);
                 }
-                else
+                else if(_program != _program_shadow_map_L)
                 {
                     if (countLightObj > 0)
                     {
@@ -697,7 +868,6 @@ namespace Thesis_3D
                             }
                         }
                     }
-
                 }
                 renderObject.Render();
             }
