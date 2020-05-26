@@ -132,7 +132,8 @@ namespace Thesis_3D
                 0.01f,
                 400f);
             _ViewMatrix = cameraFirstFace.GetViewMatrix();
-            _MVP = _ViewMatrix * _projectionMatrix;
+            // В плане матриц перемножение проихсодит в обратном порядке в шейдерах это P * V * M здесь это M * V * P
+            _MVP = _ViewMatrix * _projectionMatrix; 
         }
         #endregion
 
