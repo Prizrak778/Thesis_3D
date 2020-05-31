@@ -1,8 +1,7 @@
-﻿using System;
-
-using OpenTK;
-using OpenTK.Graphics.OpenGL;
+﻿using OpenTK;
 using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
+using System;
 
 namespace Thesis_3D
 {
@@ -111,6 +110,7 @@ namespace Thesis_3D
         public TypeObjectRenderLight TypeObject = TypeObjectRenderLight.SimpleObject;
         public TrajctoryRenderObject trajctoryRenderObject; //траектория движения объекта
         public Matrix4 ModelMatrix = Matrix4.CreateTranslation(0, 0, 0); //Матрица смещения от стартовой позиции
+        public Matrix4 RotationMatrix = Matrix4.CreateTranslation(0, 0, 0); //Матрица смещения от стартовой позиции
         public Vector4 ColorСhoice; //Цвет объекта для буффера выбора
         public RenderObject(Vertex[] vertices, GeometricInfo locGeometricInfo, Color4 locСolorСhoice, TypeObjectRenderLight typeObject = TypeObjectRenderLight.SimpleObject, bool plane = false)
         {
@@ -267,6 +267,13 @@ namespace Thesis_3D
             ModelMatrix.ClearTranslation();
             translation += tr;
             ModelMatrix = Matrix4.CreateTranslation(translation);
+        }
+        public void changeRotateMstrix(Vector3 rt)
+        {
+            RotationMatrix =
+                Matrix4.CreateRotationX(MathHelper.DegreesToRadians(rt.X)) *
+                Matrix4.CreateRotationY(MathHelper.DegreesToRadians(rt.Y)) *
+                Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(rt.Z));
         }
         private void bufferProjectionShadow(Vertex[] vertices)
         {
