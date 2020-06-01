@@ -1024,7 +1024,6 @@ namespace Thesis_3D
                                 float a2 = pa2.X * pa3.X + pa2.Y * pa3.Y + pa2.Z * pa3.Z;
                                 float a3 = pa3.X * pa1.X + pa3.Y * pa1.Y + pa3.Z * pa1.Z;
                                 float total = (float)((Math.Acos(a1) + Math.Acos(a2) + Math.Acos(a3)) * 180 / Math.PI);
-                                flag = false;
                                 if (Math.Abs(total - 360) < 0.00000001)
                                 {
                                     flag = false;
