@@ -14,13 +14,11 @@ layout(location = 27) uniform vec3 Ka;
 layout(location = 28) uniform vec3 Ls;
 layout(location = 29) uniform vec3 Ks;
 layout(location = 30) uniform int flagLight;
-layout(binding = 6) buffer bufferObject
+layout(location = 31) uniform int offset;
+layout(location = 32) uniform int size;
+layout(binding = 3) buffer bufferObject
 {
 	vec4 vertexArray[];
-}; 
-layout(binding = 7) buffer bufferPosition
-{
-	mat4 modelViewPosition[];
 };
 out vec4 vs_color;
 
@@ -37,52 +35,47 @@ void main(void)
 	float D;
 	float mu;
 	float mu_znam;
-	float eps = 0.0000001;
+	float eps = 0.00000001;
 	float total;
 	float testFlag = 0;
 	const float PI = 3.1415926535897932384626433832795;
-	int j = 0;
-	int offset = int(positionArray[0].w);
-	for(int i = 0; i < 12 && flag == 0 && flagLight != 1; i+=3)
+	for(int i = 0; (i < vertexArray.length()) && (flag == 0) && (flagLight != 1); i+=3)
 	{
-		
-		if(length((vertexArray[i].xyz + positionArray[j].xyz) - (modelView * vec_position).xyz) < eps)
+		vec3 pa = vertexArray[i].xyz;
+		vec3 pb = vertexArray[i + 1].xyz;
+		vec3 pc = vertexArray[i + 2].xyz;
+		vec3 p2 = (modelView * vec_position).xyz;
+		if(offset <= i && i < (offset + size))
 		{
 			continue;
 		}
+		//testFlag = i;
+		N = normalize(cross((pb - pa), (pc - pa)));
+		D = - N.x * pa.x - N.y * pa.y - N.z * pa.z;
+		mu = N.x * LightPos.x + N.y * LightPos.y + N.z * LightPos.z;
 		
-		N = cross((vertexArray[i+1].xyz - vertexArray[i].xyz + positionArray[j].xyz  + positionArray[j].xyz), (vertexArray[i+2].xyz - vertexArray[i].xyz + positionArray[j].xyz  + positionArray[j].xyz));
-		normalize(N);
-		D = - N.x * vertexArray[i].x - N.y * vertexArray[i].y - N.z * vertexArray[i].z;
-		mu  = -(D + N.x * LightPos.x + N.y * LightPos.y + N.z * LightPos.z);
-		mu_znam = N.x * ((modelView * vec_position).x - LightPos.x) + N.y * ((modelView * vec_position).y - LightPos.y) + N.z * ((modelView * vec_position).z - LightPos.z);
+		mu  = -(D + mu);
+		mu_znam = N.x * (p2.x - LightPos.x) + N.y * (p2.y - LightPos.y) + N.z * (p2.z - LightPos.z);
 		if(abs(mu_znam)< eps)
 		{
 			continue;
 		}
 		mu = mu / mu_znam;
-		if(1 < mu || mu < 0)
+		if(mu < 0 || mu >= 1)
 		{
 			continue;
 		}
-		
-		vec3 p =  LightPos.xyz + mu * ((modelView * vec_position).xyz - LightPos.xyz);
-		vec3 p1 = normalize(vertexArray[i].xyz + positionArray[j].xyz - p);
-		vec3 p2 = normalize(vertexArray[i + 1].xyz + positionArray[j].xyz - p);
-		vec3 p3 = normalize(vertexArray[i + 2].xyz + positionArray[j].xyz - p);
-		float a1 = p1.x * p2.x + p1.y * p2.y + p1.z * p2.z;
-		float a2 = p2.x * p3.x + p2.y * p3.y + p2.z * p3.z;
-		float a3 = p3.x * p1.x + p3.y * p1.y + p3.z * p1.z;
+		vec3 p =  LightPos.xyz + mu * (p2 - LightPos.xyz);
+		vec3 pa1 = normalize(pa - p);
+		vec3 pa2 = normalize(pb - p);
+		vec3 pa3 = normalize(pc - p);
+		float a1 = pa1.x * pa2.x + pa1.y * pa2.y + pa1.z * pa2.z;
+		float a2 = pa2.x * pa3.x + pa2.y * pa3.y + pa2.z * pa3.z;
+		float a3 = pa3.x * pa1.x + pa3.y * pa1.y + pa3.z * pa1.z;
 		total = (acos(a1)+acos(a2)+acos(a3))*180/PI;
-		testFlag = 1;
-		if(abs(total-360) < eps)
+		if((total - 360) < eps)
 		{
 			flag = 1;
-		}
-		if(offset < i)
-		{
-			j++;
-			offset += int(positionArray[j].w);
 		}
 	}
 	float Shininess = 16.0;
@@ -106,6 +99,7 @@ void main(void)
 	
 	gl_Position = view * modelView * vec_position;
 	vs_color = vec4(vec3(ambient + diffuse + spec), 1.0);
-	//if(testFlag == 1) vs_color = vec4(1, 0 , 0 , 1);
-	if(flag == 1) vs_color = vec4(vec3(0), 1);
+	//if(testFlag > 0) vs_color = vec4(vec3(0.0), 1);
+	//if(testFlag > 1) vs_color = vec4(1, 0, 0, 1);
+	if(flag > 0) vs_color = vec4(vec3(0.0), 1);
 }
