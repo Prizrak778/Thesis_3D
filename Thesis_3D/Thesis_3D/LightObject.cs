@@ -46,7 +46,7 @@ namespace Thesis_3D
         }
         public void SetPositionLight(Matrix4 ModelMatrix)
         {
-            Position = StartPosition + ModelMatrix.Row3.Xyz;
+            Position = StartPosition + ModelMatrix.ExtractTranslation();
         }
         public void SetColorRadiation(Color4 color)
         {

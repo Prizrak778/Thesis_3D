@@ -17,7 +17,7 @@ out VS_OUT
 
 void main(void)
 {
-	vs_out.FragPos = vec3(modelView * vec_position);
+	vs_out.FragPos = vec3((modelView * vec_position).xyz);
 	vs_out.Normal = transpose(inverse(mat3(modelView)))*vec3(vec_normal);
 	vs_out.TexCoords = tex_coord;
 	gl_Position = view * modelView * vec_position;
