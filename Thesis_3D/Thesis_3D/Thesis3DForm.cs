@@ -1081,7 +1081,7 @@ namespace Thesis_3D
                         pointTarget = renderObjectTarget != null ? renderObjectTarget.getPositionRenderObject().Xyz : Vector3.Zero;
                     }
                     else pointTarget = renderObject.trajctoryRenderObject.GetPoint().Xyz;
-                    Vector3 translation = -(renderObject.getStartPosition()) + renderObject.trajctoryRenderObject.getValue() + pointTarget;
+                    Vector3 translation = renderObject.trajctoryRenderObject.getValue() + pointTarget;
                     renderObject.geometricInfo.TranslationMatrix = Matrix4.CreateTranslation(translation);
                     if (renderObject.TypeObject == TypeObjectRenderLight.LightSourceObject)
                     {
