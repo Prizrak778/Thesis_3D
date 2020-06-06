@@ -21,7 +21,6 @@ namespace Thesis_3D
         private Matrix4 _MVP; //Modal * View * Matrix
 
         private int pointShasowFBO = -1;
-        private int pointShasowPositionFBO = -1;
         private int shadowFBO;
         private int depthTex;
         private float far_plane = 1024;
@@ -380,52 +379,6 @@ namespace Thesis_3D
             return true;
         }
         #region BufferPointShadowns
-        private void ResetBufferPointShadownsPosition()
-        {
-            if (pointShasowPositionFBO == -1)
-            {
-                setBufferPointShadownsPosition();
-                return;
-            }
-            if (_renderObjects.Count < 1) return;
-            var sizeBuffer = 4 * _renderObjects.Where(x => x.TypeObject != TypeObjectRenderLight.LightSourceObject).Count();
-            if (sizeBuffer < 0) return;
-            var offsetVertex = 0;
-            float[] allPosition = new float[sizeBuffer];
-            foreach (var renderObject in _renderObjects.Where(x => x.TypeObject != TypeObjectRenderLight.LightSourceObject))
-            {
-
-                Vector3 positionObject = renderObject.ModelMatrix.ExtractTranslation();
-                allPosition[offsetVertex] = positionObject.X;
-                allPosition[offsetVertex + 1] = positionObject.Y;
-                allPosition[offsetVertex + 2] = positionObject.Z;
-                allPosition[offsetVertex + 3] = renderObject.BufferSize(); //Костыль или оптимизация??? 
-                offsetVertex += 4;
-            }
-            GL.BindBuffer(BufferTarget.ShaderStorageBuffer, pointShasowPositionFBO);
-            GL.BufferData(BufferTarget.ShaderStorageBuffer, allPosition.Length, allPosition, BufferUsageHint.DynamicDraw);
-        }
-        private void setBufferPointShadownsPosition()
-        {
-            if (_renderObjects.Count < 1) return;
-            var sizeBuffer = 4 * _renderObjects.Where(x => x.TypeObject != TypeObjectRenderLight.LightSourceObject).Count();
-            if (sizeBuffer < 0) return;
-            var offsetVertex = 0;
-            float[] allPosition = new float[sizeBuffer];
-            foreach (var renderObject in _renderObjects.Where(x => x.TypeObject != TypeObjectRenderLight.LightSourceObject))
-            {
-
-                Vector3 positionObject = renderObject.ModelMatrix.ExtractTranslation();
-                allPosition[offsetVertex] = positionObject.X;
-                allPosition[offsetVertex + 1] = positionObject.Y;
-                allPosition[offsetVertex + 2] = positionObject.Z;
-                allPosition[offsetVertex + 3] = renderObject.BufferSize(); //Костыль или оптимизация??? 
-                offsetVertex += 4;
-            }
-            GL.GenBuffers(1, out pointShasowPositionFBO);
-            GL.BindBuffer(BufferTarget.ShaderStorageBuffer, pointShasowPositionFBO);
-            GL.BufferData(BufferTarget.ShaderStorageBuffer, allPosition.Length, allPosition, BufferUsageHint.DynamicDraw);
-        }
 
         private void setBufferPointShadowns()
         {
@@ -444,10 +397,11 @@ namespace Thesis_3D
                 renderObject.ReadBuffer(vertexObject);
                 for(int i = 0; i < vertexObject.Length; i++)
                 {
-                    allVertex[offsetVertex + i * 4] = (vertexObject[i]._Position * renderObject.RotationMatrix * renderObject.ModelMatrix).X;
-                    allVertex[offsetVertex + i * 4 + 1] = (vertexObject[i]._Position * renderObject.RotationMatrix * renderObject.ModelMatrix).Y;
-                    allVertex[offsetVertex + i * 4 + 2] = (vertexObject[i]._Position * renderObject.RotationMatrix * renderObject.ModelMatrix).Z;
-                    allVertex[offsetVertex + i * 4 + 3] = (vertexObject[i]._Position * renderObject.RotationMatrix * renderObject.ModelMatrix).W;
+                    Vector4 positionObject = vertexObject[i]._Position * renderObject.geometricInfo.RotationMatrix * renderObject.geometricInfo.TranslationMatrix;
+                    allVertex[offsetVertex + i * 4] = positionObject.X;
+                    allVertex[offsetVertex + i * 4 + 1] = positionObject.Y;
+                    allVertex[offsetVertex + i * 4 + 2] = positionObject.Z;
+                    allVertex[offsetVertex + i * 4 + 3] = positionObject.W;
                 }
                 offsetVertex += renderObject.BufferSize() * 4;
             }
@@ -477,7 +431,7 @@ namespace Thesis_3D
                 renderObject.ReadBuffer(vertexObject);
                 for (int i = 0; i < vertexObject.Length; i++)
                 {
-                    Vector4 positionObject = vertexObject[i]._Position * renderObject.RotationMatrix * renderObject.ModelMatrix;
+                    Vector4 positionObject = vertexObject[i]._Position * renderObject.geometricInfo.RotationMatrix * renderObject.geometricInfo.TranslationMatrix;
                     allVertex[offsetVertex + i * 4] = positionObject.X;
                     allVertex[offsetVertex + i * 4 + 1] = positionObject.Y;
                     allVertex[offsetVertex + i * 4 + 2] = positionObject.Z;
@@ -566,27 +520,27 @@ namespace Thesis_3D
             });
             comboBoxShaders.SelectedIndex = 0;
             Vector3 positionObject = new Vector3(-1.0f, 1.0f, 0.0f);
-            primarySphereAt = new RenderObject(ObjectCreate.CreateSphere(40f, positionObject, 60, 60, 1, 1), positionObject, Color4.DeepSkyBlue, RandomColor(), locSide: 40f, locTypeObjectCreate: TypeObjectCreate.Sphere, locColBreakX: 60, locColBreakY: 60, locCoeffSX: 1, locCoeffSY: 1);
-            _renderObjects.Add(new RenderObject(ObjectCreate.CreatePlane(1.5f, positionObject, 0, 0, 45), positionObject, Color4.LightCyan, RandomColor(), plane: true, locSide: 1.5f, locTypeObjectCreate: TypeObjectCreate.Plane, locAngleZ: 45));
+            primarySphereAt = new RenderObject(ObjectCreate.CreateSphere(40f, 60, 60, 1, 1), positionObject, Color4.DeepSkyBlue, RandomColor(), locSide: 40f, locTypeObjectCreate: TypeObjectCreate.Sphere, locColBreakX: 60, locColBreakY: 60, locCoeffSX: 1, locCoeffSY: 1);
+            _renderObjects.Add(new RenderObject(ObjectCreate.CreatePlane(1.5f), positionObject, Color4.LightCyan, RandomColor(), plane: true, locSide: 1.5f, locTypeObjectCreate: TypeObjectCreate.Plane, locAngleZ: 45));
             primaryRenderObject = _renderObjects[0];
             positionObject = new Vector3(0.0f, 0.0f, 0.0f);
-            _renderObjects.Add(new RenderObject(ObjectCreate.CreatePlane(15f, positionObject, 0, 0, 0), positionObject, Color4.Green, RandomColor(), plane: true, locSide: 40f, locTypeObjectCreate: TypeObjectCreate.Plane));
+            _renderObjects.Add(new RenderObject(ObjectCreate.CreatePlane(15f), positionObject, Color4.Green, RandomColor(), plane: true, locSide: 40f, locTypeObjectCreate: TypeObjectCreate.Plane));
             positionObject = new Vector3(0.0f, 2.0f, 0.0f);
-            _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f, positionObject), positionObject, Color4.LightCoral, RandomColor(), locSide: 0.5f, locTypeObjectCreate: TypeObjectCreate.SolidCube));
+            _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f), positionObject, Color4.LightCoral, RandomColor(), locSide: 0.5f, locTypeObjectCreate: TypeObjectCreate.SolidCube));
             for (int i = 0; i < 10; i++)
             {
                 positionObject = new Vector3((float)i + 1, 2.0f, 0.0f);
-                _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f, positionObject), positionObject, Color4.LightCoral, RandomColor(), locSide: 0.5f, locTypeObjectCreate: TypeObjectCreate.SolidCube));
+                _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f), positionObject, Color4.LightCoral, RandomColor(), locSide: 0.5f, locTypeObjectCreate: TypeObjectCreate.SolidCube));
             }
             for (int i = 0; i < 10; i++)
             {
                 positionObject = new Vector3(1, -(float)i + 2.0f, 0.0f);
-                _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f, positionObject), positionObject, Color4.LightCoral, RandomColor(), locSide: 0.5f, locTypeObjectCreate: TypeObjectCreate.SolidCube));
+                _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f), positionObject, Color4.LightCoral, RandomColor(), locSide: 0.5f, locTypeObjectCreate: TypeObjectCreate.SolidCube));
             }
             positionObject = new Vector3(1.0f);
             //_renderObjects.Add(new RenderObject(ObjectCreate.CreateSphere(1.5f, positionObject, 60, 60, 1, 1), positionObject, Color4.Brown, RandomColor(), locSide: 1.5f, locTypeObjectCreate: TypeObjectCreate.Sphere, locColBreakX: 60, locColBreakY: 60, locCoeffSX: 1, locCoeffSY: 1));
             Vector3 positionLight = new Vector3(-3, 1.0f, 0.0f);
-            _lightObjects.Add(new LightObject(ObjectCreate.CreateSphere(1.0f, positionLight, 10, 10, 1, 1), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.3f, 0.3f, 0.0f), new Vector3(1.0f, 0.0f, 5f), _program_Fong_directed, side: 1f, locTypeObjectCreate: TypeObjectCreate.SolidCube, locColBreakX: 10, locColBreakY: 10, locCoeffSX: 1, locCoeffSY: 1));
+            _lightObjects.Add(new LightObject(ObjectCreate.CreateSphere(1.0f, 10, 10, 1, 1), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.3f, 0.3f, 0.0f), new Vector3(1.0f, 0.0f, 5f), _program_Fong_directed, side: 1f, locTypeObjectCreate: TypeObjectCreate.SolidCube, locColBreakX: 10, locColBreakY: 10, locCoeffSX: 1, locCoeffSY: 1));
             primaryLightObject = _lightObjects[0];
             
             /*primaryLightObject.trajctoryRenderObject = new TrajctoryRenderObject(
@@ -598,13 +552,13 @@ namespace Thesis_3D
                 );*/
             primaryLightObject.Ambient = new Vector3(0.0f, 0.15f, 0.0f);
             positionLight = new Vector3(4.0f, 3.0f, 1.0f);                                                                                                                                                                                     
-            _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f, positionLight), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.0f, 0.3f, 0.3f), new Vector3(1.0f, 0.0f, 5f), side: 0.1f, locTypeObjectCreate: TypeObjectCreate.SolidCube));
-            positionLight = new Vector3(7.0f, 3.0f, 1.0f);                                                                                                                                                                                     
-            _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f, positionLight), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.3f, 0.0f, 0.3f), new Vector3(1.0f, 0.0f, 5f), side: 0.1f, locTypeObjectCreate: TypeObjectCreate.SolidCube));
+            _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.0f, 0.3f, 0.3f), new Vector3(1.0f, 0.0f, 5f), side: 0.1f, locTypeObjectCreate: TypeObjectCreate.SolidCube));
+            positionLight = new Vector3(7.0f, 3.0f, 1.0f);                                                                                                                                                                      
+            _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.3f, 0.0f, 0.3f), new Vector3(1.0f, 0.0f, 5f), side: 0.1f, locTypeObjectCreate: TypeObjectCreate.SolidCube));
             for (int i = 0; i < 2; i++)
             {
                 positionLight = new Vector3(10.0f + 3*i, 3.0f, 1.0f);
-                _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f, positionLight), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.3f, 0.0f, 0.3f), new Vector3(1.0f, 0.0f, 5f), side: 0.1f, locTypeObjectCreate: TypeObjectCreate.SolidCube));
+                _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.3f, 0.0f, 0.3f), new Vector3(1.0f, 0.0f, 5f), side: 0.1f, locTypeObjectCreate: TypeObjectCreate.SolidCube));
             }
             foreach (var obj in _lightObjects)
             {
@@ -617,7 +571,6 @@ namespace Thesis_3D
             }
             bufferSize = bufferSize + 1 - 1;
             setBufferPointShadowns();
-            setBufferPointShadownsPosition();
         }
 
         protected override void OnClosing(CancelEventArgs e)
@@ -842,6 +795,24 @@ namespace Thesis_3D
                     case Keys.D9:
                         _renderObjects[_SelectID].changeModelMstrix(new Vector3(0, 1, 0));
                         break;
+                    case Keys.F:
+                        _renderObjects[_SelectID].changeRotateMstrix(new Vector3(-1, 0, 0));
+                        break;
+                    case Keys.R:
+                        _renderObjects[_SelectID].changeRotateMstrix(new Vector3(1, 0, 0));
+                        break;
+                    case Keys.T:
+                        _renderObjects[_SelectID].changeRotateMstrix(new Vector3(0, -1, 0));
+                        break;
+                    case Keys.G:
+                        _renderObjects[_SelectID].changeRotateMstrix(new Vector3(0, 1, 0));
+                        break;
+                    case Keys.Y:
+                        _renderObjects[_SelectID].changeRotateMstrix(new Vector3(0, 0, -1));
+                        break;                                                           
+                    case Keys.H:                                                         
+                        _renderObjects[_SelectID].changeRotateMstrix(new Vector3(0, 0,  1));
+                        break;
                 }
                 if(_renderObjects[_SelectID].TypeObject == TypeObjectRenderLight.LightSourceObject)
                 {
@@ -849,7 +820,7 @@ namespace Thesis_3D
                     {
                         if(lightObject.ColorСhoice == _renderObjects[_SelectID].ColorСhoice)
                         {
-                            lightObject.SetPositionLight(_renderObjects[_SelectID].ModelMatrix);
+                            lightObject.SetPositionLight(_renderObjects[_SelectID].geometricInfo.TranslationMatrix);
                             if (_program_Fong_directed != -1 && lightObject.uboLightInfo != -1) lightObject.UpdatePositionForBlock(_program_Fong_directed);
                             break; // -_-
                         }
@@ -887,7 +858,7 @@ namespace Thesis_3D
 
         private void RenderFigure(RenderObject renderObject, PolygonMode polygon)
         {
-            Matrix4 ModelView = renderObject.RotationMatrix * renderObject.ModelMatrix;
+            Matrix4 ModelView = renderObject.geometricInfo.RotationMatrix * renderObject.geometricInfo.TranslationMatrix;
             renderObject.Bind();
             GL.UniformMatrix4(20, false, ref _MVP);
             //GL.UniformMatrix4(21, false, ref _projectionMatrix);
@@ -951,7 +922,8 @@ namespace Thesis_3D
                     if (countLightObj > 0 && countRenderObj > 0 && primaryLightObject.ColorСhoice != renderObject.ColorСhoice && primaryRenderObject.ColorСhoice != renderObject.ColorСhoice)
                     {
                         GL.UseProgram(_program_shadow_project);
-                        GL.UniformMatrix4(23, false, ref primaryRenderObject.ModelMatrix);
+                        Matrix4 ModelView = renderObject.geometricInfo.RotationMatrix * renderObject.geometricInfo.TranslationMatrix;
+                        GL.UniformMatrix4(23, false, ref ModelView);
                         GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 5, primaryRenderObject.ShadowProjectBuffer());
                         GL.BindBuffer(BufferTarget.ShaderStorageBuffer, 0);
                         RenderFigure(renderObject, PolygonMode.Fill);
@@ -962,7 +934,8 @@ namespace Thesis_3D
                 }
                 else if (_program == _program_shadow_point)
                 {
-                    Vector4 vector4 = new Vector4(renderObject.getStartPosition(), 1.0f) * renderObject.ModelMatrix;
+                    Matrix4 ModelView = renderObject.geometricInfo.RotationMatrix * renderObject.geometricInfo.TranslationMatrix;
+                    Vector4 vector4 = new Vector4(renderObject.getStartPosition(), 1.0f) * ModelView;
                     GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 3, pointShasowFBO);
                     GL.Uniform1(30, (int)renderObject.TypeObject);
                     GL.Uniform1(31, offset);
@@ -1006,10 +979,11 @@ namespace Thesis_3D
 
                             for(int j = 0; j < vertexOtherObject.Length && flag; j+=3)
                             {
-                                Vector3 pa = (vertexOtherObject[j]._Position * renderOtherObject.ModelMatrix).Xyz;
-                                Vector3 pb = (vertexOtherObject[j + 1]._Position * renderOtherObject.ModelMatrix).Xyz;
-                                Vector3 pc = (vertexOtherObject[j + 2]._Position * renderOtherObject.ModelMatrix).Xyz;
-                                Vector3 p2 = (vertexObject[i]._Position * renderObject.ModelMatrix).Xyz; //И тут и шейдеры исправить модельное перемножение
+                                Matrix4 ModelView = renderObject.geometricInfo.RotationMatrix * renderObject.geometricInfo.TranslationMatrix;
+                                Vector3 pa = (vertexOtherObject[j]._Position * ModelView).Xyz;
+                                Vector3 pb = (vertexOtherObject[j + 1]._Position * ModelView).Xyz;
+                                Vector3 pc = (vertexOtherObject[j + 2]._Position * ModelView).Xyz;
+                                Vector3 p2 = (vertexObject[i]._Position * ModelView).Xyz; //И тут и шейдеры исправить модельное перемножение
                                 Vector3 N = Vector3.Normalize(Vector3.Cross((pb - pa), (pc - pa)));
                                 float D = -N.X * pa.X - N.Y * pa.Y - N.Z * pa.Z;
                                 float mu = N.X * primaryLightObject.Position.X + N.Y * primaryLightObject.Position.Y + N.Z * primaryLightObject.Position.Z;
@@ -1099,7 +1073,7 @@ namespace Thesis_3D
                 }
                 if (renderObject.trajctoryRenderObject.useTrajectory)
                 {
-                    renderObject.ModelMatrix.ClearTranslation();
+                    renderObject.geometricInfo.TranslationMatrix.ClearTranslation();
                     Vector3 pointTarget = Vector3.Zero;
                     if (renderObject.trajctoryRenderObject.target == TargetTrajectory.Object)
                     {
@@ -1108,14 +1082,14 @@ namespace Thesis_3D
                     }
                     else pointTarget = renderObject.trajctoryRenderObject.GetPoint().Xyz;
                     Vector3 translation = -(renderObject.getStartPosition()) + renderObject.trajctoryRenderObject.getValue() + pointTarget;
-                    renderObject.ModelMatrix = Matrix4.CreateTranslation(translation);
+                    renderObject.geometricInfo.TranslationMatrix = Matrix4.CreateTranslation(translation);
                     if (renderObject.TypeObject == TypeObjectRenderLight.LightSourceObject)
                     {
                         foreach (var lightObject in _lightObjects)
                         {
                             if (lightObject.ColorСhoice == renderObject.ColorСhoice)
                             {
-                                lightObject.SetPositionLight(renderObject.ModelMatrix);
+                                lightObject.SetPositionLight(renderObject.geometricInfo.TranslationMatrix);
                                 if (_program_Fong_directed != -1 && lightObject.uboLightInfo != -1) lightObject.UpdatePositionForBlock(_program_Fong_directed);
                                 break; // -_-
                             }
@@ -1441,6 +1415,17 @@ namespace Thesis_3D
                 }
                 if (changeNonAnalitik == 0)
                 {
+                    var anlgeQauternion = _renderObjects[_SelectID].geometricInfo.RotationMatrix.ExtractRotation();
+                    var tau = Math.Acos(anlgeQauternion.W);
+                    var ax = 0;
+                    var ay = 0;
+                    var az = 0;
+                    if (Math.Abs(tau) > 0)
+                    {
+                        ax = Convert.ToInt32(Math.Round(anlgeQauternion.X / Math.Sin(tau) * tau / MathHelper.PiOver2 * 180, MidpointRounding.AwayFromZero));
+                        ay = Convert.ToInt32(Math.Round(anlgeQauternion.Y / Math.Sin(tau) * tau / MathHelper.PiOver2 * 180, MidpointRounding.AwayFromZero));
+                        az = Convert.ToInt32(Math.Round(anlgeQauternion.Z / Math.Sin(tau) * tau / MathHelper.PiOver2 * 180, MidpointRounding.AwayFromZero));
+                    }
                     Form dlgChangeFigure = new Form()
                     {
                         Text = "Изменение объекта",
@@ -1471,6 +1456,7 @@ namespace Thesis_3D
                     TextBox textBoxMirrorG = new TextBox() { Text = mirror.Y.ToString(), Width = 40, Height = 30, Top = 456, Left = 395, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
                     TextBox textBoxMirrorB = new TextBox() { Text = mirror.Z.ToString(), Width = 40, Height = 30, Top = 456, Left = 455, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
                     Color4 colorSurface = new Color4();
+
                     colorSurface.R = _renderObjects[_SelectID].geometricInfo.ColorObj.X;
                     colorSurface.G = _renderObjects[_SelectID].geometricInfo.ColorObj.Y;
                     colorSurface.B = _renderObjects[_SelectID].geometricInfo.ColorObj.Z;
@@ -1490,9 +1476,9 @@ namespace Thesis_3D
                     Label lblAngleX = new Label() { Text = "X:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 528, Left = 450 };
                     Label lblAngleY = new Label() { Text = "Y:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 528, Left = 510 };
                     Label lblAngleZ = new Label() { Text = "Z:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 528, Left = 570 };
-                    TextBox textBoxAngleX = new TextBox() { Text = "0", Width = 40, Height = 30, Top = 525, Left = 470, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
-                    TextBox textBoxAngleY = new TextBox() { Text = "0", Width = 40, Height = 30, Top = 525, Left = 530, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
-                    TextBox textBoxAngleZ = new TextBox() { Text = "0", Width = 40, Height = 30, Top = 525, Left = 590, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
+                    NumericUpDown textBoxAngleX = new NumericUpDown() { Value = ax, Width = 40, Height = 30, Top = 525, Left = 470, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
+                    NumericUpDown textBoxAngleY = new NumericUpDown() { Value = ay, Width = 40, Height = 30, Top = 525, Left = 530, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
+                    NumericUpDown textBoxAngleZ = new NumericUpDown() { Value = az, Width = 40, Height = 30, Top = 525, Left = 590, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
                     Label lblCurrentPosition = new Label() { Text = "Текущая позиция:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 110, Height = 30, Top = 500, Left = 20  };
                     Label lblCurrentPositionX = new Label() { Text = "X:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 500, Left = 150 };
                     Label lblCurrentPositionY = new Label() { Text = "Y:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 500, Left = 210 };
@@ -1712,7 +1698,7 @@ namespace Thesis_3D
                         }
                         _renderObjects[_SelectID].geometricInfo.ColorObj = new Vector4(colorSurface.R, colorSurface.G, colorSurface.B, trackBar.Value / 10f);
                         _renderObjects[_SelectID].changeModelMstrix(new Vector3(float.Parse(textBoxCoordX.Text), float.Parse(textBoxCoordY.Text), float.Parse(textBoxCoordZ.Text)));
-                        _renderObjects[_SelectID].changeRotateMstrix(new Vector3(float.Parse(textBoxAngleX.Text), float.Parse(textBoxAngleY.Text), float.Parse(textBoxAngleZ.Text)));
+                        _renderObjects[_SelectID].changeRotateMstrix(new Vector3((float)Convert.ToDouble(textBoxAngleX.Value), (float)Convert.ToDouble(textBoxAngleY.Value), (float)Convert.ToDouble(textBoxAngleZ.Value)));
                         if (typeObject == TypeObjectRenderLight.LightSourceObject)
                         {
                             var lightObject = _lightObjects.Where(x => x.ColorСhoice == _renderObjects[_SelectID].ColorСhoice).FirstOrDefault();
@@ -1721,7 +1707,7 @@ namespace Thesis_3D
                             lightObject.Mirror = new Vector3(float.Parse(textBoxMirrorR.Text), float.Parse(textBoxMirrorG.Text), float.Parse(textBoxMirrorB.Text));
                             if (lightObject != null)
                             {
-                                lightObject.SetPositionLight(_renderObjects[_SelectID].ModelMatrix);
+                                lightObject.SetPositionLight(_renderObjects[_SelectID].geometricInfo.TranslationMatrix);
                                 if (_program_Fong_directed != -1 && lightObject.uboLightInfo != -1) lightObject.UpdatePositionForBlock(_program_Fong_directed);
                             }
                         }

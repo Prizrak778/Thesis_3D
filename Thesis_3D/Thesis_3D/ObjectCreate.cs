@@ -44,13 +44,16 @@ namespace Thesis_3D
         public int coeffSX;
         public int coeffSY;
         //Углы поворота по осямs
-        public int angleX; 
-        public int angleY;
-        public int angleZ;
+        public int StartAngleX; 
+        public int StartAngleY;
+        public int StartAngleZ;
         //Тип созданного объекта
         public TypeObjectCreate typeObjectCreate;
-        //Цвет объектаs
-        public Vector4 ColorObj; 
+        //Цвет объекта
+        public Vector4 ColorObj;
+        //
+        public Matrix4 TranslationMatrix;
+        public Matrix4 RotationMatrix;
 
         public GeometricInfo(GeometricInfo geometricInfo)
         {
@@ -60,11 +63,13 @@ namespace Thesis_3D
             colBreakY = geometricInfo.colBreakY;
             coeffSX = geometricInfo.coeffSX;
             coeffSY = geometricInfo.coeffSX;
-            angleX = geometricInfo.angleX;
-            angleY = geometricInfo.angleY;
-            angleZ = geometricInfo.angleZ;
+            StartAngleX = geometricInfo.StartAngleX;
+            StartAngleY = geometricInfo.StartAngleY;
+            StartAngleZ = geometricInfo.StartAngleZ;
             typeObjectCreate = geometricInfo.typeObjectCreate;
             ColorObj = geometricInfo.ColorObj;
+            TranslationMatrix = geometricInfo.TranslationMatrix;
+            RotationMatrix = geometricInfo.RotationMatrix;
         }
         public GeometricInfo(Vector3 locStartPosition, Vector4 locColorObj, float locSide = 1.0f, int locColBreakX = 1, int locColBreakY = 1, int locCoeffSX = 1, int locCoeffSY = 1, int locAngleX = 0, int locAngleY = 0, int locAngleZ = 0, TypeObjectCreate locTypeObjectCreate = TypeObjectCreate.NonTypeObject)
         {
@@ -74,11 +79,13 @@ namespace Thesis_3D
             colBreakY = locColBreakY;
             coeffSX = locCoeffSX;
             coeffSY = locCoeffSY;
-            angleX = locAngleX;
-            angleY = locAngleY;
-            angleZ = locAngleZ;
+            StartAngleX = locAngleX;
+            StartAngleY = locAngleY;
+            StartAngleZ = locAngleZ;
             typeObjectCreate = locTypeObjectCreate;
             ColorObj = locColorObj;
+            TranslationMatrix  = Matrix4.CreateTranslation(StartPosition);
+            RotationMatrix = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(StartAngleX)) * Matrix4.CreateRotationY(MathHelper.DegreesToRadians(StartAngleY)) * Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(StartAngleZ));
         }
         public GeometricInfo(Vector4 locColorObj, float shiftx = 0, float shifty = 0, float shiftz = 0, float locSide = 1.0f, int locColBreakX = 1, int locColBreakY = 1, int locCoeffSX = 1, int locCoeffSY = 1, int locAngleX = 0, int locAngleY = 0, int locAngleZ = 0, TypeObjectCreate locTypeObjectCreate = TypeObjectCreate.NonTypeObject)
         {
@@ -88,11 +95,13 @@ namespace Thesis_3D
             colBreakY = locColBreakY;
             coeffSX = locCoeffSX;
             coeffSY = locCoeffSY;
-            angleX = locAngleX;
-            angleY = locAngleY;
-            angleZ = locAngleZ;
+            StartAngleX = locAngleX;
+            StartAngleY = locAngleY;
+            StartAngleZ = locAngleZ;
             typeObjectCreate = locTypeObjectCreate;
             ColorObj = locColorObj;
+            TranslationMatrix = Matrix4.CreateTranslation(StartPosition);
+            RotationMatrix = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(StartAngleX)) * Matrix4.CreateRotationY(MathHelper.DegreesToRadians(StartAngleY)) * Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(StartAngleZ));
         }
         public GeometricInfo(Vector3 locStartPosition, float colorR = 0, float colorG = 0, float colorB = 0, float colorA = 0,float locSide = 1.0f, int locColBreakX = 1, int locColBreakY = 1, int locCoeffSX = 1, int locCoeffSY = 1, int locAngleX = 0, int locAngleY = 0, int locAngleZ = 0, TypeObjectCreate locTypeObjectCreate = TypeObjectCreate.NonTypeObject)
         {
@@ -102,11 +111,13 @@ namespace Thesis_3D
             colBreakY = locColBreakY;
             coeffSX = locCoeffSX;
             coeffSY = locCoeffSY;
-            angleX = locAngleX;
-            angleY = locAngleY;
-            angleZ = locAngleZ;
+            StartAngleX = locAngleX;
+            StartAngleY = locAngleY;
+            StartAngleZ = locAngleZ;
             typeObjectCreate = locTypeObjectCreate;
             ColorObj = new Vector4(colorR, colorG, colorB, colorA);
+            TranslationMatrix = Matrix4.CreateTranslation(StartPosition);
+            RotationMatrix = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(StartAngleX)) * Matrix4.CreateRotationY(MathHelper.DegreesToRadians(StartAngleY)) * Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(StartAngleZ));
         }
         public GeometricInfo(float colorR = 0, float colorG = 0, float colorB = 0, float colorA = 0, float shiftx = 0, float shifty = 0, float shiftz = 0, float locSide = 1.0f, int locColBreakX = 1, int locColBreakY = 1, int locCoeffSX = 1, int locCoeffSY = 1, int locAngleX = 0, int locAngleY = 0, int locAngleZ = 0, TypeObjectCreate locTypeObjectCreate = TypeObjectCreate.NonTypeObject)
         {
@@ -116,11 +127,13 @@ namespace Thesis_3D
             colBreakY = locColBreakY;
             coeffSX = locCoeffSX;
             coeffSY = locCoeffSY;
-            angleX = locAngleX;
-            angleY = locAngleY;
-            angleZ = locAngleZ;
+            StartAngleX = locAngleX;
+            StartAngleY = locAngleY;
+            StartAngleZ = locAngleZ;
             typeObjectCreate = locTypeObjectCreate;
             ColorObj = new Vector4(colorR, colorG, colorB, colorA);
+            TranslationMatrix = Matrix4.CreateTranslation(StartPosition);
+            RotationMatrix = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(StartAngleX)) * Matrix4.CreateRotationY(MathHelper.DegreesToRadians(StartAngleY)) * Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(StartAngleZ));
         }
     }
     class ObjectCreate
@@ -134,7 +147,7 @@ namespace Thesis_3D
             Vector3 startPosition = Vector3.Zero;
             Vector4 colorObj = new Vector4(0, 0, 0, 1);
             geometricInfo = new GeometricInfo(startPosition, colorObj);
-            vertices = CreateSolidCube(geometricInfo.side, startPosition);
+            vertices = CreateSolidCube(geometricInfo.side);
         }
         ObjectCreate(GeometricInfo locGeometricInfo, Vertex[] locVertices)
         {
@@ -153,163 +166,110 @@ namespace Thesis_3D
         }
         public static Vertex[] CreateSolidCube(GeometricInfo geometricInfo)//размер куба, смещение y/-y, смещение x/-x, смещение z/-z цвет
         {
-            return CreateSolidCube(geometricInfo.side, geometricInfo.StartPosition.X, geometricInfo.StartPosition.Y, geometricInfo.StartPosition.Z, geometricInfo.angleX, geometricInfo.angleY, geometricInfo.angleZ);
+            return CreateSolidCube(geometricInfo.side);
         }
-        public static Vertex[] CreateSolidCube(float side, Vector3 shift, int alphaX = 0, int alphaY = 0, int alphaZ = 0)//размер куба, смещение y/-y, смещение x/-x, смещение z/-z цвет
+        public static Vertex[] CreateSolidCube(float side)//размер куба, смещение y/-y, смещение x/-x, смещение z/-z цвет
         {
-            return CreateSolidCube(side, shift.X, shift.Y, shift.Z, alphaX, alphaY, alphaZ);
-        }
-        public static Vertex[] CreateSolidCube(float side, float shift_lr, float shift_y, float shift_ud, int alphaX = 0, int alphaY = 0, int alphaZ = 0)//размер куба, смещение y/-y, смещение x/-x, смещение z/-z цвет
-        {
-            alphaX %= 360;
-            alphaY %= 360;
-            alphaZ %= 360;
-            float angle_x = MathHelper.DegreesToRadians(alphaX);
-            float angle_y = MathHelper.DegreesToRadians(alphaY);
-            float angle_z = MathHelper.DegreesToRadians(alphaZ);
-            Vector3 translation = new Vector3(shift_lr, shift_y, shift_ud);
-
-            Matrix4 matrix4RX = Matrix4.Zero;
-            Matrix4 matrix4RY = Matrix4.Zero;
-            Matrix4 matrix4RZ = Matrix4.Zero;
-            Matrix4.CreateRotationX(angle_x, out matrix4RX);
-            Matrix4.CreateRotationY(angle_y, out matrix4RY);
-            Matrix4.CreateRotationZ(angle_z, out matrix4RZ);
-            Matrix4 transform = matrix4RX * matrix4RY * matrix4RZ;
-
-            //Чуть позже допишу задание с поворотом
-            Vector3 tnormXYZ;
-            CalcNormals(new Vector3((transform * new Vector4(0, 0, 0, 1.0f)).Xyz), new Vector3((transform * new Vector4(side + 0, 0, -side + 0, 1.0f)).Xyz), new Vector3((transform * new Vector4(-side + 0, 0, -side + 0, 1.0f)).Xyz), out tnormXYZ);
-
             Vertex[] vertices =
             {
                 //координаты для треуголника, нормаль, текстурные координаты
                 //на каждый куб по 12 треугольников(36 точек)
                 
-                new Vertex(new Vector4(-side+shift_lr, -side+shift_y, -side+shift_ud, 1.0f), new Vector4(-1.0f, 0f, 0f, 0.0f), new Vector2(0, 0)),
-                new Vertex(new Vector4(-side+shift_lr,  side+shift_y, -side+shift_ud, 1.0f), new Vector4(-1.0f, 0f, 0f, 0.0f), new Vector2(0, 1)),
-                new Vertex(new Vector4(-side+shift_lr, -side+shift_y,  side+shift_ud, 1.0f), new Vector4(-1.0f, 0f, 0f, 0.0f), new Vector2(1, 0)),
+                new Vertex(new Vector4(-side, -side, -side, 1.0f), new Vector4(-1.0f, 0f, 0f, 0.0f), new Vector2(0, 0)),
+                new Vertex(new Vector4(-side,  side, -side, 1.0f), new Vector4(-1.0f, 0f, 0f, 0.0f), new Vector2(0, 1)),
+                new Vertex(new Vector4(-side, -side,  side, 1.0f), new Vector4(-1.0f, 0f, 0f, 0.0f), new Vector2(1, 0)),
 
-                new Vertex(new Vector4(-side+shift_lr, -side+shift_y,  side+shift_ud, 1.0f), new Vector4(-1.0f, 0f, 0f, 0.0f), new Vector2(1, 0)),
-                new Vertex(new Vector4(-side+shift_lr,  side+shift_y, -side+shift_ud, 1.0f), new Vector4(-1.0f, 0f, 0f, 0.0f), new Vector2(0, 1)),
-                new Vertex(new Vector4(-side+shift_lr,  side+shift_y,  side+shift_ud, 1.0f), new Vector4(-1.0f, 0f, 0f, 0.0f), new Vector2(1, 1)),
+                new Vertex(new Vector4(-side, -side,  side, 1.0f), new Vector4(-1.0f, 0f, 0f, 0.0f), new Vector2(1, 0)),
+                new Vertex(new Vector4(-side,  side, -side, 1.0f), new Vector4(-1.0f, 0f, 0f, 0.0f), new Vector2(0, 1)),
+                new Vertex(new Vector4(-side,  side,  side, 1.0f), new Vector4(-1.0f, 0f, 0f, 0.0f), new Vector2(1, 1)),
 
                 //+x
-                new Vertex(new Vector4( side+shift_lr, -side+shift_y, -side+shift_ud, 1.0f), new Vector4( 1.0f, 0f, 0f, 0.0f), new Vector2(0, 0)),
-                new Vertex(new Vector4( side+shift_lr,  side+shift_y, -side+shift_ud, 1.0f), new Vector4( 1.0f, 0f, 0f, 0.0f), new Vector2(0, 1)),
-                new Vertex(new Vector4( side+shift_lr, -side+shift_y,  side+shift_ud, 1.0f), new Vector4( 1.0f, 0f, 0f, 0.0f), new Vector2(1, 0)),
+                new Vertex(new Vector4( side, -side, -side, 1.0f), new Vector4( 1.0f, 0f, 0f, 0.0f), new Vector2(0, 0)),
+                new Vertex(new Vector4( side,  side, -side, 1.0f), new Vector4( 1.0f, 0f, 0f, 0.0f), new Vector2(0, 1)),
+                new Vertex(new Vector4( side, -side,  side, 1.0f), new Vector4( 1.0f, 0f, 0f, 0.0f), new Vector2(1, 0)),
 
-                new Vertex(new Vector4( side+shift_lr, -side+shift_y,  side+shift_ud, 1.0f), new Vector4( 1.0f, 0f, 0f, 0.0f), new Vector2(1, 0)),
-                new Vertex(new Vector4( side+shift_lr,  side+shift_y, -side+shift_ud, 1.0f), new Vector4( 1.0f, 0f, 0f, 0.0f), new Vector2(0, 1)),
-                new Vertex(new Vector4( side+shift_lr,  side+shift_y,  side+shift_ud, 1.0f), new Vector4( 1.0f, 0f, 0f, 0.0f), new Vector2(1, 1)),
+                new Vertex(new Vector4( side, -side,  side, 1.0f), new Vector4( 1.0f, 0f, 0f, 0.0f), new Vector2(1, 0)),
+                new Vertex(new Vector4( side,  side, -side, 1.0f), new Vector4( 1.0f, 0f, 0f, 0.0f), new Vector2(0, 1)),
+                new Vertex(new Vector4( side,  side,  side, 1.0f), new Vector4( 1.0f, 0f, 0f, 0.0f), new Vector2(1, 1)),
 
                 //-z
-                new Vertex(new Vector4(-side+shift_lr, -side+shift_y, -side+shift_ud, 1.0f), new Vector4(0f, -1.0f, 0f, 0.0f), new Vector2(0, 0)),
-                new Vertex(new Vector4( side+shift_lr, -side+shift_y, -side+shift_ud, 1.0f), new Vector4(0f, -1.0f, 0f, 0.0f), new Vector2(1, 0)),
-                new Vertex(new Vector4(-side+shift_lr, -side+shift_y,  side+shift_ud, 1.0f), new Vector4(0f, -1.0f, 0f, 0.0f), new Vector2(0, 1)),
+                new Vertex(new Vector4(-side, -side, -side, 1.0f), new Vector4(0f, -1.0f, 0f, 0.0f), new Vector2(0, 0)),
+                new Vertex(new Vector4( side, -side, -side, 1.0f), new Vector4(0f, -1.0f, 0f, 0.0f), new Vector2(1, 0)),
+                new Vertex(new Vector4(-side, -side,  side, 1.0f), new Vector4(0f, -1.0f, 0f, 0.0f), new Vector2(0, 1)),
 
-                new Vertex(new Vector4(-side+shift_lr, -side+shift_y,  side+shift_ud, 1.0f), new Vector4(0f, -1.0f, 0f, 0.0f), new Vector2(0, 1)),
-                new Vertex(new Vector4( side+shift_lr, -side+shift_y, -side+shift_ud, 1.0f), new Vector4(0f, -1.0f, 0f, 0.0f), new Vector2(1, 0)),
-                new Vertex(new Vector4( side+shift_lr, -side+shift_y,  side+shift_ud, 1.0f), new Vector4(0f, -1.0f, 0f, 0.0f), new Vector2(1, 1)),
+                new Vertex(new Vector4(-side, -side,  side, 1.0f), new Vector4(0f, -1.0f, 0f, 0.0f), new Vector2(0, 1)),
+                new Vertex(new Vector4( side, -side, -side, 1.0f), new Vector4(0f, -1.0f, 0f, 0.0f), new Vector2(1, 0)),
+                new Vertex(new Vector4( side, -side,  side, 1.0f), new Vector4(0f, -1.0f, 0f, 0.0f), new Vector2(1, 1)),
 
                 //z+
-                new Vertex(new Vector4(-side+shift_lr,  side+shift_y, -side+shift_ud, 1.0f), new Vector4(0f,  1.0f,  0f, 0.0f), new Vector2(0, 0)),
-                new Vertex(new Vector4(-side+shift_lr,  side+shift_y,  side+shift_ud, 1.0f), new Vector4(0f,  1.0f,  0f, 0.0f), new Vector2(0, 1)),
-                new Vertex(new Vector4( side+shift_lr,  side+shift_y, -side+shift_ud, 1.0f), new Vector4(0f,  1.0f,  0f, 0.0f), new Vector2(1, 0)),
+                new Vertex(new Vector4(-side,  side, -side, 1.0f), new Vector4(0f,  1.0f,  0f, 0.0f), new Vector2(0, 0)),
+                new Vertex(new Vector4(-side,  side,  side, 1.0f), new Vector4(0f,  1.0f,  0f, 0.0f), new Vector2(0, 1)),
+                new Vertex(new Vector4( side,  side, -side, 1.0f), new Vector4(0f,  1.0f,  0f, 0.0f), new Vector2(1, 0)),
 
-                new Vertex(new Vector4( side+shift_lr,  side+shift_y, -side+shift_ud, 1.0f), new Vector4(0f,  1.0f,  0f, 0.0f), new Vector2(1, 0)),
-                new Vertex(new Vector4(-side+shift_lr,  side+shift_y,  side+shift_ud, 1.0f), new Vector4(0f,  1.0f,  0f, 0.0f), new Vector2(0, 1)),
-                new Vertex(new Vector4( side+shift_lr,  side+shift_y,  side+shift_ud, 1.0f), new Vector4(0f,  1.0f,  0f, 0.0f), new Vector2(1, 1)),
+                new Vertex(new Vector4( side,  side, -side, 1.0f), new Vector4(0f,  1.0f,  0f, 0.0f), new Vector2(1, 0)),
+                new Vertex(new Vector4(-side,  side,  side, 1.0f), new Vector4(0f,  1.0f,  0f, 0.0f), new Vector2(0, 1)),
+                new Vertex(new Vector4( side,  side,  side, 1.0f), new Vector4(0f,  1.0f,  0f, 0.0f), new Vector2(1, 1)),
 
                 //y-
-                new Vertex(new Vector4(-side+shift_lr, -side+shift_y, -side+shift_ud, 1.0f), new Vector4(0f, 0f, -1.0f, 0.0f), new Vector2(0, 0)),
-                new Vertex(new Vector4(-side+shift_lr,  side+shift_y, -side+shift_ud, 1.0f), new Vector4(0f, 0f, -1.0f, 0.0f), new Vector2(0, 1)),
-                new Vertex(new Vector4( side+shift_lr, -side+shift_y, -side+shift_ud, 1.0f), new Vector4(0f, 0f, -1.0f, 0.0f), new Vector2(1, 0)),
+                new Vertex(new Vector4(-side, -side, -side, 1.0f), new Vector4(0f, 0f, -1.0f, 0.0f), new Vector2(0, 0)),
+                new Vertex(new Vector4(-side,  side, -side, 1.0f), new Vector4(0f, 0f, -1.0f, 0.0f), new Vector2(0, 1)),
+                new Vertex(new Vector4( side, -side, -side, 1.0f), new Vector4(0f, 0f, -1.0f, 0.0f), new Vector2(1, 0)),
 
-                new Vertex(new Vector4( side+shift_lr, -side+shift_y, -side+shift_ud, 1.0f), new Vector4(0f, 0f, -1.0f, 0.0f), new Vector2(1, 0)),
-                new Vertex(new Vector4(-side+shift_lr,  side+shift_y, -side+shift_ud, 1.0f), new Vector4(0f, 0f, -1.0f, 0.0f), new Vector2(0, 1)),
-                new Vertex(new Vector4( side+shift_lr,  side+shift_y, -side+shift_ud, 1.0f), new Vector4(0f, 0f, -1.0f, 0.0f), new Vector2(1, 1)),
+                new Vertex(new Vector4( side, -side, -side, 1.0f), new Vector4(0f, 0f, -1.0f, 0.0f), new Vector2(1, 0)),
+                new Vertex(new Vector4(-side,  side, -side, 1.0f), new Vector4(0f, 0f, -1.0f, 0.0f), new Vector2(0, 1)),
+                new Vertex(new Vector4( side,  side, -side, 1.0f), new Vector4(0f, 0f, -1.0f, 0.0f), new Vector2(1, 1)),
 
                 //y+
-                new Vertex(new Vector4(-side+shift_lr, -side+shift_y,  side+shift_ud, 1.0f), new Vector4(0f, 0f,  1.0f, 0.0f), new Vector2(0, 0)),
-                new Vertex(new Vector4( side+shift_lr, -side+shift_y,  side+shift_ud, 1.0f), new Vector4(0f, 0f,  1.0f, 0.0f), new Vector2(1, 0)),
-                new Vertex(new Vector4(-side+shift_lr,  side+shift_y,  side+shift_ud, 1.0f), new Vector4(0f, 0f,  1.0f, 0.0f), new Vector2(0, 1)),
+                new Vertex(new Vector4(-side, -side,  side, 1.0f), new Vector4(0f, 0f,  1.0f, 0.0f), new Vector2(0, 0)),
+                new Vertex(new Vector4( side, -side,  side, 1.0f), new Vector4(0f, 0f,  1.0f, 0.0f), new Vector2(1, 0)),
+                new Vertex(new Vector4(-side,  side,  side, 1.0f), new Vector4(0f, 0f,  1.0f, 0.0f), new Vector2(0, 1)),
 
-                new Vertex(new Vector4(-side+shift_lr,  side+shift_y,  side+shift_ud, 1.0f), new Vector4(0f, 0f,  1.0f, 0.0f), new Vector2(0, 1)),
-                new Vertex(new Vector4( side+shift_lr, -side+shift_y,  side+shift_ud, 1.0f), new Vector4(0f, 0f,  1.0f, 0.0f), new Vector2(1, 0)),
-                new Vertex(new Vector4( side+shift_lr,  side+shift_y,  side+shift_ud, 1.0f), new Vector4(0f, 0f,  1.0f, 0.0f), new Vector2(1, 1)),
+                new Vertex(new Vector4(-side,  side,  side, 1.0f), new Vector4(0f, 0f,  1.0f, 0.0f), new Vector2(0, 1)),
+                new Vertex(new Vector4( side, -side,  side, 1.0f), new Vector4(0f, 0f,  1.0f, 0.0f), new Vector2(1, 0)),
+                new Vertex(new Vector4( side,  side,  side, 1.0f), new Vector4(0f, 0f,  1.0f, 0.0f), new Vector2(1, 1)),
             };
             return vertices;
         }
         public static Vertex[] CreatePlane(GeometricInfo geometricInfo)//размер куба, смещение y/-y, смещение x/-x, смещение z/-z цвет
         {
-            return CreatePlane(geometricInfo.side, geometricInfo.StartPosition.X, geometricInfo.StartPosition.Y, geometricInfo.StartPosition.Z, geometricInfo.angleX, geometricInfo.angleY, geometricInfo.angleZ);
+            return CreatePlane(geometricInfo.side);
         }
-        public static Vertex[] CreatePlane(float side, Vector3 shift, int alpha_x = 90, int alpha_y = 90, int alpha_z = 90)
+        public static Vertex[] CreatePlane(float side)
         {
-            return CreatePlane(side, shift.X, shift.Y, shift.Z, alpha_x, alpha_y, alpha_z);
-        }
-        public static Vertex[] CreatePlane(float side, float shift_lr, float shift_y, float shift_ud, int alpha_x = 90, int alpha_y = 90, int alpha_z = 90)
-        {
-            alpha_x %= 360;
-            alpha_y %= 360;
-            alpha_z %= 360;
-            float angle_x = MathHelper.DegreesToRadians(alpha_x);
-            float angle_y = MathHelper.DegreesToRadians(alpha_y);
-            float angle_z = MathHelper.DegreesToRadians(alpha_z);
-            Vector3 translation = new Vector3(shift_lr, shift_y, shift_ud);
-
-            Matrix4 matrix4RX = Matrix4.Zero;
-            Matrix4 matrix4RY = Matrix4.Zero;
-            Matrix4 matrix4RZ = Matrix4.Zero;
-            Matrix4.CreateRotationX(angle_x, out matrix4RX);
-            Matrix4.CreateRotationY(angle_y, out matrix4RY);
-            Matrix4.CreateRotationZ(angle_z, out matrix4RZ);
-            Matrix4 transform = matrix4RX * matrix4RY * matrix4RZ;
             Vector3 tnormXYZ;
-            CalcNormals(new Vector3((transform * new Vector4(0, 0, 0, 1.0f)).Xyz), new Vector3((transform * new Vector4(side + 0, 0, -side + 0, 1.0f)).Xyz), new Vector3((transform * new Vector4(-side + 0, 0, -side + 0, 1.0f)).Xyz), out tnormXYZ);
+            CalcNormals(new Vector3(0, 0, 0), new Vector3(side, 0, -side + 0), new Vector3(-side + 0, 0, -side + 0), out tnormXYZ);
             Vector4 tnorm = new Vector4(tnormXYZ, 1.0f);
             List<Vertex> vertices = new List<Vertex>
             {
-                new Vertex(new Vector4((transform * new Vector4(-side + 0, 0, -side + 0, 1.0f)).Xyz + translation, 1.0f), tnorm, new Vector2(0, 0)),
-                new Vertex(new Vector4((transform * new Vector4( 0, 0, 0, 1.0f)).Xyz + translation, 1.0f), tnorm, new Vector2(0.5f, 0.5f)),
-                new Vertex(new Vector4((transform * new Vector4( side + 0, 0, -side + 0, 1.0f)).Xyz + translation, 1.0f), tnorm, new Vector2(1f, 0f)),
+                new Vertex(new Vector4(-side, 0, -side, 1.0f), tnorm, new Vector2(0, 0)),
+                new Vertex(new Vector4( 0, 0, 0, 1.0f), tnorm, new Vector2(0.5f, 0.5f)),
+                new Vertex(new Vector4( side, 0, -side, 1.0f), tnorm, new Vector2(1f, 0f)),
 
-                new Vertex(new Vector4((transform * new Vector4(-side + 0, 0,  side + 0, 1.0f)).Xyz + translation, 1.0f), tnorm, new Vector2(1f, 0f)),
-                new Vertex(new Vector4((transform * new Vector4( 0, 0, 0, 1.0f)).Xyz + translation, 1.0f),  tnorm, new Vector2(0.5f, 0.5f)),
-                new Vertex(new Vector4((transform * new Vector4(-side + 0, 0, -side + 0, 0.0f)).Xyz + translation, 1.0f),  tnorm, new Vector2(1, 1)),
+                new Vertex(new Vector4(-side, 0,  side, 1.0f), tnorm, new Vector2(1f, 0f)),
+                new Vertex(new Vector4( 0, 0, 0, 1.0f),  tnorm, new Vector2(0.5f, 0.5f)),
+                new Vertex(new Vector4(-side, 0, -side, 1.0f),  tnorm, new Vector2(1, 1)),
 
-                new Vertex(new Vector4((transform * new Vector4( side + 0, 0, -side + 0, 1.0f)).Xyz + translation, 1.0f),  tnorm, new Vector2(0f, 1f)),
-                new Vertex(new Vector4((transform * new Vector4( 0, 0, 0, 1.0f)).Xyz + translation, 1.0f),  tnorm, new Vector2(0.5f, 0.5f)),
-                new Vertex(new Vector4((transform * new Vector4( side + 0, 0,  side + 0, 1.0f)).Xyz + translation, 1.0f), tnorm, new Vector2(0, 0)),
+                new Vertex(new Vector4( side, 0, -side, 1.0f),  tnorm, new Vector2(0f, 1f)),
+                new Vertex(new Vector4( 0, 0, 0, 1.0f),  tnorm, new Vector2(0.5f, 0.5f)),
+                new Vertex(new Vector4( side, 0,  side, 1.0f), tnorm, new Vector2(0, 0)),
 
-                new Vertex(new Vector4((transform * new Vector4(-side + 0, 0,  side + 0, 0.0f)).Xyz + translation, 1.0f), tnorm, new Vector2(0f, 1f)),
-                new Vertex(new Vector4((transform * new Vector4( side + 0, 0,  side + 0, 1.0f)).Xyz + translation, 1.0f),  tnorm, new Vector2(1, 1)),
-                new Vertex(new Vector4((transform * new Vector4( 0, 0, 0, 1.0f)).Xyz + translation, 1.0f),  tnorm, new Vector2(0.5f, 0.5f)),
+                new Vertex(new Vector4(-side, 0,  side, 1.0f), tnorm, new Vector2(0f, 1f)),
+                new Vertex(new Vector4( side, 0,  side, 1.0f),  tnorm, new Vector2(1, 1)),
+                new Vertex(new Vector4( 0, 0, 0, 1.0f),  tnorm, new Vector2(0.5f, 0.5f)),
             };
             return vertices.ToArray();
         }
         public static Vertex[] CreateSphere(GeometricInfo geometricInfo)//размер куба, смещение y/-y, смещение x/-x, смещение z/-z цвет
         {
-            return CreateSphere(geometricInfo.side, geometricInfo.StartPosition.X, geometricInfo.StartPosition.Y, geometricInfo.StartPosition.Z, geometricInfo.colBreakX, geometricInfo.colBreakY, geometricInfo.coeffSX, geometricInfo.coeffSY);
+            return CreateSphere(geometricInfo.side,geometricInfo.colBreakX, geometricInfo.colBreakY, geometricInfo.coeffSX, geometricInfo.coeffSY);
         }
-        public static Vertex[] CreateSphere(float side, Vector3 shift, int nx, int ny, float k1, float k2)
-        {
-            return CreateSphere(side, shift.X, shift.Y, shift.Z, nx, ny, k1, k2);
-        }
-        public static Vertex[] CreateSphere(float side, float shift_lr, float shift_y, float shift_ud, int nx, int ny, float k1, float k2)
+        public static Vertex[] CreateSphere(float side, int nx, int ny, float k1, float k2)
         {
             Vector4[] coord_s = new Vector4[(nx + 1) * 2 * ny];
             Vector2[] texcoord = new Vector2[(nx + 1) * 2 * ny];
             Vector4[] normal_s = new Vector4[(nx + 1) * 2 * ny];
             Spherecoord(coord_s, normal_s, texcoord, side / 2, nx, ny, k1, k2);
             Vertex[] vertices = new Vertex[(nx + 1) * 6 * ny];
-            for (int i = 0; i < (nx + 1) * 2 * ny; i++)
-            {
-                coord_s[i].X += shift_lr;
-                coord_s[i].Y += shift_y;
-                coord_s[i].Z += shift_ud;
-            }
             for (int i = 0, j = 0; j < (nx + 1) * 2 * ny - 3; i += 6, j += 2)
             {
 

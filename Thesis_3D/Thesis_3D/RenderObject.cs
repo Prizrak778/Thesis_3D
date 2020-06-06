@@ -109,8 +109,6 @@ namespace Thesis_3D
         private Vector3 Mirror = Vector3.One;
         public TypeObjectRenderLight TypeObject = TypeObjectRenderLight.SimpleObject;
         public TrajctoryRenderObject trajctoryRenderObject; //траектория движения объекта
-        public Matrix4 ModelMatrix = Matrix4.CreateTranslation(0, 0, 0); //Матрица смещения от стартовой позиции
-        public Matrix4 RotationMatrix = Matrix4.CreateTranslation(0, 0, 0); //Матрица смещения от стартовой позиции
         public Vector4 ColorСhoice; //Цвет объекта для буффера выбора
         public RenderObject(Vertex[] vertices, GeometricInfo locGeometricInfo, Color4 locСolorСhoice, TypeObjectRenderLight typeObject = TypeObjectRenderLight.SimpleObject, bool plane = false)
         {
@@ -263,14 +261,14 @@ namespace Thesis_3D
         }
         public void changeModelMstrix(Vector3 tr)
         {
-            Vector3 translation = ModelMatrix.ExtractTranslation();
-            ModelMatrix.ClearTranslation();
+            Vector3 translation = geometricInfo.TranslationMatrix.ExtractTranslation();
+            geometricInfo.TranslationMatrix.ClearTranslation();
             translation += tr;
-            ModelMatrix = Matrix4.CreateTranslation(translation);
+            geometricInfo.TranslationMatrix = Matrix4.CreateTranslation(translation);
         }
         public void changeRotateMstrix(Vector3 rt)
         {
-            RotationMatrix =
+            geometricInfo.RotationMatrix *=
                 Matrix4.CreateRotationX(MathHelper.DegreesToRadians(rt.X)) *
                 Matrix4.CreateRotationY(MathHelper.DegreesToRadians(rt.Y)) *
                 Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(rt.Z));
@@ -390,8 +388,7 @@ namespace Thesis_3D
         }
         public Vector4 getPositionRenderObject()
         {
-            Vector3 translation = ModelMatrix.ExtractTranslation();
-            translation += geometricInfo.StartPosition;
+            Vector3 translation = geometricInfo.TranslationMatrix.ExtractTranslation();
             return new Vector4(translation, 1.0f);
         }
         public Vector3 getStartPosition()

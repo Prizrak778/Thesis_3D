@@ -29,24 +29,36 @@ namespace Thesis_3D
             comboBoxTypeFigure.Enabled = !NewFigure;
             trackBarAlpha.Value = (int)(geometricInfo.ColorObj.W * 10); //Округляем как можем
             textBoxSide.Text = geometricInfo.side.ToString();
-            textBoxShiftX.Text = geometricInfo.StartPosition.X.ToString();
-            textBoxShiftY.Text = geometricInfo.StartPosition.Y.ToString();
-            textBoxShiftZ.Text = geometricInfo.StartPosition.Z.ToString();
+            Vector3 translation = geometricInfo.TranslationMatrix.ExtractTranslation();
+            textBoxShiftX.Text = translation.X.ToString();
+            textBoxShiftY.Text = translation.Y.ToString();
+            textBoxShiftZ.Text = translation.Z.ToString();
             textBoxColBreakX.Text = geometricInfo.colBreakX.ToString();
             textBoxColBreakY.Text = geometricInfo.colBreakY.ToString();
             textBoxCoeffSX.Text = geometricInfo.coeffSX.ToString();
             textBoxCoeffSY.Text = geometricInfo.coeffSY.ToString();
-            numericUpDownAngelX.Value = geometricInfo.angleX;
-            numericUpDownAngelY.Value = geometricInfo.angleY;
-            numericUpDownAngelZ.Value = geometricInfo.angleZ;
+            var anlgeQauternion = geometricInfo.RotationMatrix.ExtractRotation(); 
+            var tau = Math.Acos(anlgeQauternion.W);
+            var ax = 0;
+            var ay = 0;
+            var az = 0;
+            if(Math.Abs(tau) > 0)
+            {
+                ax = Convert.ToInt32(Math.Round(anlgeQauternion.X / Math.Sin(tau)* tau / MathHelper.PiOver2 * 180, MidpointRounding.AwayFromZero));
+                ay = Convert.ToInt32(Math.Round(anlgeQauternion.Y / Math.Sin(tau)* tau / MathHelper.PiOver2 * 180, MidpointRounding.AwayFromZero));
+                az = Convert.ToInt32(Math.Round(anlgeQauternion.Z / Math.Sin(tau)* tau / MathHelper.PiOver2 * 180, MidpointRounding.AwayFromZero));
+            }
+            numericUpDownAngelX.Value = ax;
+            numericUpDownAngelY.Value = ay;
+            numericUpDownAngelZ.Value = az;
             if (_typeObjectCreate == TypeObjectCreate.SolidCube)
             {
                 labelAngelX.Enabled = false;
                 labelAngelY.Enabled = false;
                 labelAngelZ.Enabled = false;
-                numericUpDownAngelX.Enabled = false;
-                numericUpDownAngelY.Enabled = false;
-                numericUpDownAngelZ.Enabled = false;
+                numericUpDownAngelX.Enabled = true;
+                numericUpDownAngelY.Enabled = true;
+                numericUpDownAngelZ.Enabled = true;
                 labelColBreakX.Enabled = false;
                 labelColBreakY.Enabled = false;
                 labelCoeffSX.Enabled = false;
@@ -78,9 +90,9 @@ namespace Thesis_3D
                 labelAngelX.Enabled = false;
                 labelAngelY.Enabled = false;
                 labelAngelZ.Enabled = false;
-                numericUpDownAngelX.Enabled = false;
-                numericUpDownAngelY.Enabled = false;
-                numericUpDownAngelZ.Enabled = false;
+                numericUpDownAngelX.Enabled = true;
+                numericUpDownAngelY.Enabled = true;
+                numericUpDownAngelZ.Enabled = true;
                 labelColBreakX.Enabled = true;
                 labelColBreakY.Enabled = true;
                 labelCoeffSX.Enabled = true;
