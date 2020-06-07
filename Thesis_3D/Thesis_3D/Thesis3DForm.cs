@@ -596,21 +596,26 @@ namespace Thesis_3D
                 bufferSize = bufferSize + 1 - 1;
                 setBufferPointShadowns();
             }
-            catch(ArgumentNullException error)
+
+            catch (NullReferenceException error)
             {
-                MessageBox.Show(error.Message, "Error");
+                MessageBox.Show(error.Message, "Error NullReferenc");
+            }
+            catch (ArgumentNullException error)
+            {
+                MessageBox.Show(error.Message, "Error ArgumentNull");
             }
             catch (FileLoadException error)
             {
-                MessageBox.Show(error.Message, "Error");
+                MessageBox.Show(error.Message, "Error FileLoad");
             }
             catch (FileNotFoundException error)
             {
-                MessageBox.Show(error.Message, "Error");
+                MessageBox.Show(error.Message, "Error FileNotFound");
             }
             catch (Exception error)
             {
-                MessageBox.Show(error.Message, "Error");
+                MessageBox.Show(error.Message, "Error Overall");
             }
         }
 
