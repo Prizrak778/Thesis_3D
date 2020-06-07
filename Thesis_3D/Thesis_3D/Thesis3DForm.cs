@@ -504,19 +504,21 @@ namespace Thesis_3D
 
         protected override void OnLoad(EventArgs e)
         {
-            FileStream filteTest = File.Create("FPSData.txt");
-            filteTest.Close();
-            glControlThesis3D.Load += new EventHandler(glControl_Load);
-            glControl_Load(glControlThesis3D, EventArgs.Empty);
-            Application.Idle += Application_Idle;
-            string ErrorText = string.Empty;
-            if(!string.IsNullOrWhiteSpace(ErrorText = CompileAllShaders()))
+            try
             {
-                MessageBox.Show(ErrorText);
-            }
-            init_tex_shadow();
-            comboBoxShaders.Items.AddRange(new object[] 
-              {
+                FileStream filteTest = File.Create("FPSData.txt");
+                filteTest.Close();
+                glControlThesis3D.Load += new EventHandler(glControl_Load);
+                glControl_Load(glControlThesis3D, EventArgs.Empty);
+                Application.Idle += Application_Idle;
+                string ErrorText = string.Empty;
+                if (!string.IsNullOrWhiteSpace(ErrorText = CompileAllShaders()))
+                {
+                    MessageBox.Show(ErrorText);
+                }
+                init_tex_shadow();
+                comboBoxShaders.Items.AddRange(new object[]
+                  {
                   "Обычные цвета",
                   "Т.И. без отражения",
                   "Т.И. с отражением",
@@ -536,60 +538,80 @@ namespace Thesis_3D
                   "Карта теней PFC улучшенный",
                   "Рёберная трассировка",
                   "Рёберная трассировка не шейдеры"
-            });
-            comboBoxShaders.SelectedIndex = 0;
-            Vector3 positionObject = new Vector3(-1.0f, 1.0f, 0.0f);
-            primarySphereAt = new RenderObject(ObjectCreate.CreateSphere(40f, 60, 60, 1, 1), positionObject, Color4.DeepSkyBlue, RandomColor(), locSide: 40f, locTypeObjectCreate: TypeObjectCreate.Sphere, locColBreakX: 60, locColBreakY: 60, locCoeffSX: 1, locCoeffSY: 1);
-            _renderObjects.Add(new RenderObject(ObjectCreate.CreatePlane(1.5f), positionObject, Color4.LightCyan, RandomColor(), plane: true, locSide: 1.5f, locTypeObjectCreate: TypeObjectCreate.Plane, locAngleZ: 45));
-            primaryRenderObject = _renderObjects[0];
-            positionObject = new Vector3(0.0f, 0.0f, 0.0f);
-            _renderObjects.Add(new RenderObject(ObjectCreate.CreatePlane(15f), positionObject, Color4.Green, RandomColor(), plane: true, locSide: 40f, locTypeObjectCreate: TypeObjectCreate.Plane));
-            positionObject = new Vector3(0.0f, 2.0f, 0.0f);
-            _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f), positionObject, Color4.LightCoral, RandomColor(), locSide: 0.5f, locTypeObjectCreate: TypeObjectCreate.SolidCube));
-            for (int i = 0; i < 10; i++)
-            {
-                positionObject = new Vector3((float)i + 1, 2.0f, 0.0f);
+                });
+                comboBoxShaders.SelectedIndex = 0;
+                Vector3 positionObject = new Vector3(0.0f, 0.0f, 0.0f);
+                primarySphereAt = new RenderObject(ObjectCreate.CreateSphere(40f, 60, 60, 1, 1), positionObject, Color4.DeepSkyBlue, RandomColor(), locSide: 40f, locTypeObjectCreate: TypeObjectCreate.Sphere, locColBreakX: 60, locColBreakY: 60, locCoeffSX: 1, locCoeffSY: 1);
+                positionObject = new Vector3(-1.0f, 1.0f, 0.0f);
+                _renderObjects.Add(new RenderObject(ObjectCreate.CreatePlane(1.5f), positionObject, Color4.LightCyan, RandomColor(), plane: true, locSide: 1.5f, locTypeObjectCreate: TypeObjectCreate.Plane));
+                primaryRenderObject = _renderObjects[0];
+                positionObject = new Vector3(0.0f, 0.0f, 0.0f);
+                _renderObjects.Add(new RenderObject(ObjectCreate.CreatePlane(15f), positionObject, Color4.Green, RandomColor(), plane: true, locSide: 40f, locTypeObjectCreate: TypeObjectCreate.Plane));
+                positionObject = new Vector3(-3.0f, 2.0f, 0.0f);
                 _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f), positionObject, Color4.LightCoral, RandomColor(), locSide: 0.5f, locTypeObjectCreate: TypeObjectCreate.SolidCube));
-            }
-            for (int i = 0; i < 10; i++)
-            {
-                positionObject = new Vector3(1, -(float)i + 2.0f, 0.0f);
+                positionObject = new Vector3(0.0f, 2.0f, 0.0f);
                 _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f), positionObject, Color4.LightCoral, RandomColor(), locSide: 0.5f, locTypeObjectCreate: TypeObjectCreate.SolidCube));
-            }
-            positionObject = new Vector3(1.0f);
-            //_renderObjects.Add(new RenderObject(ObjectCreate.CreateSphere(1.5f, positionObject, 60, 60, 1, 1), positionObject, Color4.Brown, RandomColor(), locSide: 1.5f, locTypeObjectCreate: TypeObjectCreate.Sphere, locColBreakX: 60, locColBreakY: 60, locCoeffSX: 1, locCoeffSY: 1));
-            Vector3 positionLight = new Vector3(-3, 1.0f, 0.0f);
-            _lightObjects.Add(new LightObject(ObjectCreate.CreateSphere(1.0f, 10, 10, 1, 1), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.3f, 0.3f, 0.0f), new Vector3(1.0f, 0.0f, 5f), _program_Fong_directed, side: 1f, locTypeObjectCreate: TypeObjectCreate.SolidCube, locColBreakX: 10, locColBreakY: 10, locCoeffSX: 1, locCoeffSY: 1));
-            primaryLightObject = _lightObjects[0];
-            
-            /*primaryLightObject.trajctoryRenderObject = new TrajctoryRenderObject(
-                new TrajectoryFunctions(300, (double x) => (Math.Cos(x)), 0.03f, -180, 180, 0, "cos(x)", true),
-                new TrajectoryFunctions(300, (double x) => (Math.Sin(x)), 0.03f, -180, 180, 0, "sin(y)", true),
-                new TrajectoryFunctions(100, (double x) => (x), 0.001f, -1, 1, 0, "z", false),
-                TargetTrajectory.Point,
-                new Vector4(0, 0, 0, 1f)
-                );*/
-            primaryLightObject.Ambient = new Vector3(0.0f, 0.15f, 0.0f);
-            positionLight = new Vector3(4.0f, 3.0f, 1.0f);                                                                                                                                                                                     
-            _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.0f, 0.3f, 0.3f), new Vector3(1.0f, 0.0f, 5f), side: 0.1f, locTypeObjectCreate: TypeObjectCreate.SolidCube));
-            positionLight = new Vector3(7.0f, 3.0f, 1.0f);                                                                                                                                                                      
-            _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.3f, 0.0f, 0.3f), new Vector3(1.0f, 0.0f, 5f), side: 0.1f, locTypeObjectCreate: TypeObjectCreate.SolidCube));
-            for (int i = 0; i < 2; i++)
-            {
-                positionLight = new Vector3(10.0f + 3*i, 3.0f, 1.0f);
+                for (int i = 0; i < 10; i++)
+                {
+                    positionObject = new Vector3((float)i + 1, 2.0f, 0.0f);
+                    _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f), positionObject, Color4.LightCoral, RandomColor(), locSide: 0.5f, locTypeObjectCreate: TypeObjectCreate.SolidCube));
+                }
+                for (int i = 0; i < 10; i++)
+                {
+                    positionObject = new Vector3(1, -(float)i + 2.0f, 0.0f);
+                    _renderObjects.Add(new RenderObject(ObjectCreate.CreateSolidCube(0.5f), positionObject, Color4.LightCoral, RandomColor(), locSide: 0.5f, locTypeObjectCreate: TypeObjectCreate.SolidCube));
+                }
+                positionObject = new Vector3(1.0f);
+                //_renderObjects.Add(new RenderObject(ObjectCreate.CreateSphere(1.5f, positionObject, 60, 60, 1, 1), positionObject, Color4.Brown, RandomColor(), locSide: 1.5f, locTypeObjectCreate: TypeObjectCreate.Sphere, locColBreakX: 60, locColBreakY: 60, locCoeffSX: 1, locCoeffSY: 1));
+                Vector3 positionLight = new Vector3(-4, 3.0f, 0.0f);
+                _lightObjects.Add(new LightObject(ObjectCreate.CreateSphere(1.0f, 10, 10, 1, 1), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.3f, 0.3f, 0.0f), new Vector3(1.0f, 0.0f, 5f), _program_Fong_directed, side: 1f, locTypeObjectCreate: TypeObjectCreate.SolidCube, locColBreakX: 10, locColBreakY: 10, locCoeffSX: 1, locCoeffSY: 1));
+                primaryLightObject = _lightObjects[0];
+
+                /*primaryLightObject.trajctoryRenderObject = new TrajctoryRenderObject(
+                    new TrajectoryFunctions(300, (double x) => (Math.Cos(x)), 0.03f, -180, 180, 0, "cos(x)", true),
+                    new TrajectoryFunctions(300, (double x) => (Math.Sin(x)), 0.03f, -180, 180, 0, "sin(y)", true),
+                    new TrajectoryFunctions(100, (double x) => (x), 0.001f, -1, 1, 0, "z", false),
+                    TargetTrajectory.Point,
+                    new Vector4(0, 0, 0, 1f)
+                    );*/
+                primaryLightObject.Ambient = new Vector3(0.0f, 0.15f, 0.0f);
+                positionLight = new Vector3(4.0f, 3.0f, 1.0f);
+                _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.0f, 0.3f, 0.3f), new Vector3(1.0f, 0.0f, 5f), side: 0.1f, locTypeObjectCreate: TypeObjectCreate.SolidCube));
+                positionLight = new Vector3(7.0f, 3.0f, 1.0f);
                 _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.3f, 0.0f, 0.3f), new Vector3(1.0f, 0.0f, 5f), side: 0.1f, locTypeObjectCreate: TypeObjectCreate.SolidCube));
+                for (int i = 0; i < 2; i++)
+                {
+                    positionLight = new Vector3(10.0f + 3*i, 3.0f, 1.0f);
+                    _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.3f, 0.0f, 0.3f), new Vector3(1.0f, 0.0f, 5f), side: 0.1f, locTypeObjectCreate: TypeObjectCreate.SolidCube));
+                }
+                foreach (var obj in _lightObjects)
+                {
+                    _renderObjects.Add(obj);
+                }
+                var bufferSize = 0;
+                foreach (var obj in _renderObjects)
+                {
+                    bufferSize += obj.BufferSize();
+                }
+                bufferSize = bufferSize + 1 - 1;
+                setBufferPointShadowns();
             }
-            foreach (var obj in _lightObjects)
+            catch(ArgumentNullException error)
             {
-                _renderObjects.Add(obj);
+                MessageBox.Show(error.Message, "Error");
             }
-            var bufferSize = 0;
-            foreach(var obj in _renderObjects)
+            catch (FileLoadException error)
             {
-                bufferSize += obj.BufferSize();
+                MessageBox.Show(error.Message, "Error");
             }
-            bufferSize = bufferSize + 1 - 1;
-            setBufferPointShadowns();
+            catch (FileNotFoundException error)
+            {
+                MessageBox.Show(error.Message, "Error");
+            }
+            catch (Exception error)
+            {
+                MessageBox.Show(error.Message, "Error");
+            }
         }
 
         protected override void OnClosing(CancelEventArgs e)
@@ -941,7 +963,7 @@ namespace Thesis_3D
                     if (countLightObj > 0 && countRenderObj > 0 && primaryLightObject.ColorСhoice != renderObject.ColorСhoice && primaryRenderObject.ColorСhoice != renderObject.ColorСhoice)
                     {
                         GL.UseProgram(_program_shadow_project);
-                        Matrix4 ModelView = renderObject.geometricInfo.RotationMatrix * renderObject.geometricInfo.TranslationMatrix;
+                        Matrix4 ModelView = primaryRenderObject.geometricInfo.RotationMatrix * primaryRenderObject.geometricInfo.TranslationMatrix;
                         GL.UniformMatrix4(23, false, ref ModelView);
                         GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 5, primaryRenderObject.ShadowProjectBuffer());
                         GL.BindBuffer(BufferTarget.ShaderStorageBuffer, 0);

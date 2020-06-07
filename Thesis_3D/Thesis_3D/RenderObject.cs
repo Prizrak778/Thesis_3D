@@ -292,7 +292,7 @@ namespace Thesis_3D
             GL.GenBuffers(1, out ssbo);
             GL.BindBuffer(BufferTarget.ShaderStorageBuffer, ssbo);
             GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 5, ssbo);
-            GL.BufferData(BufferTarget.ShaderStorageBuffer, temp.Length * 4 + 4 * 4, temp, BufferUsageHint.DynamicDraw);
+            GL.BufferData(BufferTarget.ShaderStorageBuffer, temp.Length * 4, temp, BufferUsageHint.DynamicDraw);
         }
         public int BufferSize()
         {

@@ -1,9 +1,8 @@
 ﻿#version 450 core
 
-in float dotVt;
 out vec4 color;
 
 void main(void)
 {
-	color = vec4(0.0,0.0,0.0, 1.0);
+	color = vec4(vec3(0.0), 1.0);
 }
