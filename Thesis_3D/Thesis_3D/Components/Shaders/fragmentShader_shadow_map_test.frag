@@ -19,11 +19,11 @@ out vec4 color;
 float ShadowCalculation(vec3 FragPos)
 { 
 	vec3 fragToLight = FragPos - LightPos.xyz;
-	vec3 closestDepth = texture(depthTex, fragToLight).r;  
+	vec3 closestDepth = texture(depthTex, fragToLight).rgb;  
 	closestDepth *= far_plane;
 	float currentDepth = length(fragToLight);
 	float bias = 0.05;
-	float shadow = closestDepth / far_plane;
+	float shadow = currentDepth / far_plane;
 	return shadow;
 }
 

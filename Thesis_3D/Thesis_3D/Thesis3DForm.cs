@@ -171,178 +171,195 @@ namespace Thesis_3D
 
         #endregion
 
-        bool CompileAllShaders(out string error)
+        string CompileAllShaders()
         {
-            error = string.Empty;
+            string error = string.Empty;
             string VertexShader = @"Components\Shaders\vertexShader_c.vert";
             string FragentShader = @"Components\Shaders\fragmentShader.frag";
             string GeometryShader = string.Empty;
-            if ((_program_contour = _program = CompileShaders(ref error, VertexShader, FragentShader)) == -1)
+            string errorShader = string.Empty;
+            _program_contour = _program = CompileShaders(ref errorShader, VertexShader, FragentShader);
+            if (!string.IsNullOrWhiteSpace(errorShader))
             {
-                error += "Ошибка при компиляции обычного шейдера\n===============================\n";
-                return false;
+                error += "Ошибка при компиляции обычного шейдера\n" + errorShader + "===============================\n";
             }
             VertexShader = @"Components\Shaders\vertexShader.vert";
             FragentShader = @"Components\Shaders\fragmentShader.frag";
             listProgram.Add(_program);
-
-            if ((_program = CompileShaders(ref error, VertexShader, FragentShader)) == -1)
+            errorShader = string.Empty;
+            _program = CompileShaders(ref errorShader, VertexShader, FragentShader);
+            if (!string.IsNullOrWhiteSpace(errorShader))
             {
-                error += "Ошибка при компиляции шейдера т.и. без отражения\n===============================\n";
-                return false;
+                error += "Ошибка при компиляции шейдера т.и. без отражения\n" + errorShader + "===============================\n";
             }
             listProgram.Add(_program);
 
             VertexShader = @"Components\Shaders\vertexShader_mirror.vert";
             FragentShader = @"Components\Shaders\fragmentShader.frag";
-            if ((_program = CompileShaders(ref error, VertexShader, FragentShader)) == -1)
+            errorShader = string.Empty;
+            _program = CompileShaders(ref errorShader, VertexShader, FragentShader);
+            if (!string.IsNullOrWhiteSpace(errorShader))
             {
-                error += "Ошибка при компиляции шейдера т.и. с отражением\n===============================\n";
-                return false;
+                error += "Ошибка при компиляции шейдера т.и. с отражением\n" + errorShader + "===============================\n";
             }
             listProgram.Add(_program);
 
             VertexShader = @"Components\Shaders\vertexShader_double_mirror.vert";
             FragentShader = @"Components\Shaders\fragmentShader_double_mirror.frag";
-            if ((_program = CompileShaders(ref error, VertexShader, FragentShader)) == -1)
+            errorShader = string.Empty;
+            _program = CompileShaders(ref errorShader, VertexShader, FragentShader);
+            if (!string.IsNullOrWhiteSpace(errorShader))
             {
-                error += "Ошибка при компиляции шейдера т.и. с двойным отражением\n===============================\n";
-                return false;
+                error += "Ошибка при компиляции шейдера т.и. с двойным отражением\n" + errorShader + "===============================\n";
             }
             listProgram.Add(_program);
 
             VertexShader = @"Components\Shaders\vertexShader_flatshadow.vert";
             FragentShader = @"Components\Shaders\fragmentShader.frag";
-            if ((_program = CompileShaders(ref error, VertexShader, FragentShader)) == -1)
+            errorShader = string.Empty;
+            _program = CompileShaders(ref errorShader, VertexShader, FragentShader);
+            if (!string.IsNullOrWhiteSpace(errorShader))
             {
-                error += "Ошибка при компиляции шейдера т.и. с плоским затенением\n===============================\n";
-                return false;
+                error += "Ошибка при компиляции шейдера т.и. с плоским затенением\n" + errorShader + "===============================\n";
             }
             listProgram.Add(_program);
 
             VertexShader = @"Components\Shaders\vertexShader_some_light.vert";
             FragentShader = @"Components\Shaders\fragmentShader.frag";
-            if ((_program = CompileShaders(ref error, VertexShader, FragentShader)) == -1)
+            errorShader = string.Empty;
+            _program = CompileShaders(ref errorShader, VertexShader, FragentShader);
+            if (!string.IsNullOrWhiteSpace(errorShader))
             {
-                error += "Ошибка при компиляции шейдера несколько т.и.\n===============================\n";
-                return false;
+                error += "Ошибка при компиляции шейдера несколько т.и.\n" + errorShader + "===============================\n";
             }
             _program_some_light = _program;
             listProgram.Add(_program);
 
             VertexShader = @"Components\Shaders\vertexShader_Lgh_directed.vert";
             FragentShader = @"Components\Shaders\fragmentShader.frag";
-            if ((_program = CompileShaders(ref error, VertexShader, FragentShader)) == -1)
+            errorShader = string.Empty;
+            _program = CompileShaders(ref errorShader, VertexShader, FragentShader);
+            if (!string.IsNullOrWhiteSpace(errorShader))
             {
-                error += "Ошибка при компиляции шейдера направленного т.и\n===============================\n";
-                return false;
+                error += "Ошибка при компиляции шейдера направленного т.и\n" + errorShader + "===============================\n";
             }
             listProgram.Add(_program);
 
             VertexShader = @"Components\Shaders\vertexShader_Fong.vert";
             FragentShader = @"Components\Shaders\fragmentShader_Fong.frag";
-            if ((_program = CompileShaders(ref error, VertexShader, FragentShader)) == -1)
+            errorShader = string.Empty;
+            _program = CompileShaders(ref errorShader, VertexShader, FragentShader);
+            if (!string.IsNullOrWhiteSpace(errorShader))
             {
-                error += "Ошибка при компиляции шейдера затенение по Фонгу\n===============================\n";
-                return false;
+                error += "Ошибка при компиляции шейдера затенение по Фонгу\n" + errorShader + "===============================\n";
             }
             _program_Fong = _program;
             listProgram.Add(_program);
 
             VertexShader = @"Components\Shaders\vertexShader_Fong.vert";
             FragentShader = @"Components\Shaders\fragmentShader_Fong_half.frag";
-            if ((_program = CompileShaders(ref error, VertexShader, FragentShader)) == -1)
+            errorShader = string.Empty;
+            _program = CompileShaders(ref errorShader, VertexShader, FragentShader);
+            if (!string.IsNullOrWhiteSpace(errorShader))
             {
-                error += "Ошибка при компиляции шейдера затенение по Фонгу с использованием вектора полпути\n===============================\n";
-                return false;
+                error += "Ошибка при компиляции шейдера затенение по Фонгу с использованием вектора полпути\n" + errorShader + "===============================\n";
             }
             listProgram.Add(_program);
 
             VertexShader = @"Components\Shaders\vertexShader_Fong.vert";
             FragentShader = @"Components\Shaders\fragmentShader_Fong_directed.frag";
-            if ((_program = CompileShaders(ref error, VertexShader, FragentShader)) == -1)
+            errorShader = string.Empty;
+            _program = CompileShaders(ref errorShader, VertexShader, FragentShader);
+            if (!string.IsNullOrWhiteSpace(errorShader))
             {
-                error += "Ошибка при компиляции шейдера узконаправленый источник\n===============================\n";
-                return false;
+                error += "Ошибка при компиляции шейдера узконаправленый источник\n" + errorShader + "===============================\n";
             }
             _program_Fong_directed = _program;
             listProgram.Add(_program);
 
             VertexShader = @"Components\Shaders\vertexShader_Fong.vert";
             FragentShader = @"Components\Shaders\fragmentShader_Fong_fog.frag";
-            if ((_program = CompileShaders(ref error, VertexShader, FragentShader)) == -1)
+            errorShader = string.Empty;
+            _program = CompileShaders(ref errorShader, VertexShader, FragentShader);
+            if (!string.IsNullOrWhiteSpace(errorShader))
             {
-                error += "Ошибка при компиляции шейдера туман\n===============================\n";
-                return false;
+                error += "Ошибка при компиляции шейдера туман\n" + errorShader + "===============================\n";
             }
             _program_Fong_fog = _program;
             listProgram.Add(_program);
 
             VertexShader = @"Components\Shaders\vertexShader_shadow.vert";
             FragentShader = @"Components\Shaders\fragmentShader_shadow.frag";
-            if ((_program = CompileShaders(ref error, VertexShader, FragentShader)) == -1)
+            errorShader = string.Empty;
+            _program = CompileShaders(ref errorShader, VertexShader, FragentShader);
+            if (!string.IsNullOrWhiteSpace(errorShader))
             {
-                error += "Ошибка при компиляции шейдера плоских теней\n===============================\n";
-                return false;
+                error += "Ошибка при компиляции шейдера плоских теней\n" + errorShader + "===============================\n";
             }
             _program_shadow_project = _program;
             listProgram.Add(_program);
 
             VertexShader = @"Components\Shaders\vertexShader_Lgh_directed_solar_effect.vert";
             FragentShader = @"Components\Shaders\fragmentShader_Lgh_directed_solar_effect.frag";
-            if ((_program = CompileShaders(ref error, VertexShader, FragentShader)) == -1)
+            errorShader = string.Empty;
+            _program = CompileShaders(ref errorShader, VertexShader, FragentShader);
+            if (!string.IsNullOrWhiteSpace(errorShader))
             {
-                error += "Ошибка при компиляции шейдера плоских теней\n===============================\n";
-                return false;
+                error += "Ошибка при компиляции шейдера узконаправленного источника\n" + errorShader + "===============================\n";
             }
             _program_Lgh_directed_solar_effect = _program;
 
             VertexShader = @"Components\Shaders\vertexShader_shadow_map_test.vert";
             FragentShader = @"Components\Shaders\fragmentShader_shadow_map_test.frag";
-            if ((_program = CompileShaders(ref error, VertexShader, FragentShader)) == -1)
+            errorShader = string.Empty;
+            _program = CompileShaders(ref errorShader, VertexShader, FragentShader);
+            if (!string.IsNullOrWhiteSpace(errorShader))
             {
-                error += "Ошибка при компиляции шейдера глубины карты теней\n===============================\n";
-                return false;
+                error += "Ошибка при компиляции шейдера глубины карты теней\n" + errorShader + "===============================\n";
             }
             _program_shadow_map_test = _program;
             listProgram.Add(_program);
 
             VertexShader = @"Components\Shaders\vertexShader_shadow_map.vert";
             FragentShader = @"Components\Shaders\fragmentShader_shadow_map.frag";
-            if ((_program = CompileShaders(ref error, VertexShader, FragentShader)) == -1)
+            errorShader = string.Empty;
+            _program = CompileShaders(ref errorShader, VertexShader, FragentShader);
+            if (!string.IsNullOrWhiteSpace(errorShader))
             {
-                error += "Ошибка при компиляции шейдера карты теней\n===============================\n";
-                return false;
+                error += "Ошибка при компиляции шейдера карты теней\n" + errorShader + "===============================\n";
             }
             _program_shadow_map = _program;
             listProgram.Add(_program);
 
             VertexShader = @"Components\Shaders\vertexShader_shadow_map.vert";
             FragentShader = @"Components\Shaders\fragmentShader_shadow_map_new.frag";
-            if ((_program = CompileShaders(ref error, VertexShader, FragentShader)) == -1)
+            errorShader = string.Empty;
+            _program = CompileShaders(ref errorShader, VertexShader, FragentShader);
+            if (!string.IsNullOrWhiteSpace(errorShader))
             {
-                error += "Ошибка при компиляции шейдера старой карты теней\n===============================\n";
-                return false;
+                error += "Ошибка при компиляции шейдера новой карты теней\n" + errorShader + "===============================\n";
             }
             _program_shadow_map_new = _program;
             listProgram.Add(_program);
 
             VertexShader = @"Components\Shaders\vertexShader_shadow_map.vert";
             FragentShader = @"Components\Shaders\fragmentShader_shadow_map_PCF.frag";
-            if ((_program = CompileShaders(ref error, VertexShader, FragentShader)) == -1)
+            errorShader = string.Empty;
+            _program = CompileShaders(ref errorShader, VertexShader, FragentShader);
+            if (!string.IsNullOrWhiteSpace(errorShader))
             {
-                error += "Ошибка при компиляции шейдера старой карты теней PCF\n===============================\n";
-                return false;
+                error += "Ошибка при компиляции шейдера старой карты теней PCF\n" + errorShader + "===============================\n";
             }
             _program_shadow_map_PCF = _program;
             listProgram.Add(_program);
 
             VertexShader = @"Components\Shaders\vertexShader_shadow_map.vert";
             FragentShader = @"Components\Shaders\fragmentShader_shadow_map_PCF_new.frag";
-            if ((_program = CompileShaders(ref error, VertexShader, FragentShader)) == -1)
+            errorShader = string.Empty;
+            _program = CompileShaders(ref errorShader, VertexShader, FragentShader);
+            if (!string.IsNullOrWhiteSpace(errorShader))
             {
-                error += "Ошибка при компиляции шейдера старой карты теней PCF\n===============================\n";
-                return false;
+                error += "Ошибка при компиляции шейдера новой карты теней PCF\n" + errorShader + "===============================\n";
             }
             _program_shadow_map_PCF_new = _program;
             listProgram.Add(_program);
@@ -350,33 +367,36 @@ namespace Thesis_3D
             VertexShader = @"Components\Shaders\vertexShader_shadow_map_L.vert";
             GeometryShader = @"Components\Shaders\geometryShader_shadow_map_L.geom";
             FragentShader = @"Components\Shaders\fragmentShader_shadow_map_L.frag";
-            if ((_program = CompileShaders(ref error, VertexShader, FragentShader, GeometryShader)) == -1)
+            errorShader = string.Empty;
+            _program = CompileShaders(ref errorShader, VertexShader, FragentShader);
+            if (!string.IsNullOrWhiteSpace(errorShader))
             {
-                error += "Ошибка при компиляции шейдера текстурный карты теней\n===============================\n";
-                return false;
+                error += "Ошибка при компиляции шейдера текстурный карты теней\n" + errorShader + "===============================\n";
             }
             _program_shadow_map_L = _program;
             
             VertexShader = @"Components\Shaders\vertexShader_shadow_point.vert";
             FragentShader = @"Components\Shaders\fragmentShader_shadow_point.frag";
-            if ((_program = CompileShaders(ref error, VertexShader, FragentShader)) == -1)
+            errorShader = string.Empty;
+            _program = CompileShaders(ref errorShader, VertexShader, FragentShader);
+            if (!string.IsNullOrWhiteSpace(errorShader))
             {
-                error += "Ошибка при компиляции шейдера реберной трассировка\n===============================\n";
-                return false;
+                error += "Ошибка при компиляции шейдера реберной трассировка\n" + errorShader + "===============================\n";
             }
             _program_shadow_point = _program;
             listProgram.Add(_program);
 
             VertexShader = @"Components\Shaders\vertexShader_Fong.vert";
             FragentShader = @"Components\Shaders\fragmentShader_shadow_point_noshaders.frag";
-            if ((_program = CompileShaders(ref error, VertexShader, FragentShader)) == -1)
+            errorShader = string.Empty;
+            _program = CompileShaders(ref errorShader, VertexShader, FragentShader);
+            if (!string.IsNullOrWhiteSpace(errorShader))
             {
-                error += "Ошибка при компиляции шейдера реберной трассировка без шейдеров\n===============================\n";
-                return false;
+                error += "Ошибка при компиляции шейдера реберной трассировка без шейдеров\n" + errorShader + "===============================\n";
             }
             _program_shadow_point_noshaders = _program;
             listProgram.Add(_program);
-            return true;
+            return error;
         }
         #region BufferPointShadowns
 
@@ -490,10 +510,9 @@ namespace Thesis_3D
             glControl_Load(glControlThesis3D, EventArgs.Empty);
             Application.Idle += Application_Idle;
             string ErrorText = string.Empty;
-            if(!CompileAllShaders(out ErrorText))
+            if(!string.IsNullOrWhiteSpace(ErrorText = CompileAllShaders()))
             {
                 MessageBox.Show(ErrorText);
-                throw new Exception(ErrorText);
             }
             init_tex_shadow();
             comboBoxShaders.Items.AddRange(new object[] 
