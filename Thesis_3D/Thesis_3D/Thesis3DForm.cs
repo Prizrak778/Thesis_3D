@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
+using GlmNet;
 
 namespace Thesis_3D
 {
@@ -23,7 +24,8 @@ namespace Thesis_3D
         private int pointShasowFBO = -1;
         private int shadowFBO;
         private int depthTex;
-        private float far_plane = 1024;
+        private int depthRandomTexID = -1;
+        private float far_plane = 1000f;
         private int _program = -1;
         private int _program_contour = -1;
         private int _program_some_light = -1;
@@ -38,6 +40,7 @@ namespace Thesis_3D
         private int _program_shadow_map_new = -1;
         private int _program_shadow_map_PCF = -1;
         private int _program_shadow_map_PCF_new = -1;
+        private int _program_shadow_map_PCF_Random = -1;
         private int _program_shadow_point = -1;
         private int _program_shadow_point_noshaders = -1;
 
@@ -102,7 +105,7 @@ namespace Thesis_3D
                 error += GL.GetShaderInfoLog(geometryShader);
                 if (!string.IsNullOrWhiteSpace(error)) error += "\r\n";
             }
-            
+
             var fragmentShader = GL.CreateShader(ShaderType.FragmentShader);
             GL.ShaderSource(fragmentShader, File.ReadAllText(FragmentString));
             GL.CompileShader(fragmentShader);
@@ -142,7 +145,7 @@ namespace Thesis_3D
                 400f);
             _ViewMatrix = cameraFirstFace.GetViewMatrix();
             // В плане матриц перемножение проихсодит в обратном порядке в шейдерах это P * V * M здесь это M * V * P
-            _MVP = _ViewMatrix * _projectionMatrix; 
+            _MVP = _ViewMatrix * _projectionMatrix;
         }
         #endregion
 
@@ -364,17 +367,19 @@ namespace Thesis_3D
             _program_shadow_map_PCF_new = _program;
             listProgram.Add(_program);
 
-            VertexShader = @"Components\Shaders\vertexShader_shadow_map_L.vert";
-            GeometryShader = @"Components\Shaders\geometryShader_shadow_map_L.geom";
-            FragentShader = @"Components\Shaders\fragmentShader_shadow_map_L.frag";
+            VertexShader = @"Components\Shaders\vertexShader_shadow_map.vert";
+            FragentShader = @"Components\Shaders\fragmentShader_shadow_map_PCF_Random.frag";
             errorShader = string.Empty;
             _program = CompileShaders(ref errorShader, VertexShader, FragentShader);
             if (!string.IsNullOrWhiteSpace(errorShader))
             {
-                error += "Ошибка при компиляции шейдера текстурный карты теней\n" + errorShader + "===============================\n";
+                error += "Ошибка при компиляции шейдера новой карты теней PCF Random\n" + errorShader + "===============================\n";
             }
-            _program_shadow_map_L = _program;
+            _program_shadow_map_PCF_Random = _program;
+            listProgram.Add(_program);
+
             
+
             VertexShader = @"Components\Shaders\vertexShader_shadow_point.vert";
             FragentShader = @"Components\Shaders\fragmentShader_shadow_point.frag";
             errorShader = string.Empty;
@@ -396,6 +401,17 @@ namespace Thesis_3D
             }
             _program_shadow_point_noshaders = _program;
             listProgram.Add(_program);
+
+            VertexShader = @"Components\Shaders\vertexShader_shadow_map_L.vert";
+            GeometryShader = @"Components\Shaders\geometryShader_shadow_map_L.geom";
+            FragentShader = @"Components\Shaders\fragmentShader_shadow_map_L.frag";
+            errorShader = string.Empty;
+            _program = CompileShaders(ref errorShader, VertexShader, FragentShader, GeometryShader);
+            if (!string.IsNullOrWhiteSpace(errorShader))
+            {
+                error += "Ошибка при компиляции шейдера текстурный карты теней\n" + errorShader + "===============================\n";
+            }
+            _program_shadow_map_L = _program;
             return error;
         }
         #region BufferPointShadowns
@@ -404,18 +420,18 @@ namespace Thesis_3D
         {
             if (_renderObjects.Count < 1) return;
             var colVertex = 0;
-            foreach(var renderObject in _renderObjects.Where(x => x.TypeObject != TypeObjectRenderLight.LightSourceObject))
+            foreach (var renderObject in _renderObjects.Where(x => x.TypeObject != TypeObjectRenderLight.LightSourceObject))
             {
                 colVertex += renderObject.BufferSize();
             }
             if (colVertex < 0) return;
             var offsetVertex = 0;
             float[] allVertex = new float[colVertex * 4];
-            foreach (var renderObject in _renderObjects.Where(x=>x.TypeObject != TypeObjectRenderLight.LightSourceObject))
+            foreach (var renderObject in _renderObjects.Where(x => x.TypeObject != TypeObjectRenderLight.LightSourceObject))
             {
                 Vertex[] vertexObject = new Vertex[renderObject.BufferSize()];
                 renderObject.ReadBuffer(vertexObject);
-                for(int i = 0; i < vertexObject.Length; i++)
+                for (int i = 0; i < vertexObject.Length; i++)
                 {
                     Vector4 positionObject = vertexObject[i]._Position * renderObject.geometricInfo.RotationMatrix * renderObject.geometricInfo.TranslationMatrix;
                     allVertex[offsetVertex + i * 4] = positionObject.X;
@@ -431,7 +447,7 @@ namespace Thesis_3D
         }
         private void ResetBufferPointShadowns()
         {
-            if(pointShasowFBO == -1)
+            if (pointShasowFBO == -1)
             {
                 setBufferPointShadowns();
                 return;
@@ -465,13 +481,67 @@ namespace Thesis_3D
         #endregion
 
         #region shadow_map_tex
-        private void init_tex_shadow()
+
+        private float RandomOffset()
+        {
+            return (float)(rnd.NextDouble() - 0.5);
+        }
+
+        private void buildOffsetTex(int size, int samplesU, int samplesV) // size - размер текстуры, U V - количество текселей 
+        {
+            int samples = samplesU * samplesV;
+            int bufSize = size * size * samples * 2;
+            float[] data = new float[bufSize];
+            for (int i = 0; i < size; i++)
+            {
+                for (int j = 0; j < size; j++)
+                {
+                    for (int k = 0; k < samples; k += 2)
+                    {
+                        int x1, y1, x2, y2;
+                        x1 = k % (samplesU);
+                        y1 = (samples - 1 - k) / samplesU;
+                        x2 = (k + 1) % samplesU;
+                        y2 = (samples - 1 - k - 1) / samplesU;
+                        Vector4 v;
+                        v.X = (x1 + 0.5f) + RandomOffset();
+                        v.Y = (y1 + 0.5f) + RandomOffset();
+                        v.Z = (x2 + 0.5f) + RandomOffset();
+                        v.W = (y2 + 0.5f) + RandomOffset();
+                        v.X /= samplesU;
+                        v.Y /= samplesV;
+                        v.Z /= samplesU;
+                        v.W /= samplesV;
+
+                        int cell = ((k / 2) * size * size + j * size + i) * 4;
+                        data[cell + 0] = (float)(Math.Sqrt(v.X) * Math.Cos(MathHelper.DegreesToRadians(v.X)));
+                        data[cell + 1] = (float)(Math.Sqrt(v.Y) * Math.Sin(MathHelper.DegreesToRadians(v.X)));
+                        data[cell + 2] = (float)(Math.Sqrt(v.Z) * Math.Cos(MathHelper.DegreesToRadians(v.Z)));
+                        data[cell + 3] = (float)(Math.Sqrt(v.W) * Math.Sin(MathHelper.DegreesToRadians(v.Z)));
+                    }
+                }
+            }
+
+
+            GL.ActiveTexture(TextureUnit.Texture1);
+            depthRandomTexID = GL.GenTexture();
+            GL.BindTexture(TextureTarget.Texture3D, depthRandomTexID);
+            GL.TexStorage3D(TextureTarget3d.Texture3D, 1, SizedInternalFormat.Rgba32f, size, size,
+            samples / 2);
+            GL.TexSubImage3D(TextureTarget.Texture3D, 0, 0, 0, 0, size, size, samples / 2, PixelFormat.Rgba, PixelType.Float, data);
+
+            GL.TexParameterI(TextureTarget.Texture3D, TextureParameterName.TextureMagFilter, new int[1] { (int)TextureMagFilter.Nearest });
+            GL.TexParameterI(TextureTarget.Texture3D, TextureParameterName.TextureMinFilter, new int[1] { (int)TextureMinFilter.Nearest });
+        }
+
+        private void initTexShadow()
         {
             float[] border = { 1.0f, 0.0f, 0.0f, 0.0f };
 
             //Текстура с картой теней
 
             GL.GenTextures(1, out depthTex);
+            GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.TextureCubeMap, depthTex);
             for (int i = 0; i < 6; i++)
             {
@@ -516,7 +586,8 @@ namespace Thesis_3D
                 {
                     MessageBox.Show(ErrorText);
                 }
-                init_tex_shadow();
+                initTexShadow();
+                //buildOffsetTex(256, 4, 8);
                 comboBoxShaders.Items.AddRange(new object[]
                   {
                   "Обычные цвета",
@@ -536,6 +607,7 @@ namespace Thesis_3D
                   "Карта теней улучшенный",
                   "Карта теней PFC",
                   "Карта теней PFC улучшенный",
+                  "Карта теней PFC с выборкой",
                   "Рёберная трассировка",
                   "Рёберная трассировка не шейдеры"
                 });
@@ -581,7 +653,7 @@ namespace Thesis_3D
                 _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.3f, 0.0f, 0.3f), new Vector3(1.0f, 0.0f, 5f), side: 0.1f, locTypeObjectCreate: TypeObjectCreate.SolidCube));
                 for (int i = 0; i < 2; i++)
                 {
-                    positionLight = new Vector3(10.0f + 3*i, 3.0f, 1.0f);
+                    positionLight = new Vector3(10.0f + 3 * i, 3.0f, 1.0f);
                     _lightObjects.Add(new LightObject(ObjectCreate.CreateSolidCube(0.1f), Color4.Yellow, RandomColor(), positionLight, new Vector4(5.0f, 5.0f, 1.0f, 1.0f), new Vector3(-0.2f, -1f, -0.3f), new Vector3(0.3f, 0.0f, 0.3f), new Vector3(1.0f, 0.0f, 5f), side: 0.1f, locTypeObjectCreate: TypeObjectCreate.SolidCube));
                 }
                 foreach (var obj in _lightObjects)
@@ -662,6 +734,7 @@ namespace Thesis_3D
             GL.PatchParameter(PatchParameterInt.PatchVertices, 3);
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.Texture2D);
+            //GL.Enable(EnableCap.Texture3DExt);
             GL.Enable(EnableCap.TextureCubeMap);
             GL.DepthFunc(DepthFunction.Less);
             GL.ClearColor(new Color4(0.3f, 0.3f, 0.3f, 0.0f));
@@ -706,11 +779,11 @@ namespace Thesis_3D
         }
         void glControl_MouseWheel(object sender, MouseEventArgs e)
         {
-            if(angel > 1 && angel < 179)
+            if (angel > 1 && angel < 179)
             {
-                angel += e.Delta/120;
+                angel += e.Delta / 120;
             }
-            else if(angel == 1 && e.Delta > 0)
+            else if (angel == 1 && e.Delta > 0)
             {
                 angel += e.Delta / 120;
             }
@@ -747,7 +820,7 @@ namespace Thesis_3D
                     }
                 }
             }
-            if(_SelectID > -1)
+            if (_SelectID > -1)
             {
                 buttonChangeFigure.Enabled = true;
                 buttonRemoveFigure.Enabled = true;
@@ -855,16 +928,16 @@ namespace Thesis_3D
                         break;
                     case Keys.Y:
                         _renderObjects[_SelectID].changeRotateMstrix(new Vector3(0, 0, -1));
-                        break;                                                           
-                    case Keys.H:                                                         
-                        _renderObjects[_SelectID].changeRotateMstrix(new Vector3(0, 0,  1));
+                        break;
+                    case Keys.H:
+                        _renderObjects[_SelectID].changeRotateMstrix(new Vector3(0, 0, 1));
                         break;
                 }
-                if(_renderObjects[_SelectID].TypeObject == TypeObjectRenderLight.LightSourceObject)
+                if (_renderObjects[_SelectID].TypeObject == TypeObjectRenderLight.LightSourceObject)
                 {
-                    foreach(var lightObject in _lightObjects)
+                    foreach (var lightObject in _lightObjects)
                     {
-                        if(lightObject.ColorСhoice == _renderObjects[_SelectID].ColorСhoice)
+                        if (lightObject.ColorСhoice == _renderObjects[_SelectID].ColorСhoice)
                         {
                             lightObject.SetPositionLight(_renderObjects[_SelectID].geometricInfo.TranslationMatrix);
                             if (_program_Fong_directed != -1 && lightObject.uboLightInfo != -1) lightObject.UpdatePositionForBlock(_program_Fong_directed);
@@ -876,7 +949,7 @@ namespace Thesis_3D
         }
         #endregion
 
-        
+
         private void RenderSelectColorBuf()
         {
             CreateProjection();
@@ -919,23 +992,53 @@ namespace Thesis_3D
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             CreateProjection();
 
-            
-            if ((_program == _program_shadow_map || _program == _program_shadow_map_test || _program == _program_shadow_map_new || _program == _program_shadow_map_PCF || _program == _program_shadow_map_PCF_new) && primaryLightObject != null)
+            if ((_program == _program_shadow_map || _program == _program_shadow_map_test || _program == _program_shadow_map_new || _program == _program_shadow_map_PCF || _program == _program_shadow_map_PCF_new || _program == _program_shadow_map_PCF_Random) && primaryLightObject != null)
             {
                 var programSave = _program;
-                Matrix4 lightProjection = Matrix4.CreatePerspectiveFieldOfView(90f * (float)Math.PI / 180f, 1f, 0.01f, far_plane);
+                mat4 ProjectLightMatrix = glm.infinitePerspective(glm.radians(90.0f),
+                1f, 0.01f);
+                float[] matrix = ProjectLightMatrix.to_array();
+                
+                Matrix4 lightProjection = new Matrix4(
+                    ProjectLightMatrix[0][0], 
+                    ProjectLightMatrix[0][1], 
+                    ProjectLightMatrix[0][2], 
+                    ProjectLightMatrix[0][3],
+                    ProjectLightMatrix[1][0],
+                    ProjectLightMatrix[1][1],
+                    ProjectLightMatrix[1][2],
+                    ProjectLightMatrix[1][3],
+                    ProjectLightMatrix[2][0],
+                    ProjectLightMatrix[2][1],
+                    ProjectLightMatrix[2][2],
+                    ProjectLightMatrix[2][3],
+                    ProjectLightMatrix[3][0],
+                    ProjectLightMatrix[3][1],
+                    ProjectLightMatrix[3][2],
+                    ProjectLightMatrix[3][3]
+                    );
+                //lightProjection = Matrix4.CreatePerspectiveFieldOfView(90f * (float)Math.PI / 180f, 1f, 0.01f, far_plane);
                 Matrix4[] shadowTransforms = new Matrix4[6];
                 Vector3 positionLight = primaryLightObject.getPositionRenderObject().Xyz * new Vector3(1.0f, 1.0f, 1.0f);
-                shadowTransforms[0] = Matrix4.LookAt(positionLight, positionLight + new Vector3( 1.0f,  0.0f,  0.0f), new Vector3(0, -1,  0)) * lightProjection;
-                shadowTransforms[1] = Matrix4.LookAt(positionLight, positionLight + new Vector3(-1.0f,  0.0f,  0.0f), new Vector3(0, -1,  0)) * lightProjection;
-                shadowTransforms[2] = Matrix4.LookAt(positionLight, positionLight + new Vector3( 0.0f,  1.0f,  0.0f), new Vector3(0,  0,  1)) * lightProjection;
-                shadowTransforms[3] = Matrix4.LookAt(positionLight, positionLight + new Vector3( 0.0f, -1.0f,  0.0f), new Vector3(0,  0, -1)) * lightProjection;
-                shadowTransforms[4] = Matrix4.LookAt(positionLight, positionLight + new Vector3( 0.0f,  0.0f,  1.0f), new Vector3(0, -1,  0)) * lightProjection;
-                shadowTransforms[5] = Matrix4.LookAt(positionLight, positionLight + new Vector3( 0.0f,  0.0f, -1.0f), new Vector3(0, -1,  0)) * lightProjection;
-                
+                //shadowTransforms[0] = lightProjection  * Matrix4.LookAt(positionLight, positionLight + new Vector3(1.0f, 0.0f, 0.0f), new Vector3(0, -1, 0))   ;
+                //shadowTransforms[1] = lightProjection  * Matrix4.LookAt(positionLight, positionLight + new Vector3(-1.0f, 0.0f, 0.0f), new Vector3(0, -1, 0))  ;
+                //shadowTransforms[2] = lightProjection  * Matrix4.LookAt(positionLight, positionLight + new Vector3(0.0f, 1.0f, 0.0f), new Vector3(0, 0, 1))    ;
+                //shadowTransforms[3] = lightProjection  * Matrix4.LookAt(positionLight, positionLight + new Vector3(0.0f, -1.0f, 0.0f), new Vector3(0, 0, -1))  ;
+                //shadowTransforms[4] = lightProjection  * Matrix4.LookAt(positionLight, positionLight + new Vector3(0.0f, 0.0f, 1.0f), new Vector3(0, -1, 0))   ;
+                //shadowTransforms[5] = lightProjection  * Matrix4.LookAt(positionLight, positionLight + new Vector3(0.0f, 0.0f, -1.0f), new Vector3(0, -1, 0)) ;
+                shadowTransforms[0] = Matrix4.LookAt(positionLight, positionLight + new Vector3(1.0f, 0.0f, 0.0f), new Vector3(0, -1, 0))   * lightProjection;
+                shadowTransforms[1] = Matrix4.LookAt(positionLight, positionLight + new Vector3(-1.0f, 0.0f, 0.0f), new Vector3(0, -1, 0))  * lightProjection;
+                shadowTransforms[2] = Matrix4.LookAt(positionLight, positionLight + new Vector3(0.0f, 1.0f, 0.0f), new Vector3(0, 0, 1))    * lightProjection;
+                shadowTransforms[3] = Matrix4.LookAt(positionLight, positionLight + new Vector3(0.0f, -1.0f, 0.0f), new Vector3(0, 0, -1))  * lightProjection;
+                shadowTransforms[4] = Matrix4.LookAt(positionLight, positionLight + new Vector3(0.0f, 0.0f, 1.0f), new Vector3(0, -1, 0))   * lightProjection;
+                shadowTransforms[5] = Matrix4.LookAt(positionLight, positionLight + new Vector3(0.0f, 0.0f, -1.0f), new Vector3(0, -1, 0))  * lightProjection;
+
+
                 GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, shadowFBO);
                 GL.Clear(ClearBufferMask.DepthBufferBit);
                 GL.UseProgram(_program_shadow_map_L);
+                //int location = GL.GetUniformLocation(_program, "projMatrix");
+                //GL.UniformMatrix4(location, 1, false, matrix);
                 GL.Uniform1(7, far_plane);
                 for (int i = 0; i < 6; i++)
                 {
@@ -943,14 +1046,14 @@ namespace Thesis_3D
                     GL.UniformMatrix4(index_shadow_mat + i, false, ref shadowTransforms[i]);
                 }
                 primaryLightObject.PositionLightUniform(18);
-                foreach (var renderObject in _renderObjects.Where(x=>x.TypeObject != TypeObjectRenderLight.LightSourceObject))
+                foreach (var renderObject in _renderObjects.Where(x => x.TypeObject != TypeObjectRenderLight.LightSourceObject))
                 {
                     RenderFigure(renderObject, PolygonMode.Fill);
                     renderObject.Render();
                 }
                 _program = programSave;
             }
-            if(_program == _program_shadow_point)
+            if (_program == _program_shadow_point)
             {
                 ResetBufferPointShadowns();
             }
@@ -988,9 +1091,9 @@ namespace Thesis_3D
                     GL.Uniform1(32, renderObject.BufferSize());
                     GL.Uniform4(33, vector4);
                     //GL.BindBuffer(BufferTarget.ShaderStorageBuffer, 0);
-                    if(renderObject.TypeObject != TypeObjectRenderLight.LightSourceObject) offset += renderObject.BufferSize();
+                    if (renderObject.TypeObject != TypeObjectRenderLight.LightSourceObject) offset += renderObject.BufferSize();
                 }
-                
+
                 if ((_program == _program_shadow_map || _program == _program_shadow_map_new || _program == _program_shadow_map_PCF || _program == _program_shadow_map_PCF_new) && renderObject.TypeObject != TypeObjectRenderLight.LightSourceObject)
                 {
                     GL.ActiveTexture(TextureUnit.Texture0);
@@ -1004,7 +1107,24 @@ namespace Thesis_3D
                     renderObject.ambientUnifrom(27);
                     renderObject.diffusionUnifrom(25);
                 }
-                else if(_program == _program_shadow_point_noshaders)
+                else if (_program == _program_shadow_map_PCF_Random)
+                {
+                    GL.ActiveTexture(TextureUnit.Texture0);
+                    GL.BindTexture(TextureTarget.TextureCubeMap, depthTex);
+                    GL.ActiveTexture(TextureUnit.Texture1);
+                    GL.BindTexture(TextureTarget.Texture3D, depthRandomTexID);
+                    GL.Uniform1(7, far_plane);
+                    Vector3 OffsetTexSize = new Vector3(1024, 1024, 1024);
+                    primaryLightObject.PositionLightUniform(18);
+                    primaryLightObject.IntensityLightVectorUniform(24);
+                    primaryLightObject.IntensityAmbient(26);
+                    primaryLightObject.IntensityMirror(28);
+                    renderObject.mirrorUnifrom(29);
+                    renderObject.ambientUnifrom(27);
+                    renderObject.diffusionUnifrom(25);
+                    GL.Uniform3(31, OffsetTexSize);
+                }
+                else if (_program == _program_shadow_point_noshaders)
                 {
                     primaryLightObject.PositionLightUniform(18);
                     primaryLightObject.IntensityLightVectorUniform(24);
@@ -1016,14 +1136,14 @@ namespace Thesis_3D
                     Vertex[] vertexObject = new Vertex[renderObject.BufferSize()];
                     renderObject.ReadBuffer(vertexObject);
                     bool flag = true;
-                    foreach (var renderOtherObject in  _renderObjects.Where(x=>x.ColorСhoice != renderObject.ColorСhoice && x.TypeObject != TypeObjectRenderLight.LightSourceObject))
+                    foreach (var renderOtherObject in _renderObjects.Where(x => x.ColorСhoice != renderObject.ColorСhoice && x.TypeObject != TypeObjectRenderLight.LightSourceObject))
                     {
                         Vertex[] vertexOtherObject = new Vertex[renderOtherObject.BufferSize()];
                         renderOtherObject.ReadBuffer(vertexOtherObject);
-                        for (int i = 0; i < vertexObject.Length && flag; i+=3)
+                        for (int i = 0; i < vertexObject.Length && flag; i += 3)
                         {
 
-                            for(int j = 0; j < vertexOtherObject.Length && flag; j+=3)
+                            for (int j = 0; j < vertexOtherObject.Length && flag; j += 3)
                             {
                                 Matrix4 ModelView = renderObject.geometricInfo.RotationMatrix * renderObject.geometricInfo.TranslationMatrix;
                                 Vector3 pa = (vertexOtherObject[j]._Position * ModelView).Xyz;
@@ -1064,7 +1184,7 @@ namespace Thesis_3D
                     int flagUn = flag ? 1 : 0;
                     GL.Uniform1(30, flagUn);
                 }
-                else if(_program == _program_shadow_map_test)
+                else if (_program == _program_shadow_map_test)
                 {
                     GL.ActiveTexture(TextureUnit.Texture0);
                     GL.BindTexture(TextureTarget.TextureCubeMap, depthTex);
@@ -1088,7 +1208,7 @@ namespace Thesis_3D
                         renderObject.diffusionUnifrom(26);
                     }
                 }
-                else if(_program == _program_Fong_fog && countLightObj > 0)
+                else if (_program == _program_Fong_fog && countLightObj > 0)
                 {
                     primaryLightObject.PositionLightUniform(18);
                     primaryLightObject.SetAttrFog(31, 1f, 30, 9f, 32, new Vector3(0.3f, 0.3f, 0.3f));
@@ -1097,14 +1217,14 @@ namespace Thesis_3D
                     renderObject.ambientUnifrom(27);
                     renderObject.diffusionUnifrom(25);
                 }
-                else if(_program == _program_Fong_directed && countLightObj > 0)
+                else if (_program == _program_Fong_directed && countLightObj > 0)
                 {
-                    if(primaryLightObject.uboLightInfo != -1) GL.BindBufferRange(BufferRangeTarget.UniformBuffer, 24, primaryLightObject.uboLightInfo, (IntPtr)0, primaryLightObject.blockSizeLightInfo);
+                    if (primaryLightObject.uboLightInfo != -1) GL.BindBufferRange(BufferRangeTarget.UniformBuffer, 24, primaryLightObject.uboLightInfo, (IntPtr)0, primaryLightObject.blockSizeLightInfo);
                     renderObject.mirrorUnifrom(29);
                     renderObject.ambientUnifrom(27);
                     renderObject.diffusionUnifrom(25);
                 }
-                else if(_program != _program_shadow_map_L)
+                else if (_program != _program_shadow_map_L)
                 {
                     if (countLightObj > 0)
                     {
@@ -1153,7 +1273,7 @@ namespace Thesis_3D
                 GL.LineWidth(4);
                 foreach (var renderObject in _renderObjects)
                 {
-                    
+
                     RenderFigure(renderObject, PolygonMode.Line);
                     Vector4 color = new Vector4(0, 0, 0, 255);
                     GL.Uniform4(19, ref color);
@@ -1161,7 +1281,7 @@ namespace Thesis_3D
                     renderObject.Render_line();
                 }
             }
-            if(_SelectID > -1)
+            if (_SelectID > -1)
             {
                 GL.LineWidth(7);
                 RenderFigure(_renderObjects[_SelectID], PolygonMode.Line);
@@ -1188,7 +1308,7 @@ namespace Thesis_3D
             startTime.Stop();
             var resultTime = startTime.Elapsed;
             _framecount = 1f / (resultTime.Ticks / 10000000f);
-            if(checkBoxFps.Checked) File.AppendAllText("FPSData.txt", $"FPS:\t{_framecount:0}" + Environment.NewLine);
+            if (checkBoxFps.Checked) File.AppendAllText("FPSData.txt", $"FPS:\t{_framecount:0}" + Environment.NewLine);
             label5.Text = $"Position:{cameraFirstFace.Position:0}";
             label6.Text = $"FPS: {_framecount:0}";
             Text = defaultTitle + $" (Vsync: {glControlThesis3D.VSync})";
@@ -1451,8 +1571,8 @@ namespace Thesis_3D
                         StartPosition = FormStartPosition.CenterScreen,
                     };
                     Label labelText = new Label() { Text = "Данная фигура аналитическая. Изменить её структуру фигуры как аналитическу?", Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 420, Height = 30, Top = 20, Left = 20 };
-                    Button buttonYes = new Button() { Text = "Да" , Top = 60, Left = 190, Width = 100, Height = 25, Anchor = AnchorStyles.Bottom | AnchorStyles.Right, DialogResult = DialogResult.Yes };
-                    Button buttonNo  = new Button() { Text = "Нет", Top = 60, Left = 290, Width = 100, Height = 25, Anchor = AnchorStyles.Bottom | AnchorStyles.Right, DialogResult = DialogResult.No  };
+                    Button buttonYes = new Button() { Text = "Да", Top = 60, Left = 190, Width = 100, Height = 25, Anchor = AnchorStyles.Bottom | AnchorStyles.Right, DialogResult = DialogResult.Yes };
+                    Button buttonNo = new Button() { Text = "Нет", Top = 60, Left = 290, Width = 100, Height = 25, Anchor = AnchorStyles.Bottom | AnchorStyles.Right, DialogResult = DialogResult.No };
                     dlgChangeTypeFigure.Controls.Add(labelText);
                     dlgChangeTypeFigure.Controls.Add(buttonYes);
                     dlgChangeTypeFigure.Controls.Add(buttonNo);
@@ -1525,7 +1645,7 @@ namespace Thesis_3D
                     NumericUpDown textBoxAngleX = new NumericUpDown() { Value = ax, Width = 40, Height = 30, Top = 525, Left = 470, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
                     NumericUpDown textBoxAngleY = new NumericUpDown() { Value = ay, Width = 40, Height = 30, Top = 525, Left = 530, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
                     NumericUpDown textBoxAngleZ = new NumericUpDown() { Value = az, Width = 40, Height = 30, Top = 525, Left = 590, Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
-                    Label lblCurrentPosition = new Label() { Text = "Текущая позиция:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 110, Height = 30, Top = 500, Left = 20  };
+                    Label lblCurrentPosition = new Label() { Text = "Текущая позиция:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 110, Height = 30, Top = 500, Left = 20 };
                     Label lblCurrentPositionX = new Label() { Text = "X:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 500, Left = 150 };
                     Label lblCurrentPositionY = new Label() { Text = "Y:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 500, Left = 210 };
                     Label lblCurrentPositionZ = new Label() { Text = "Z:", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 20, Height = 30, Top = 500, Left = 270 };
@@ -1545,11 +1665,11 @@ namespace Thesis_3D
                     buttonSave.Click += (sender1, e1) => { saveFileCoord.ShowDialog(); saveFileFinit.ShowDialog(); };
                     checkBoxChangeStruct.CheckedChanged += (sender1, e1) =>
                         {
-                        if(checkBoxChangeStruct.Checked && typeFigureChange != TypeObjectCreate.NonTypeObject)
-                        {
-                            MessageBox.Show("Данная фигура аналитическая, при изменении её структуры она перестанет быть аналитической фигуры");
-                        }
-                    };
+                            if (checkBoxChangeStruct.Checked && typeFigureChange != TypeObjectCreate.NonTypeObject)
+                            {
+                                MessageBox.Show("Данная фигура аналитическая, при изменении её структуры она перестанет быть аналитической фигуры");
+                            }
+                        };
                     saveFileFinit.Filter = saveFileCoord.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
                     saveFileCoord.FileName = "coord_default.txt";
                     saveFileFinit.FileName = "finit_default.txt";
@@ -1765,7 +1885,7 @@ namespace Thesis_3D
                         }
                     }
                 }
-                else if(changeNonAnalitik == 1)
+                else if (changeNonAnalitik == 1)
                 {
                     Vector3 position = _renderObjects[_SelectID].getStartPosition();
                     DlgAddEditAnFigure dlgNewAn = new DlgAddEditAnFigure(_renderObjects[_SelectID].geometricInfo);
@@ -1813,7 +1933,7 @@ namespace Thesis_3D
             public string Text { get; set; }
             public Vector4 colorChoices { get; set; }
         }
-            
+
 
         private void buttonTrajectory_Click(object sender, EventArgs e)
         {
@@ -1840,7 +1960,7 @@ namespace Thesis_3D
                 Label lblCoordsZ = new Label() { Text = "Z:", Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 20, Height = 30, Top = 113, Left = 140 };
                 Label objectId = new Label() { Text = "Id объект", Anchor = AnchorStyles.Left | AnchorStyles.Top, Width = 80, Height = 30, Top = 143, Left = 20 };
                 Button buttonOk = new Button() { Text = "Ok", Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Width = 40, Height = 30, Top = 200, Left = 200, DialogResult = DialogResult.OK };
-                comboBoxTargetObject.Items.AddRange( new object []
+                comboBoxTargetObject.Items.AddRange(new object[]
                 {
                         "Объект",
                         "Точка"
@@ -1867,7 +1987,8 @@ namespace Thesis_3D
                 List<IdRenderObject> idsRenderObject = new List<IdRenderObject>();
                 foreach (var renderObect in _renderObjects.Select((r, i) => new { Row = r, Index = i }))
                 {
-                    idsRenderObject.Add(new IdRenderObject {
+                    idsRenderObject.Add(new IdRenderObject
+                    {
                         colorChoices = renderObect.Row.ColorСhoice,
                         Text = Convert.ToString(renderObect.Row.ColorСhoice.Xyz).Replace("(", "").Replace(")", "").Replace(";", "").Replace(" ", "") + "   №" + Convert.ToString(renderObect.Index)
                     });
@@ -1876,7 +1997,7 @@ namespace Thesis_3D
                 comboBoxIds.DisplayMember = "Text";
                 comboBoxIds.ValueMember = "colorChoices";
                 comboBoxIds.SelectedItem = (idsRenderObject).Where(x => x.colorChoices == colorObject).FirstOrDefault();
-                
+
                 dlgChangeTrajectory.Controls.Add(checkBoxUseTrajectory);
                 dlgChangeTrajectory.Controls.Add(lblCoords);
                 dlgChangeTrajectory.Controls.Add(comboBoxTargetObject);
@@ -1897,7 +2018,7 @@ namespace Thesis_3D
                         TrajectoryFunctionsForm trajectoryFunctionsForm = new TrajectoryFunctionsForm(_renderObjects[_SelectID].trajctoryRenderObject.trajectoryFunctionsX, _renderObjects[_SelectID].trajctoryRenderObject.trajectoryFunctionsY, _renderObjects[_SelectID].trajctoryRenderObject.trajectoryFunctionsZ);
                         if (trajectoryFunctionsForm.ShowDialog() == DialogResult.OK)
                         {
-                            if(trajectoryFunctionsForm.trajectoryFunctionsX.ValidateTrajectoryFunc() && trajectoryFunctionsForm.trajectoryFunctionsY.ValidateTrajectoryFunc() && trajectoryFunctionsForm.trajectoryFunctionsZ.ValidateTrajectoryFunc())
+                            if (trajectoryFunctionsForm.trajectoryFunctionsX.ValidateTrajectoryFunc() && trajectoryFunctionsForm.trajectoryFunctionsY.ValidateTrajectoryFunc() && trajectoryFunctionsForm.trajectoryFunctionsZ.ValidateTrajectoryFunc())
                             {
                                 _renderObjects[_SelectID].trajctoryRenderObject.useTrajectory = true;
                                 _renderObjects[_SelectID].trajctoryRenderObject.target = Convert.ToString(comboBoxTargetObject.SelectedItem) == "Точка" ? TargetTrajectory.Point : TargetTrajectory.Object;

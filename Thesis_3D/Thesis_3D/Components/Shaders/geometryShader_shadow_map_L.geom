@@ -1,7 +1,8 @@
+#version 450 core
 layout(triangles) in;
+
 uniform mat4 shadowMatrices[6];
 layout(triangle_strip, max_vertices = 18) out;
-
 out vec4 FragPos;
 
 void main()
